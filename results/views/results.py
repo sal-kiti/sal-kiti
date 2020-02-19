@@ -160,15 +160,21 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
         Build a raw query for grouping results with inner query.
         """
         raw_query = str(queryset.query)
-        raw_query = raw_query.replace("`results_result`.`result`", "SUM(`results_result`.`result`) `result`", 1)
-        raw_query = raw_query.split('ORDER BY')[
-                        0] + "GROUP BY `results_result`.`athlete_id` ORDER BY SUM(`result`) DESC"
-        inner_query = "FROM (SELECT *, ROW_NUMBER() OVER(PARTITION BY `results_result`.`athlete_id` ORDER BY " \
-                      "`results_result`.`result` DESC) `rn` FROM `results_result`)"
-        raw_query = raw_query.replace("FROM", inner_query)
-        raw_query = raw_query.replace("WHERE", "WHERE `rn` <= %s AND")
-        for match in re.findall(r' \d{4}-\d{2}-\d{2} ', raw_query):
-            raw_query = raw_query.replace(match, ' "' + match.strip() + '" ')
+        if 'WHERE' in raw_query:
+            where_query = ' WHERE' + raw_query.split('WHERE')[1].split(' ORDER BY')[0]
+            for match in re.findall(r' \d{4}-\d{2}-\d{2}', raw_query):
+                where_query = where_query.replace(match, ' "' + match.strip() + '"')
+            joins = re.split('FROM .results_result.', raw_query)[1].split('WHERE')[0]
+        else:
+            where_query = ''
+            joins = re.split('FROM .results_result.', raw_query)[1].split('ORDER BY')[0]
+        select_query = raw_query.split('FROM')[0]
+        first_select = re.sub('.results_result...result.,', 'SUM(`results_result`.`result`) `result`,', select_query)
+        second_select = select_query + (', ROW_NUMBER() OVER(PARTITION BY `results_result`.`athlete_id` '
+                                        'ORDER BY `results_result`.`result` DESC) `rn` ')
+        query_end = (') `results_result` WHERE `rn` <= %s GROUP BY `results_result`.`athlete_id` '
+                     'ORDER BY SUM(`result`) DESC')
+        raw_query = first_select + 'FROM (' + second_select + 'FROM `results_result`' + joins + where_query + query_end
         return raw_query
 
     def get_queryset(self):

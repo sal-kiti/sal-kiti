@@ -2,7 +2,6 @@ from decimal import Decimal
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from rest_framework import status
@@ -629,8 +628,4 @@ class ResultListTestCase(TestCase):
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        # sqlite3 does not support current results grouping
-        if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
-            self.assertIn(response.data['results'][0]['result'], [str(self.result.result), str(self.result2.result)])
-        else:
-            self.assertEqual(response.data['results'][0]['result'], str(self.result.result + self.result2.result))
+        self.assertEqual(response.data['results'][0]['result'], str(self.result.result + self.result2.result))
