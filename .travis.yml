@@ -2,6 +2,8 @@ language: python
 python:
   - "3.6"
   - "3.7"
+services:
+  - mysql
 install:
   - pip install -r requirements_dev.txt
 script:

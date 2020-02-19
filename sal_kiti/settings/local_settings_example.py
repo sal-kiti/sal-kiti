@@ -5,6 +5,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import os
 import sys
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -66,3 +67,15 @@ LOCALE_PATHS = [
 
 if 'test' in sys.argv:
     DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+
+if 'TRAVIS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'travisdb',
+            'USER':     'travis',
+            'PASSWORD': '',
+            'HOST':     '127.0.0.1',
+            'PORT':     '',
+        }
+    }
