@@ -67,15 +67,3 @@ LOCALE_PATHS = [
 
 if 'test' in sys.argv:
     DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
-
-if 'TRAVIS' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'travisdb',
-            'USER':     'travis',
-            'PASSWORD': '',
-            'HOST':     '127.0.0.1',
-            'PORT':     '',
-        }
-    }
