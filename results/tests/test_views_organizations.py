@@ -1,15 +1,14 @@
 from django.contrib.auth.models import Group, User
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
-from rest_framework.test import force_authenticate
 
 from results.models.organizations import Area, Organization
 from results.tests.factories.organizations import AreaFactory, OrganizationFactory
+from results.tests.utils import ResultsTestCase
 from results.views.organizations import AreaViewSet, OrganizationViewSet
 
 
-class OrganizationTestCase(TestCase):
+class OrganizationTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
@@ -21,33 +20,6 @@ class OrganizationTestCase(TestCase):
         self.url = '/api/organizations/'
         self.viewset = OrganizationViewSet
         self.model = Organization
-
-    def _test_access(self, user):
-        request = self.factory.get(self.url + '1/')
-        force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'get': 'retrieve'})
-        return view(request, pk=self.object.pk)
-
-    def _test_create(self, user, data):
-        request = self.factory.post(self.url, data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'post': 'create'})
-        return view(request)
-
-    def _test_delete(self, user):
-        request = self.factory.delete(self.url + '1/')
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'delete': 'destroy'})
-        return view(request, pk=1)
-
-    def _test_update(self, user, data):
-        request = self.factory.put(self.url + '1/', data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'put': 'update'})
-        return view(request, pk=1)
 
     def test_organization_access_list(self):
         request = self.factory.get(self.url)
@@ -133,7 +105,7 @@ class OrganizationTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class AreaTestCase(TestCase):
+class AreaTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
@@ -145,33 +117,6 @@ class AreaTestCase(TestCase):
         self.url = '/api/area/'
         self.viewset = AreaViewSet
         self.model = Area
-
-    def _test_access(self, user):
-        request = self.factory.get(self.url + '1/')
-        force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'get': 'retrieve'})
-        return view(request, pk=self.object.pk)
-
-    def _test_create(self, user, data):
-        request = self.factory.post(self.url, data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'post': 'create'})
-        return view(request)
-
-    def _test_delete(self, user):
-        request = self.factory.delete(self.url + '1/')
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'delete': 'destroy'})
-        return view(request, pk=1)
-
-    def _test_update(self, user, data):
-        request = self.factory.put(self.url + '1/', data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'put': 'update'})
-        return view(request, pk=1)
 
     def test_area_access_list(self):
         request = self.factory.get(self.url)

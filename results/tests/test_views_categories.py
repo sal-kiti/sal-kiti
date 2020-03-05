@@ -1,17 +1,16 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
-from rest_framework.test import force_authenticate
 
 from results.models.categories import Category, Division
 from results.models.sports import Sport
 from results.tests.factories.categories import CategoryFactory, DivisionFactory, SportFactory
+from results.tests.utils import ResultsTestCase
 from results.views.categories import CategoryViewSet, DivisionViewSet
 from results.views.sports import SportViewSet
 
 
-class SportTestCase(TestCase):
+class SportTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
@@ -23,33 +22,6 @@ class SportTestCase(TestCase):
         self.url = '/api/sports/'
         self.viewset = SportViewSet
         self.model = Sport
-
-    def _test_access(self, user):
-        request = self.factory.get(self.url + '1/')
-        force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'get': 'retrieve'})
-        return view(request, pk=self.object.pk)
-
-    def _test_create(self, user, data):
-        request = self.factory.post(self.url, data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'post': 'create'})
-        return view(request)
-
-    def _test_delete(self, user):
-        request = self.factory.delete(self.url + '1/')
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'delete': 'destroy'})
-        return view(request, pk=1)
-
-    def _test_update(self, user, data):
-        request = self.factory.put(self.url + '1/', data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'put': 'update'})
-        return view(request, pk=1)
 
     def test_sport_access_list(self):
         request = self.factory.get(self.url)
@@ -128,7 +100,7 @@ class SportTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class DivisionTestCase(TestCase):
+class DivisionTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
@@ -140,33 +112,6 @@ class DivisionTestCase(TestCase):
         self.url = '/api/divisions/'
         self.viewset = DivisionViewSet
         self.model = Division
-
-    def _test_access(self, user):
-        request = self.factory.get(self.url + '1/')
-        force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'get': 'retrieve'})
-        return view(request, pk=self.object.pk)
-
-    def _test_create(self, user, data):
-        request = self.factory.post(self.url, data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'post': 'create'})
-        return view(request)
-
-    def _test_delete(self, user):
-        request = self.factory.delete(self.url + '1/')
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'delete': 'destroy'})
-        return view(request, pk=1)
-
-    def _test_update(self, user, data):
-        request = self.factory.put(self.url + '1/', data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'put': 'update'})
-        return view(request, pk=1)
 
     def test_division_access_list(self):
         request = self.factory.get(self.url)
@@ -245,7 +190,7 @@ class DivisionTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class CategoryTestCase(TestCase):
+class CategoryTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
@@ -264,33 +209,6 @@ class CategoryTestCase(TestCase):
         self.url = '/api/categories/'
         self.viewset = CategoryViewSet
         self.model = Category
-
-    def _test_access(self, user):
-        request = self.factory.get(self.url + '1/')
-        force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'get': 'retrieve'})
-        return view(request, pk=self.object.pk)
-
-    def _test_create(self, user, data):
-        request = self.factory.post(self.url, data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'post': 'create'})
-        return view(request)
-
-    def _test_delete(self, user):
-        request = self.factory.delete(self.url + '1/')
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'delete': 'destroy'})
-        return view(request, pk=1)
-
-    def _test_update(self, user, data):
-        request = self.factory.put(self.url + '1/', data)
-        if user:
-            force_authenticate(request, user=user)
-        view = self.viewset.as_view(actions={'put': 'update'})
-        return view(request, pk=1)
 
     def test_category_access_list(self):
         request = self.factory.get(self.url)
