@@ -128,7 +128,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 API_TITLE = "SAL Kiti"
-API_VERSION = "0.1.0"
+API_VERSION = "0.2.0"
 
 try:
     from sal_kiti.settings.local_settings import *
