@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
+from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 
@@ -33,6 +34,18 @@ class AreaViewSet(viewsets.ModelViewSet):
     serializer_class = AreaSerializer
 
 
+class OrganizationFilter(filters.FilterSet):
+    """
+    Custom filters for a competition.
+    """
+    external = filters.BooleanFilter(field_name='external')
+    historical = filters.BooleanFilter(field_name='historical')
+
+    class Meta:
+        model = Organization
+        fields = ['external', 'historical']
+
+
 class OrganizationViewSet(viewsets.ModelViewSet):
     """API endpoint for organizations.
 
@@ -57,13 +70,15 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = OrganizationFilter
 
     def get_queryset(self):
         """
         Optionally restricts returned results to user's managed organizations.
         """
         limit = self.request.query_params.get('limit', None)
-        if limit and limit == "own":
+        if limit and limit == 'own':
             user = self.request.user
             if not user.is_superuser and not user.is_staff:
                 self.queryset = self.queryset.filter(group__in=user.groups.all())

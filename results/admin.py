@@ -34,7 +34,7 @@ admin.site.register(Athlete, AthleteAdmin)
 
 class AthleteInformationAdmin(admin.ModelAdmin):
     autocomplete_fields = ['athlete']
-    list_display = ['athlete', 'type', 'value', 'date_start', 'date_end', 'public']
+    list_display = ['athlete', 'type', 'value', 'date_start', 'date_end', 'visibility']
     search_fields = ['athlete']
 
     def get_queryset(self, request):

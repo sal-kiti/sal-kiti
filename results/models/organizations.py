@@ -58,6 +58,8 @@ class Organization(LogChangesMixing, models.Model):
     external = models.BooleanField(default=False, verbose_name=_('External'))
     areas = models.ManyToManyField(Area, blank=True, verbose_name=_('Areas'))
     group = models.OneToOneField(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Group'))
+    sport_id = models.CharField(max_length=15, unique=True, null=True, blank=True, verbose_name=_('Sport ID'))
+    historical = models.BooleanField(default=False, verbose_name=_('Historical'))
 
     def __str__(self):
         return '%s - %s' % (self.abbreviation, self.name)

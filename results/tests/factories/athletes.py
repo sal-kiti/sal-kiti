@@ -34,4 +34,4 @@ class AthleteInformationFactory(factory.django.DjangoModelFactory):
     athlete = factory.SubFactory(AthleteFactory)
     type = 'Medal'
     value = 'Olympic Gold 2000'
-    public = True
+    visibility = 'P'

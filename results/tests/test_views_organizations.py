@@ -13,8 +13,8 @@ class OrganizationTestCase(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.user = User.objects.create(username='tester')
-        self.staff_user = User.objects.create(username="staffuser", is_staff=True)
-        self.superuser = User.objects.create(username="superuser", is_superuser=True)
+        self.staff_user = User.objects.create(username='staffuser', is_staff=True)
+        self.superuser = User.objects.create(username='superuser', is_superuser=True)
         self.object = OrganizationFactory.create()
         self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
         self.newdata = {'name': 'Club Zero', 'abbreviation': 'Zero'}

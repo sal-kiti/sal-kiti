@@ -159,13 +159,13 @@ class AthleteInformationTestCase(TestCase):
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.athlete = AthleteFactory.create()
         self.object = AthleteInformationFactory.create(athlete=self.athlete)
-        self.object_private = AthleteInformationFactory.create(athlete=self.athlete, public=False)
+        self.object_private = AthleteInformationFactory.create(athlete=self.athlete, visibility='S')
         self.data = {'id': 1, 'athlete': self.object.athlete.pk, 'type': self.object.type,
-                     'value': self.object.value, 'public': self.object.public}
+                     'value': self.object.value, 'visibility': self.object.visibility}
         self.update_data = {'id': 1, 'athlete': self.object.athlete.pk, 'type': self.object.type,
-                            'value': "Field Champion 2018", 'public': self.object.public}
+                            'value': "Field Champion 2018", 'visibility': self.object.visibility}
         self.newdata = {'athlete': self.object.athlete.pk, 'type': self.object.type,
-                        'value': "Field Champion 2000", 'public': False}
+                        'value': "Field Champion 2000", 'visibility': 'A'}
         self.url = '/api/athleteinformation/'
         self.viewset = AthleteInformationViewSet
         self.model = AthleteInformation
@@ -209,11 +209,29 @@ class AthleteInformationTestCase(TestCase):
         for key in self.data:
             self.assertEqual(response.data[key], self.data[key])
 
+    def test_athlete_information_access_object_A(self):
+        self.object.visibility = 'A'
+        self.object.save()
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_athlete_information_access_object_with_normal_user(self):
         response = self._test_access(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
             self.assertEqual(response.data[key], self.data[key])
+
+    def test_athlete_information_access_object_S(self):
+        self.object.visibility = 'S'
+        self.object.save()
+        response = self._test_access(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_athlete_information_access_object_U(self):
+        self.object.visibility = 'U'
+        self.object.save()
+        response = self._test_access(user=self.staff_user)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_athlete_information_update_without_user(self):
         response = self._test_update(user=None, data=self.update_data)
@@ -223,7 +241,7 @@ class AthleteInformationTestCase(TestCase):
         response = self._test_update(user=self.superuser, data=self.update_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_athlete_information_update_with_staffruser(self):
+    def test_athlete_information_update_with_staff_user(self):
         response = self._test_update(user=self.staff_user, data=self.update_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

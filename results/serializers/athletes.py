@@ -16,7 +16,7 @@ class AthleteInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AthleteInformation
-        fields = ('id', 'athlete', 'type', 'value', 'date_start', 'date_end', 'public', 'permissions')
+        fields = ('id', 'athlete', 'type', 'value', 'date_start', 'date_end', 'visibility', 'permissions')
 
 
 class AthleteSerializer(serializers.ModelSerializer):
@@ -59,7 +59,7 @@ class AthleteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(_('User not authenticated'), 403)
         if user.is_superuser or user.is_staff:
             return data
-        if not data['organization'].external:
+        if 'organization' not in data or not data['organization'].external:
             raise serializers.ValidationError(_('No permission to create non external athlete'), 403)
         return data
 

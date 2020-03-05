@@ -26,4 +26,4 @@ class OrganizationSerializer(serializers.ModelSerializer, EagerLoadingMixin):
 
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'abbreviation', 'external', 'areas', 'group', 'permissions')
+        fields = ('id', 'name', 'abbreviation', 'external', 'areas', 'group', 'sport_id', 'historical', 'permissions')

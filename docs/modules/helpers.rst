@@ -1,6 +1,12 @@
 Helpers
 ====================
 
+Connectors
+----------
+.. automodule:: results.connectors.suomisport
+    :members:
+
+
 Management commands
 -------------------
 
@@ -17,6 +23,11 @@ Check records
 Create event
 ...................
 .. automodule:: results.management.commands.createevent
+    :members:
+
+Suomisport import
+...................
+.. automodule:: results.management.commands.suomisportimport
     :members:
 
 Middleware

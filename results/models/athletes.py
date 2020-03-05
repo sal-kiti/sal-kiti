@@ -27,6 +27,7 @@ class Athlete(LogChangesMixing, models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name=_('Gender'))
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
     additional_organizations = models.ManyToManyField(Organization, blank=True, related_name='additional_organizations')
+    no_auto_update = models.BooleanField(default=False, verbose_name=_('No automatic updates'))
 
     class Meta:
         verbose_name = _('Athlete')
@@ -68,12 +69,19 @@ class AthleteInformation(LogChangesMixing, models.Model):
     Related to
       - :class:`.athletes.Athlete`
     """
+    VISIBILITY_CHOICES = (
+        ('P', _('Public')),
+        ('A', _('Authenticated users')),
+        ('S', _('Staff users')),
+        ('U', _('Superuser only')),
+    )
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE, related_name='info')
     type = models.CharField(max_length=100, verbose_name=_('Type'))
     value = models.CharField(max_length=100, verbose_name=_('Value'))
     date_start = models.DateField(blank=True, null=True, verbose_name=_('Start date'))
     date_end = models.DateField(blank=True, null=True, verbose_name=_('End date'))
-    public = models.BooleanField(default=False, verbose_name=_('Public'))
+    visibility = models.CharField(max_length=1, choices=VISIBILITY_CHOICES, default='P', verbose_name=_('Visibility'))
+    modification_time = models.DateTimeField(null=True, blank=True, verbose_name=_('Suomisport update timestamp'))
 
     def __str__(self):
         return '%s, %s' % (self.athlete, self.type)
