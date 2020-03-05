@@ -64,5 +64,15 @@ LOCALE_PATHS = [
     '/path/to/sal-sal_kiti/results/locale'
 ]
 
+SUOMISPORT = {
+    'BASE_URL': 'https://www.suomisport.fi/api/public/v2/',
+    'CLIENT_ID': '',
+    'CLIENT_SECRET': '',
+    'ORGANIZATION_ID': '',
+    'TOKEN_URL': 'https://www.suomisport.fi/oauth2/token',
+    'LICENCE_TYPES': ['Competition'],
+    'FETCH_SIZE': 1000
+}
+
 if 'test' in sys.argv:
     DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
