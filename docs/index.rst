@@ -9,6 +9,7 @@ Main features
 * Competition result lists
 * Statistics
 * Records keeping
+* Suomisport connector
 
 Authentication and user types
 -----------------------------
@@ -97,6 +98,13 @@ types should be displayed.
 * order: additional ordering if a result is displayed in single column
 * hide: hide on smaller screens
 * show: show on larger screens
+
+Suomisport connector
+--------------------
+Suomisport is a Finnish service for sports and organizations, used by the most Finnish sport federations.
+It includes insurance and licence management, club memberships and events management.
+
+Suomisport connector allows Kiti to import and update licence and athlete information from the Suomisport.
 
 Structure
 ----------

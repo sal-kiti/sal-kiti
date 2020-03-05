@@ -9,8 +9,8 @@ from results.models.categories import Category, CategoryForCompetitionType
 from results.models.organizations import Area
 from results.models.records import Record, RecordLevel
 from results.tests.factories.athletes import AthleteFactory
-from results.tests.factories.competitions import CompetitionFactory
-from results.tests.factories.results import ResultFactory
+from results.tests.factories.competitions import CompetitionFactory, CompetitionResultTypeFactory
+from results.tests.factories.results import ResultFactory, ResultPartialFactory
 from results.views.records import RecordViewSet
 
 
@@ -49,8 +49,12 @@ class RecordsTestCase(TestCase):
         self.athlete_old = AthleteFactory.create(gender="W", date_of_birth=date.today() - timedelta(days=70*365))
         self.record_level = RecordLevel.objects.create(name="SE", abbreviation="SE", base=True, decimals=True,
                                                        team=True)
+        self.record_level_partial = RecordLevel.objects.create(name="Finals SE", abbreviation="FSE", base=False,
+                                                               decimals=True, partial=True)
         self.record_level.types.add(self.competition.type)
+        self.record_level_partial.types.add(self.competition.type)
         self.record_level.levels.add(self.competition.level)
+        self.record_level_partial.levels.add(self.competition.level)
         self.area = Area.objects.create(name="Area", abbreviation="A")
         self.record_level_area = RecordLevel.objects.create(name="Area", abbreviation="A", area=self.area, base=True,
                                                             team=True, decimals=True)
@@ -58,6 +62,8 @@ class RecordsTestCase(TestCase):
         self.record_level_area.levels.add(self.competition.level)
         self.result = ResultFactory.create(
             competition=self.competition, athlete=self.athlete, category=self.category_W20, result=200)
+        self.competition_result_type = CompetitionResultTypeFactory.create(
+            competition_type=self.result.competition.type)
         self.object = Record.objects.all().first()
         self.data = {'result': self.object.result.id, 'partial_result': None,
                      'level': self.object.level.id, 'type': self.object.type.id, 'category': self.object.category.id,
@@ -137,6 +143,15 @@ class RecordsTestCase(TestCase):
             competition=self.competition, athlete=self.athlete_old, category=self.category_W, result=150)
         self.assertEqual(Record.objects.all().count(), 3)
         self.assertEqual(Record.objects.filter(approved=False).count(), 1)
+
+    def test_partial_record_creation(self):
+        self.model.objects.all().update(approved=True)
+        self.object = ResultPartialFactory.create(result=self.result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.assertEqual(Record.objects.all().count(), 4)
+        self.assertEqual(Record.objects.filter(approved=False).count(), 2)
+        self.assertEqual(Record.objects.exclude(partial_result=None).count(), 2)
 
     def test_team_record_creation(self):
         self.model.objects.all().update(approved=True)
