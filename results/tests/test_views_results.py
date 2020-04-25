@@ -404,6 +404,16 @@ class ResultTestCase(TestCase):
         response = self._test_update(user=self.superuser, data=self.newdata, locked=True)
         self.assertEqual(len(response.data['partial']), 0)
 
+    def test_result_create_with_team_result(self):
+        team_members = [self.athlete.pk,
+                        AthleteFactory.create(gender="M", date_of_birth=date.today() - relativedelta(years=19)).pk,
+                        AthleteFactory.create(gender="M", date_of_birth=date.today() - relativedelta(years=20)).pk]
+        self.newdata['athlete'] = None
+        self.newdata['team_members'] = team_members
+        self.newdata['team'] = True
+        response = self._test_create(user=self.superuser, data=self.newdata, locked=False)
+        self.assertEqual(len(response.data['team_members']), 3)
+
 
 class PartialResultTestCase(TestCase):
     def setUp(self):

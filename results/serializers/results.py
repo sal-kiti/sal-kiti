@@ -72,10 +72,13 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Nested partial results support in create
         """
         partial_data = validated_data.pop('partial', None)
+        team_members = validated_data.pop('team_members', None)
         result = Result.objects.create(**validated_data)
         if partial_data:
             for partial in partial_data:
                 ResultPartial.objects.create(result=result, **partial)
+        if team_members:
+            result.team_members.set(team_members)
         return result
 
     def update(self, instance, validated_data):
@@ -83,8 +86,11 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Nested partial results support in update
         """
         for data in validated_data:
-            if data is not 'partial':
+            if data not in ['partial', 'team_members']:
                 setattr(instance, data, validated_data[data])
+        if 'team_members' in validated_data:
+            team_members = validated_data.pop('team_members')
+            instance.team_members.set(team_members)
         instance.save()
         partial_existing = list(ResultPartial.objects.filter(result=instance).values_list('id', flat=True))
         if 'partial' in validated_data:
@@ -227,7 +233,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                 athletes = self.instance.team_members.all()
         else:
             team = False
-            if 'athlete' in data:
+            if 'athlete' in data and data['athlete']:
                 athletes = [data['athlete']]
             elif self.instance:
                 athletes = [self.instance.athlete]
