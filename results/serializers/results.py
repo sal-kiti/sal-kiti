@@ -41,12 +41,23 @@ class ResultPartialSerializer(serializers.ModelSerializer):
         return data
 
 
+class ResultPartialNestedSerializer(ResultPartialSerializer):
+    """
+    Serializer for nested partial result updates where validation is done in results serializer
+    """
+    class Meta:
+        model = ResultPartial
+        fields = ('id', 'type', 'order', 'value', 'decimals', 'time', 'permissions')
+
+    def validate(self, data):
+        return data
+
+
 class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     """
     Serializer for results
     """
-
-    partial = ResultPartialSerializer(many=True, read_only=True)
+    partial = ResultPartialNestedSerializer(many=True, required=False)
     permissions = DRYPermissionsField()
 
     class Meta:
@@ -55,6 +66,49 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             'id', 'competition', 'athlete', 'team_members', 'first_name', 'last_name', 'organization', 'category',
             'elimination_category', 'result', 'decimals', 'result_code', 'position', 'position_pre',
             'approved', 'info', 'team', 'partial', 'permissions')
+
+    def create(self, validated_data):
+        """
+        Nested partial results support in create
+        """
+        partial_data = validated_data.pop('partial', None)
+        team_members = validated_data.pop('team_members', None)
+        result = Result.objects.create(**validated_data)
+        if partial_data:
+            for partial in partial_data:
+                ResultPartial.objects.create(result=result, **partial)
+        if team_members:
+            result.team_members.set(team_members)
+        return result
+
+    def update(self, instance, validated_data):
+        """
+        Nested partial results support in update
+        """
+        for data in validated_data:
+            if data not in ['partial', 'team_members']:
+                setattr(instance, data, validated_data[data])
+        if 'team_members' in validated_data:
+            team_members = validated_data.pop('team_members')
+            instance.team_members.set(team_members)
+        instance.save()
+        partial_existing = list(ResultPartial.objects.filter(result=instance).values_list('id', flat=True))
+        if 'partial' in validated_data:
+            partial_data = validated_data.pop('partial')
+            for partial in partial_data:
+                try:
+                    partial_instance = ResultPartial.objects.get(result=instance,
+                                                                 type=partial['type'],
+                                                                 order=partial['order'])
+                    for data in partial:
+                        if data not in ['result', 'type', 'order']:
+                            setattr(partial_instance, data, partial[data])
+                    partial_instance.save()
+                    partial_existing.remove(partial_instance.pk)
+                except ResultPartial.DoesNotExist:
+                    ResultPartial.objects.create(result=instance, **partial)
+            ResultPartial.objects.filter(pk__in=partial_existing).delete()
+        return instance
 
     @staticmethod
     def _age_difference(competition, athlete, exact):
@@ -179,7 +233,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                 athletes = self.instance.team_members.all()
         else:
             team = False
-            if 'athlete' in data:
+            if 'athlete' in data and data['athlete']:
                 athletes = [data['athlete']]
             elif self.instance:
                 athletes = [self.instance.athlete]
@@ -247,6 +301,20 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                               (self.instance.team and 'team' in data and not data['team'])):
             raise serializers.ValidationError(_('Cannot change team status.'))
 
+    @staticmethod
+    def _check_partial(data, competition):
+        """
+        Validate partial results
+        """
+        if 'partial' in data and len(data['partial']):
+            for partial in data['partial']:
+                if partial['type'].competition_type != competition.type:
+                    raise serializers.ValidationError(_('Partial result type does not match competition type.'))
+                if partial['type'].min_result is not None and partial['value'] < partial['type'].min_result:
+                    raise serializers.ValidationError(_('A result is too low.'))
+                if partial['type'].max_result is not None and partial['value'] > partial['type'].max_result:
+                    raise serializers.ValidationError(_('A result is too high.'))
+
     def validate(self, data):
         """
         Validates:
@@ -258,6 +326,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
          - gender limitations for the category
          - age limitations for the category
          - value limits for the result
+         - partial results
         """
         if (not (self.context['request'].user.is_superuser or self.context['request'].user.is_staff) and
             ((self.instance and (self.instance.competition.locked or self.instance.approved)) or
@@ -276,6 +345,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         result = self._get_result(data)
         if result is not None:
             self._check_value_limits(result, category, competition.type)
+        self._check_partial(data, competition)
         if 'approved' in data and data['approved'] and not (self.context['request'].user.is_superuser or
                                                             self.context['request'].user.is_staff):
             raise serializers.ValidationError(_("No permission to approve results."))
