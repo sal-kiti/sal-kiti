@@ -7,7 +7,7 @@ from results.models.competitions import Competition, CompetitionLevel, Competiti
 from results.models.competitions import CompetitionLayout
 from results.models.events import Event
 from results.models.organizations import Organization
-from results.serializers.events import EventSerializer
+from results.serializers.events import EventLimitedSerializer
 from results.serializers.organizations import OrganizationSerializer
 
 
@@ -85,7 +85,7 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     organization_info = OrganizationSerializer(read_only=True, source='organization')
     organization = serializers.PrimaryKeyRelatedField(
         queryset=Organization.objects.all())
-    event_info = EventSerializer(read_only=True, source='event')
+    event_info = EventLimitedSerializer(read_only=True, source='event')
     event = serializers.PrimaryKeyRelatedField(
         queryset=Event.objects.all())
 
@@ -133,11 +133,6 @@ class CompetitionLimitedSerializer(CompetitionSerializer):
     """
     Serializer for limited competition results
     """
-    type = serializers.PrimaryKeyRelatedField(
-        queryset=CompetitionType.objects.all())
-    level_info = CompetitionLevelSerializer(read_only=True, source='level')
-    level = serializers.PrimaryKeyRelatedField(
-        queryset=CompetitionLevel.objects.all())
 
     class Meta:
         model = Competition

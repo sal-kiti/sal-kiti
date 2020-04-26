@@ -1,11 +1,32 @@
+from abc import ABC
+
 from django.utils.translation import ugettext_lazy as _
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework import serializers
 
 from results.mixins.eager_loading import EagerLoadingMixin
+from results.models.competitions import Competition
 from results.models.events import Event
 from results.models.organizations import Organization
 from results.serializers.organizations import OrganizationSerializer
+
+
+class CompetitionInfoSerializer(serializers.ModelSerializer):
+    """
+    Serializer for competition info in events
+    """
+    type = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name'
+     )
+    level = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name'
+     )
+
+    class Meta:
+        model = Competition
+        fields = ('id', 'type', 'level', 'public')
 
 
 class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
@@ -15,17 +36,20 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     organization_info = OrganizationSerializer(read_only=True, source='organization')
     organization = serializers.PrimaryKeyRelatedField(
         queryset=Organization.objects.all())
-
+    competitions = CompetitionInfoSerializer(many=True, read_only=True)
     permissions = DRYPermissionsField()
 
     _PREFETCH_RELATED_FIELDS = ['organization',
-                                'organization__areas']
+                                'organization__areas',
+                                'competitions',
+                                'competitions__level',
+                                'competitions__type']
 
     class Meta:
         model = Event
         fields = (
             'id', 'name', 'description', 'date_start', 'date_end', 'location', 'organization', 'organization_info',
-            'public', 'locked', 'permissions')
+            'public', 'competitions', 'locked', 'permissions')
 
     def validate(self, data):
         """
@@ -48,3 +72,12 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
                 ('locked' in data and data['locked'])):
             raise serializers.ValidationError(_('No permission to alter or create a locked event.'), 403)
         return data
+
+
+class EventLimitedSerializer(EventSerializer):
+    """
+    Limited info serializer for events
+    """
+    class Meta:
+        model = Event
+        fields = ('id', 'name', 'description')
