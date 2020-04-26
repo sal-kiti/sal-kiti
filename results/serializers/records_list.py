@@ -61,6 +61,7 @@ class RecordListSerializer(serializers.ModelSerializer, EagerLoadingMixin):
                                 'result__competition__type',
                                 'result__organization',
                                 'result__organization__areas',
+                                'result__team_members',
                                 'partial_result',
                                 'partial_result__type',
                                 'level',
