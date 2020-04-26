@@ -221,7 +221,7 @@ class Competition(LogChangesMixing, models.Model):
     date_start = models.DateField(verbose_name=_('Start date'))
     date_end = models.DateField(verbose_name=_('End date'))
     location = models.CharField(max_length=255, verbose_name=_('Location'))
-    event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL, related_name='competitions', null=True)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True)
     type = models.ForeignKey(CompetitionType, on_delete=models.CASCADE)
     level = models.ForeignKey(CompetitionLevel, on_delete=models.CASCADE)
