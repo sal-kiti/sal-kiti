@@ -151,7 +151,7 @@ admin.site.register(Organization, OrganizationAdmin)
 class RecordAdmin(admin.ModelAdmin):
     autocomplete_fields = ['result', 'partial_result', 'level', 'type', 'category']
     list_display = ['result', 'partial_result', 'level', 'type', 'category', 'date_start', 'date_end']
-    search_fields = ['name', 'abbreviation']
+    search_fields = ['result__competition__name']
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
