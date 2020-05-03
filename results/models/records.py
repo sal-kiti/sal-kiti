@@ -99,7 +99,7 @@ class Record(LogChangesMixing, models.Model):
                                                 partial_result__value__lt=self.partial_result.value)
             else:
                 records = Record.objects.filter(level=self.level, type=self.type, date_end=None, category=self.category,
-                                                result__result__lt=self.result.result)
+                                                partial_result=None, result__result__lt=self.result.result)
             for record in records:
                 if record.approved:
                     record.date_end = self.date_start

@@ -141,6 +141,7 @@ def _create_record_partial(partial, record_level, category):
                                      date_start=partial.result.competition.date_start)
         Record.objects.filter(approved=False,
                               partial_result__value__lt=partial.value,
+                              partial_result__type=partial.type,
                               level=record_level,
                               type=partial.result.competition.type,
                               category=category,
@@ -158,7 +159,7 @@ def check_records(result):
     :type result: result object
     """
     Record.objects.filter(result=result, partial_result=None, approved=False).delete()
-    if result.result and not result.organization.external:
+    if result.result and result.organization and not result.organization.external:
         allowed_categories = get_categories(result)
         decimals = True if result.decimals else False
         if result.team:
@@ -206,8 +207,9 @@ def check_records_partial(partial):
     :param partial:
     :type partial: partial result object
     """
-    Record.objects.filter(partial_result=partial, approved=False).delete()
-    if partial.type.records and partial.value and not partial.result.organization.external:
+    Record.objects.filter(partial_result=partial, partial_result__type=partial.type, approved=False).delete()
+    if (partial.type.records and partial.value and partial.result.organization and
+            not partial.result.organization.external):
         allowed_categories = get_categories(partial.result)
         record_levels = RecordLevel.objects.filter(
             Q(area=None) | Q(area__in=partial.result.organization.areas.all()),
@@ -222,5 +224,6 @@ def check_records_partial(partial):
                                                result__athlete=partial.result.athlete),
                                              date_start__lte=partial.result.competition.date_start,
                                              level=record_level, type=partial.result.competition.type, date_end=None,
+                                             partial_result__type=partial.type,
                                              historical=False, category=category).exclude(partial_result=None):
                     _create_record_partial(partial, record_level, category)
