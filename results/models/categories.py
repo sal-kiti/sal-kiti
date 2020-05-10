@@ -121,6 +121,7 @@ class CategoryForCompetitionType(LogChangesMixing, models.Model):
     min_result = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Minimum result'))
     disallow = models.BooleanField(default=False, verbose_name=_('Disallow category for this competition type'))
     check_record = models.BooleanField(default=True, verbose_name=_('Check records'))
+    check_record_partial = models.BooleanField(default=True, verbose_name=_('Check partial records'))
     record_group = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Record group'))
 
     def __str__(self):

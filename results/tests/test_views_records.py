@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
@@ -21,6 +21,10 @@ class RecordsTestCase(TestCase):
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.competition = CompetitionFactory.create()
+        self.competition_later = CompetitionFactory(date_start=self.competition.date_start + timedelta(days=2),
+                                                    date_end=self.competition.date_end + timedelta(days=2),
+                                                    type=self.competition.type,
+                                                    level=self.competition.level)
         sport = self.competition.type.sport
         self.category_W = Category.objects.create(
             name="W", abbreviation="W", max_age=None, min_age=None, gender="W", sport=sport)
@@ -46,6 +50,8 @@ class RecordsTestCase(TestCase):
         CategoryForCompetitionType.objects.create(type=self.competition.type, category=self.category_W20_2,
                                                   record_group=2)
         self.athlete = AthleteFactory.create(gender="W", date_of_birth=date.today() - timedelta(days=18*365))
+        self.athlete2 = AthleteFactory.create(gender="W", date_of_birth=date.today() - timedelta(days=18*365),
+                                              sport_id=self.athlete.sport_id + "2")
         self.athlete_old = AthleteFactory.create(gender="W", date_of_birth=date.today() - timedelta(days=70*365))
         self.record_level = RecordLevel.objects.create(name="SE", abbreviation="SE", base=True, decimals=True,
                                                        team=True)
@@ -117,6 +123,22 @@ class RecordsTestCase(TestCase):
         self.assertEqual(Record.objects.all().count(), 4)
         self.assertEqual(Record.objects.filter(approved=False).count(), 2)
 
+    @override_settings(CREATE_RECORD_FOR_SAME_RESULT_VALUE=True)
+    def test_record_creation_same_value_setting_true(self):
+        self.model.objects.all().update(approved=True)
+        ResultFactory.create(
+            competition=self.competition_later, athlete=self.athlete2, category=self.category_W, result=200)
+        self.assertEqual(Record.objects.all().count(), 4)
+        self.assertEqual(Record.objects.filter(approved=False).count(), 2)
+
+    @override_settings(CREATE_RECORD_FOR_SAME_RESULT_VALUE=False)
+    def test_record_creation_same_value_setting_false(self):
+        self.model.objects.all().update(approved=True)
+        ResultFactory.create(
+            competition=self.competition_later, athlete=self.athlete2, category=self.category_W, result=200)
+        self.assertEqual(Record.objects.all().count(), 2)
+        self.assertEqual(Record.objects.filter(approved=False).count(), 0)
+
     def test_record_creation_no_record_check(self):
         self.category_check.check_record = False
         self.category_check.save()
@@ -144,14 +166,35 @@ class RecordsTestCase(TestCase):
         self.assertEqual(Record.objects.all().count(), 3)
         self.assertEqual(Record.objects.filter(approved=False).count(), 1)
 
-    def test_partial_record_creation(self):
-        self.model.objects.all().update(approved=True)
+    @override_settings(CREATE_RECORD_FOR_SAME_RESULT_VALUE=False)
+    def test_partial_record_creation_same_value_setting_false(self):
         self.object = ResultPartialFactory.create(result=self.result,
                                                   type=self.competition_result_type,
                                                   value=50)
+        result = ResultFactory.create(
+            competition=self.competition_later, athlete=self.athlete2, category=self.category_W20, result=200)
+        self.model.objects.all().update(approved=True)
+        self.object = ResultPartialFactory.create(result=result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
         self.assertEqual(Record.objects.all().count(), 4)
-        self.assertEqual(Record.objects.filter(approved=False).count(), 2)
+        self.assertEqual(Record.objects.filter(approved=False).count(), 0)
         self.assertEqual(Record.objects.exclude(partial_result=None).count(), 2)
+
+    @override_settings(CREATE_RECORD_FOR_SAME_RESULT_VALUE=True)
+    def test_partial_record_creation_same_value_setting_true(self):
+        result = ResultFactory.create(
+            competition=self.competition_later, athlete=self.athlete2, category=self.category_W20, result=150)
+        self.object = ResultPartialFactory.create(result=self.result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.model.objects.all().update(approved=True)
+        self.object = ResultPartialFactory.create(result=result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.assertEqual(Record.objects.all().count(), 6)
+        self.assertEqual(Record.objects.filter(approved=False).count(), 2)
+        self.assertEqual(Record.objects.exclude(partial_result=None).count(), 4)
 
     def test_team_record_creation(self):
         self.model.objects.all().update(approved=True)

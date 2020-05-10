@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Q
 
@@ -58,17 +59,19 @@ def _get_gender(result):
     return gender
 
 
-def get_categories(result):
+def get_categories(result, partial=False):
     """
     Returns the list of possible record categories for the result.
 
     :param result:
+    :param partial: get categories for a partial result
     :type result: result object
+    :type partial: boolean
     :return: categories
     :rtype: QuerySet
     """
     check = CategoryForCompetitionType.objects.filter(type=result.competition.type, category=result.category).first()
-    if check and not check.check_record:
+    if check and ((not partial and not check.check_record) or (partial and not check.check_record_partial)):
         return Category.objects.none()
     if not check or not check.record_group:
         return Category.objects.filter(id=result.category.id)
@@ -141,6 +144,7 @@ def _create_record_partial(partial, record_level, category):
                                      date_start=partial.result.competition.date_start)
         Record.objects.filter(approved=False,
                               partial_result__value__lt=partial.value,
+                              partial_result__type=partial.type,
                               level=record_level,
                               type=partial.result.competition.type,
                               category=category,
@@ -148,6 +152,82 @@ def _create_record_partial(partial, record_level, category):
                               ).delete()
     except MultipleObjectsReturned:
         pass
+
+
+def check_team_records(result, categories):
+    """
+    Checks possible records for the team results
+
+    :param result:
+    :param categories:
+    :type result: result object
+    :type categories: list
+    """
+    decimals = True if result.decimals else False
+    record_levels = RecordLevel.objects.filter(
+        Q(area=None) | Q(area__in=result.organization.areas.all()),
+        levels=result.competition.level,
+        types=result.competition.type,
+        historical=False,
+        decimals=decimals,
+        base=True,
+        team=True)
+    for record_level in record_levels:
+        for category in categories:
+            if settings.CREATE_RECORD_FOR_SAME_RESULT_VALUE:
+                if not Record.objects.filter(Q(result__result__gt=result.result) |
+                                             Q(result__result=result.result,
+                                               result__team_members__in=result.team_members.all(),
+                                               result__organization=result.organization),
+                                             date_start__lte=result.competition.date_start,
+                                             level=record_level, type=result.competition.type, date_end=None,
+                                             historical=False, category=category, partial_result=None):
+                    _create_record(result, record_level, category)
+            else:
+                if not Record.objects.filter(Q(result__result__gte=result.result,
+                                               date_start__lt=result.competition.date_start) |
+                                             Q(result__result__gt=result.result,
+                                               date_start=result.competition.date_start),
+                                             level=record_level, type=result.competition.type, date_end=None,
+                                             historical=False, category=category, partial_result=None):
+                    _create_record(result, record_level, category)
+
+
+def check_personal_records(result, categories):
+    """
+    Checks possible records for the personal results
+
+    :param result:
+    :param categories:
+    :type result: result object
+    :type categories: list
+    """
+    decimals = True if result.decimals else False
+    record_levels = RecordLevel.objects.filter(
+        Q(area=None) | Q(area__in=result.organization.areas.all()),
+        levels=result.competition.level,
+        types=result.competition.type,
+        historical=False,
+        decimals=decimals,
+        base=True,
+        personal=True)
+    for record_level in record_levels:
+        for category in categories:
+            if settings.CREATE_RECORD_FOR_SAME_RESULT_VALUE:
+                if not Record.objects.filter(Q(result__result__gt=result.result) |
+                                             Q(result__result=result.result, result__athlete=result.athlete),
+                                             date_start__lte=result.competition.date_start,
+                                             level=record_level, type=result.competition.type, date_end=None,
+                                             historical=False, category=category, partial_result=None):
+                    _create_record(result, record_level, category)
+            else:
+                if not Record.objects.filter(Q(result__result__gte=result.result,
+                                               date_start__lt=result.competition.date_start) |
+                                             Q(result__result__gt=result.result,
+                                               date_start=result.competition.date_start),
+                                             level=record_level, type=result.competition.type, date_end=None,
+                                             historical=False, category=category, partial_result=None):
+                    _create_record(result, record_level, category)
 
 
 def check_records(result):
@@ -158,45 +238,12 @@ def check_records(result):
     :type result: result object
     """
     Record.objects.filter(result=result, partial_result=None, approved=False).delete()
-    if result.result and not result.organization.external:
+    if result.result and result.organization and not result.organization.external:
         allowed_categories = get_categories(result)
-        decimals = True if result.decimals else False
         if result.team:
-            record_levels = RecordLevel.objects.filter(
-                Q(area=None) | Q(area__in=result.organization.areas.all()),
-                levels=result.competition.level,
-                types=result.competition.type,
-                historical=False,
-                decimals=decimals,
-                base=True,
-                team=True)
+            check_team_records(result, allowed_categories)
         else:
-            record_levels = RecordLevel.objects.filter(
-                Q(area=None) | Q(area__in=result.organization.areas.all()),
-                levels=result.competition.level,
-                types=result.competition.type,
-                historical=False,
-                decimals=decimals,
-                base=True,
-                personal=True)
-        for record_level in record_levels:
-            for category in allowed_categories:
-                if category.team:
-                    if not Record.objects.filter(Q(result__result__gt=result.result) |
-                                                 Q(result__result=result.result,
-                                                   result__team_members__in=result.team_members.all(),
-                                                   result__organization=result.organization),
-                                                 date_start__lte=result.competition.date_start,
-                                                 level=record_level, type=result.competition.type, date_end=None,
-                                                 historical=False, category=category, partial_result=None):
-                        _create_record(result, record_level, category)
-                else:
-                    if not Record.objects.filter(Q(result__result__gt=result.result) |
-                                                 Q(result__result=result.result, result__athlete=result.athlete),
-                                                 date_start__lte=result.competition.date_start,
-                                                 level=record_level, type=result.competition.type, date_end=None,
-                                                 historical=False, category=category, partial_result=None):
-                        _create_record(result, record_level, category)
+            check_personal_records(result, allowed_categories)
 
 
 def check_records_partial(partial):
@@ -206,9 +253,10 @@ def check_records_partial(partial):
     :param partial:
     :type partial: partial result object
     """
-    Record.objects.filter(partial_result=partial, approved=False).delete()
-    if partial.type.records and partial.value and not partial.result.organization.external:
-        allowed_categories = get_categories(partial.result)
+    Record.objects.filter(partial_result=partial, partial_result__type=partial.type, approved=False).delete()
+    if (partial.type.records and partial.value and partial.result.organization and
+            not partial.result.organization.external):
+        allowed_categories = get_categories(partial.result, partial=True)
         record_levels = RecordLevel.objects.filter(
             Q(area=None) | Q(area__in=partial.result.organization.areas.all()),
             levels=partial.result.competition.level,
@@ -217,10 +265,21 @@ def check_records_partial(partial):
             partial=True)
         for record_level in record_levels:
             for category in allowed_categories:
-                if not Record.objects.filter(Q(partial_result__value__gt=partial.value) |
-                                             Q(partial_result__value=partial.value,
-                                               result__athlete=partial.result.athlete),
-                                             date_start__lte=partial.result.competition.date_start,
-                                             level=record_level, type=partial.result.competition.type, date_end=None,
-                                             historical=False, category=category).exclude(partial_result=None):
-                    _create_record_partial(partial, record_level, category)
+                if settings.CREATE_RECORD_FOR_SAME_RESULT_VALUE:
+                    if not Record.objects.filter(Q(partial_result__value__gt=partial.value) |
+                                                 Q(partial_result__value=partial.value,
+                                                   result__athlete=partial.result.athlete),
+                                                 date_start__lte=partial.result.competition.date_start,
+                                                 level=record_level, type=partial.result.competition.type,
+                                                 date_end=None, partial_result__type=partial.type, historical=False,
+                                                 category=category).exclude(partial_result=None):
+                        _create_record_partial(partial, record_level, category)
+                else:
+                    if not Record.objects.filter(Q(partial_result__value__gte=partial.value,
+                                                   date_start__lt=partial.result.competition.date_start) |
+                                                 Q(partial_result__value=partial.value,
+                                                   date_start=partial.result.competition.date_start),
+                                                 level=record_level, type=partial.result.competition.type,
+                                                 date_end=None, partial_result__type=partial.type, historical=False,
+                                                 category=category).exclude(partial_result=None):
+                        _create_record_partial(partial, record_level, category)
