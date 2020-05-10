@@ -36,6 +36,12 @@ DATABASES = {
     }
 }
 
+# If true, new record will be created for the same result as the previous record.
+CREATE_RECORD_FOR_SAME_RESULT_VALUE = False
+
+# Gender and date of birth are available through API to these users
+UNMASKED_ATHLETE_USERS = ['admin']
+
 # memcached is recommended for production use
 CACHES = {
     'default': {
@@ -54,8 +60,6 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ''
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'no-reply@example.org'
-
-UNMASKED_ATHLETE_USERS = ['admin']
 
 STATIC_ROOT = '/path/to/static/'
 

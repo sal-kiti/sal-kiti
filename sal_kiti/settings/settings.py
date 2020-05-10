@@ -72,6 +72,7 @@ TEMPLATES = [
         },
     },
 ]
+CREATE_RECORD_FOR_SAME_RESULT_VALUE = False
 
 WSGI_APPLICATION = 'sal_kiti.wsgi.application'
 
