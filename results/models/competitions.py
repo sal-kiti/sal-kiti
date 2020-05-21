@@ -71,6 +71,7 @@ class CompetitionLevel(LogChangesMixing, models.Model):
     abbreviation = models.CharField(max_length=15, unique=True, verbose_name=_('Abbreviation'))
     order = models.SmallIntegerField(default=0, verbose_name=_('Order'))
     requirements = models.CharField(blank=True, max_length=100, verbose_name=_('Requirements'))
+    require_approval = models.BooleanField(default=False, verbose_name=_('Require approved competition to add results'))
     historical = models.BooleanField(default=False, verbose_name=_('Historical'))
 
     def __str__(self):
@@ -226,6 +227,7 @@ class Competition(LogChangesMixing, models.Model):
     type = models.ForeignKey(CompetitionType, on_delete=models.CASCADE)
     level = models.ForeignKey(CompetitionLevel, on_delete=models.CASCADE)
     layout = models.SmallIntegerField(default=1, verbose_name=_('Layout type'))
+    approved = models.BooleanField(default=False, verbose_name=_('Approved'))
     locked = models.BooleanField(default=False, verbose_name=_('Edit lock'))
     public = models.BooleanField(default=False, verbose_name=_('Public'))
     trial = models.BooleanField(default=False, verbose_name=_('Trial competition'))

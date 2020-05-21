@@ -329,8 +329,12 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
          - partial results
         """
         if (not (self.context['request'].user.is_superuser or self.context['request'].user.is_staff) and
-            ((self.instance and (self.instance.competition.locked or self.instance.approved)) or
-                (data['competition'].locked or ('approved' in data and data['approved']) or
+            ((self.instance and
+              (self.instance.competition.locked or self.instance.approved or
+               (self.instance.competition.level.require_approval and not self.instance.competition.approved))) or
+                (data['competition'].locked or
+                 (data['competition'].level.require_approval and not data['competition'].approved) or
+                 ('approved' in data and data['approved']) or
                  data['competition'].organization.group not in self.context['request'].user.groups.all()))):
             raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
         self._check_team_status(data)

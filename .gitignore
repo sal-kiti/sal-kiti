@@ -43,6 +43,8 @@ coverage.xml
 *.cover
 .hypothesis/
 .test-screenshots/
+coverage-results/
+coverage-reports/
 
 # Translations
 *.mo

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
@@ -456,6 +456,16 @@ class CompetitionTestCase(ResultsTestCase):
         view = self.viewset.as_view(actions={'put': 'update'})
         return view(request, pk=1)
 
+    def _test_patch(self, user, data, locked=True):
+        if not locked:
+            self.object.event.locked = False
+            self.object.event.save()
+        request = self.factory.patch(self.url + '1/', data)
+        if user:
+            force_authenticate(request, user=user)
+        view = self.viewset.as_view(actions={'patch': 'partial_update'})
+        return view(request, pk=1)
+
     def test_competition_access_list(self):
         request = self.factory.get(self.url)
         view = self.viewset.as_view(actions={'get': 'list'})
@@ -504,6 +514,28 @@ class CompetitionTestCase(ResultsTestCase):
 
     def test_competition_update_with_normal_user(self):
         response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_competition_publish_with_staffruser(self):
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.staff_user, data={"public": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(COMPETITION_PUBLISH_REQUIRES_STAFF=False)
+    def test_competition_publish_with_organizational_user_permitted(self):
+        self.object.locked = False
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.organization_user, data={"public": True}, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(COMPETITION_PUBLISH_REQUIRES_STAFF=True)
+    def test_competition_publish_with_organizational_user_not_permitted(self):
+        self.object.locked = False
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.organization_user, data={"public": True}, locked=False)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_competition_create_without_user(self):

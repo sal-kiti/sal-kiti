@@ -5,8 +5,8 @@ from django.views.decorators.vary import vary_on_cookie
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 
-from results.models.events import Event
-from results.serializers.events import EventSerializer
+from results.models.events import Event, EventContact
+from results.serializers.events import EventSerializer, EventContactSerializer
 from results.utils.pagination import CustomPagePagination
 
 
@@ -72,3 +72,39 @@ class EventViewSet(viewsets.ModelViewSet):
     @method_decorator(vary_on_cookie)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+
+class EventContactViewSet(viewsets.ModelViewSet):
+    """API endpoint for event contacts.
+
+    list:
+    Returns a list of all the existing event contacts.
+
+    retrieve:
+    Returns the given event contact.
+
+    create:
+    Creates a new event contact instance.
+
+    update:
+    Updates a given event contact.
+
+    partial_update:
+    Updates a given event contact.
+
+    destroy:
+    Removes the given event contact.
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = EventContact.objects.all()
+    serializer_class = EventContactSerializer
+
+    def get_queryset(self):
+        """
+        Restricts the returned information to the organizer of the event, unless user is
+        staff or superuser.
+        """
+        user = self.request.user
+        if not user.is_superuser and not user.is_staff:
+            self.queryset = self.queryset.filter(Q(event__organization__group__in=user.groups.all()))
+        return self.queryset

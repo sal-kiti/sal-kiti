@@ -182,6 +182,20 @@ class ResultTestCase(TestCase):
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_result_create_with_organization_user_requiring_approval(self):
+        self.object.competition.level.require_approval = True
+        self.object.competition.level.save()
+        response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_result_create_with_organization_user_requiring_approval_and_approved(self):
+        self.object.competition.level.require_approval = True
+        self.object.competition.level.save()
+        self.object.competition.approved=True
+        self.object.competition.save()
+        response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_result_create_with_normal_user(self):
         response = self._test_create(user=self.user, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

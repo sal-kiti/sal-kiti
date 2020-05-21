@@ -39,6 +39,11 @@ DATABASES = {
 # If true, new record will be created for the same result as the previous record.
 CREATE_RECORD_FOR_SAME_RESULT_VALUE = False
 
+# Should publishing events and competitions require staff or superuser.
+# If false, organizers may also publish events and competitions.
+COMPETITION_PUBLISH_REQUIRES_STAFF = True
+EVENT_PUBLISH_REQUIRES_STAFF = True
+
 # Gender and date of birth are available through API to these users
 UNMASKED_ATHLETE_USERS = ['admin']
 

@@ -1,4 +1,6 @@
 from django.contrib.auth.models import Group, User
+from django.test import override_settings
+
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
@@ -25,7 +27,7 @@ class EventTestCase(ResultsTestCase):
                      'organization': self.object.organization.pk}
         self.newdata = {'name': 'New Year', 'date_start': self.object.date_start.strftime('%Y-%m-%d'),
                         'date_end': self.object.date_end.strftime('%Y-%m-%d'), 'location': 'City Field',
-                        'organization': self.object.organization.pk}
+                        'organization': self.object.organization.pk, 'toc_agreement': True}
         self.updatedata = {'name': 'Change Event'}
         self.url = '/api/events/'
         self.viewset = EventViewSet
@@ -73,6 +75,28 @@ class EventTestCase(ResultsTestCase):
 
     def test_event_update_with_normal_user(self):
         response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_event_publish_with_staffruser(self):
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.staff_user, data={"public": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(EVENT_PUBLISH_REQUIRES_STAFF=False)
+    def test_event_publish_with_organizational_user_permitted(self):
+        self.object.locked = False
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.organization_user, data={"public": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(EVENT_PUBLISH_REQUIRES_STAFF=True)
+    def test_event_publish_with_organizational_user_not_permitted(self):
+        self.object.locked = False
+        self.object.public = False
+        self.object.save()
+        response = self._test_patch(user=self.organization_user, data={"public": True})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_event_create_without_user(self):
