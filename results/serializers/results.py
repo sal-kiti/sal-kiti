@@ -36,8 +36,13 @@ class ResultPartialSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(_('Partial result type does not match competition type.'))
         if data['result'] and data['type'].min_result is not None and data['value'] < data['type'].min_result:
             raise serializers.ValidationError(_('A result is too low.'))
-        if data['result'] and data['type'].max_result is not None and data['value'] > data['type'].max_result:
-            raise serializers.ValidationError(_('A result is too high.'))
+        if data['result'] and data['type'].max_result:
+            max_result = data['type'].max_result
+            category = data['result'].category
+            if category.team and category.team_size:
+                max_result = max_result * category.team_size
+            if data['value'] > max_result:
+                raise serializers.ValidationError(_('A result is too high.'))
         return data
 
 
@@ -229,8 +234,10 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             team = True
             if 'team_members' in data:
                 athletes = data['team_members']
-            else:
+            elif self.instance:
                 athletes = self.instance.team_members.all()
+            else:
+                raise serializers.ValidationError(_("Missing athletes."))
         else:
             team = False
             if 'athlete' in data and data['athlete']:
@@ -302,7 +309,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             raise serializers.ValidationError(_('Cannot change team status.'))
 
     @staticmethod
-    def _check_partial(data, competition):
+    def _check_partial(data, competition, category):
         """
         Validate partial results
         """
@@ -312,8 +319,12 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                     raise serializers.ValidationError(_('Partial result type does not match competition type.'))
                 if partial['type'].min_result is not None and partial['value'] < partial['type'].min_result:
                     raise serializers.ValidationError(_('A result is too low.'))
-                if partial['type'].max_result is not None and partial['value'] > partial['type'].max_result:
-                    raise serializers.ValidationError(_('A result is too high.'))
+                if partial['type'].max_result is not None:
+                    max_result = partial['type'].max_result
+                    if category.team and category.team_size:
+                        max_result = max_result * category.team_size
+                    if partial['value'] > max_result:
+                        raise serializers.ValidationError(_('A result is too high.'))
 
     def validate(self, data):
         """
@@ -345,7 +356,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         result = self._get_result(data)
         if result is not None:
             self._check_value_limits(result, category, competition.type)
-        self._check_partial(data, competition)
+        self._check_partial(data, competition, category)
         if 'approved' in data and data['approved'] and not (self.context['request'].user.is_superuser or
                                                             self.context['request'].user.is_staff):
             raise serializers.ValidationError(_("No permission to approve results."))
