@@ -642,6 +642,22 @@ class PartialResultTestCase(TestCase):
         response = self._test_create(user=self.superuser, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_partial_result_create_too_high_team(self):
+        self.object.result.category.team = True
+        self.object.result.category.team_size = 3
+        self.object.result.category.save()
+        self.newdata['value'] = Decimal(self.competition_result_type.max_result * 3 + 1)
+        response = self._test_create(user=self.superuser, data=self.newdata, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_partial_result_create_max_result_team(self):
+        self.object.result.category.team = True
+        self.object.result.category.team_size = 3
+        self.object.result.category.save()
+        self.newdata['value'] = Decimal(self.competition_result_type.max_result * 3)
+        response = self._test_create(user=self.superuser, data=self.newdata, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_partial_result_create_too_low(self):
         self.newdata['value'] = Decimal(self.competition_result_type.min_result - 1)
         response = self._test_create(user=self.superuser, data=self.newdata, locked=True)
