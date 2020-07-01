@@ -19,7 +19,8 @@ class ResultPartialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'time', 'permissions')
+        fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'code', 'time', 'permissions')
+        extra_kwargs = {'code': {'required': False}}
 
     def validate(self, data):
         """
@@ -34,14 +35,15 @@ class ResultPartialSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
         if data['type'].competition_type != data['result'].competition.type:
             raise serializers.ValidationError(_('Partial result type does not match competition type.'))
-        if data['result'] and data['type'].min_result is not None and data['value'] < data['type'].min_result:
+        if ('value' in data and data['result'] and data['type'].min_result is not None and
+                data['value'] < data['type'].min_result):
             raise serializers.ValidationError(_('A result is too low.'))
         if data['result'] and data['type'].max_result:
             max_result = data['type'].max_result
             category = data['result'].category
             if category.team and category.team_size:
                 max_result = max_result * category.team_size
-            if data['value'] > max_result:
+            if 'value' in data and data['value'] > max_result:
                 raise serializers.ValidationError(_('A result is too high.'))
         return data
 
@@ -52,7 +54,8 @@ class ResultPartialNestedSerializer(ResultPartialSerializer):
     """
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'time', 'permissions')
+        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'permissions')
+        extra_kwargs = {'code': {'required': False}}
 
     def validate(self, data):
         return data
@@ -184,9 +187,10 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         for requirement in competition.type.requirements.split(',') + competition.level.requirements.split(','):
             if requirement.strip():
                 for athlete in athletes:
-                    if not athlete.info.filter(type=requirement.strip(),
-                                               date_start__lte=competition.date_start,
-                                               date_end__gte=competition.date_start).count():
+                    if not athlete.organization.external and not athlete.info.filter(
+                            type=requirement.strip(),
+                            date_start__lte=competition.date_start,
+                            date_end__gte=competition.date_start).count():
                         raise serializers.ValidationError(_("Missing requirement: %s." % requirement.strip()))
 
     def _check_value_limits(self, result, category, competition_type):
@@ -317,9 +321,9 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             for partial in data['partial']:
                 if partial['type'].competition_type != competition.type:
                     raise serializers.ValidationError(_('Partial result type does not match competition type.'))
-                if partial['type'].min_result is not None and partial['value'] < partial['type'].min_result:
+                if 'value' in partial and partial['type'].min_result is not None and partial['value'] < partial['type'].min_result:
                     raise serializers.ValidationError(_('A result is too low.'))
-                if partial['type'].max_result is not None:
+                if 'value' in partial and partial['type'].max_result is not None:
                     max_result = partial['type'].max_result
                     if category.team and category.team_size:
                         max_result = max_result * category.team_size
@@ -376,7 +380,7 @@ class ResultPartialLimitedSerializer(ResultPartialSerializer):
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'time')
+        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time')
 
 
 class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadingMixin):

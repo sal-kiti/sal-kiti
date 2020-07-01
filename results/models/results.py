@@ -101,7 +101,8 @@ class ResultPartial(LogChangesMixing, models.Model):
     result = models.ForeignKey(Result, related_name='partial', on_delete=models.CASCADE)
     type = models.ForeignKey(CompetitionResultType, related_name='result_type', on_delete=models.CASCADE)
     order = models.SmallIntegerField(verbose_name=_('Order'))
-    value = models.DecimalField(verbose_name=_('Value'), max_digits=10, decimal_places=1)
+    value = models.DecimalField(blank=True, null=True, verbose_name=_('Value'), max_digits=10, decimal_places=1)
+    code = models.CharField(blank=True, max_length=3, verbose_name=_('Code'))
     decimals = models.SmallIntegerField(default=0, verbose_name=_('Value decimals'))
     time = models.DateTimeField(null=True, blank=True, verbose_name=_('Time'))
 
