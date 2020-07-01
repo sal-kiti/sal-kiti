@@ -120,7 +120,7 @@ class Suomisport:
         else:
             return 'U'
 
-    def _update_athletes(self, licences, print_to_stdout=False):
+    def _update_athletes(self, licences, print_to_stdout=False, only_year=False):
         """
         Update athletes and licences based on Suomisport licence list
 
@@ -150,6 +150,8 @@ class Suomisport:
             last_name = user['lastName'].capitalize()
             gender = self._parse_gender(user['gender'])
             date_of_birth = datetime.datetime.strptime(user['birthDate'], '%Y-%m-%d').date()
+            if only_year:
+                date_of_birth = date_of_birth.replace(month=1, day=1)
             try:
                 athlete = Athlete.objects.get(sport_id=sport_id)
                 modified = False
@@ -195,14 +197,16 @@ class Suomisport:
                                                      modification_time=modification_time,
                                                      visibility='A')
 
-    def update_licences(self, update_only_latest=True, print_to_stdout=False):
+    def update_licences(self, update_only_latest=True, print_to_stdout=False, only_year=False):
         """
         Fetch licences and update athletes
 
         :param update_only_latest: update only licences added since last modification time
         :param print_to_stdout: print messages to stdout
+        :param only_year: set athlete's birth date to YYYY-01-01
         :type update_only_latest: bool
         :type print_to_stdout: bool
+        :type only_year: bool
         """
         if update_only_latest:
             try:
@@ -217,4 +221,32 @@ class Suomisport:
             if licence_type['type'] in self.licence_types:
                 licences = self.get_licences(
                     licence_type['licencePeriodId'], licence_type['id'], ts=latest_modification)
-                self._update_athletes(licences, print_to_stdout)
+                self._update_athletes(licences=licences, print_to_stdout=print_to_stdout, only_year=only_year)
+
+    def get_organizations(self, print_to_stdout=False):
+        """
+        Fetch licences and update athletes
+
+        :param print_to_stdout: print messages to stdout
+        :type print_to_stdout: bool
+        """
+        url = 'organization/' + self.organization_id + '/list'
+        organizations = self._fetch_from_api(url)
+        for item in organizations:
+            sport_id = item['sportId']
+            name = item['name']
+            if 'shortName' in item and item['shortName']:
+                abbreviation = item['shortName']
+            else:
+                abbreviation = None
+            organization = Organization.objects.none()
+            if abbreviation:
+                organization = Organization.objects.filter(abbreviation__iexact=abbreviation)
+            if organization.count() != 1:
+                organization = Organization.objects.filter(name__iexact=name)
+            if print_to_stdout:
+                if organization.count() == 1:
+                    stdout.write("%s;%s;%s;%s\n" % ("FOUND", organization[0].abbreviation, sport_id, name))
+                else:
+                    stdout.write("%s;%s;%s;%s\n" % ("NOT FOUND", sport_id, name, abbreviation))
+
