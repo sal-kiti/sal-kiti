@@ -4,7 +4,7 @@ from results.views.athletes import AthleteViewSet, AthleteInformationViewSet
 from results.views.categories import CategoryViewSet, DivisionViewSet
 from results.views.competitions import CompetitionViewSet, CompetitionLevelViewSet, CompetitionTypeViewSet
 from results.views.competitions import CompetitionResultTypeViewSet, CompetitionLayoutViewSet
-from results.views.events import EventViewSet
+from results.views.events import EventViewSet, EventContactViewSet
 from results.views.organizations import AreaViewSet, OrganizationViewSet
 from results.views.records import RecordViewSet, RecordLevelViewSet, RecordList
 from results.views.results import ResultViewSet, ResultPartialViewSet, ResultDetailViewSet
@@ -19,6 +19,7 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'divisions', DivisionViewSet)
 router.register(r'competitions', CompetitionViewSet)
 router.register(r'events', EventViewSet)
+router.register(r'eventcontacts', EventContactViewSet)
 router.register(r'competitionlevels', CompetitionLevelViewSet)
 router.register(r'competitiontypes', CompetitionTypeViewSet)
 router.register(r'competitionlayouts', CompetitionLayoutViewSet)

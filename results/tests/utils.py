@@ -5,6 +5,8 @@ from rest_framework.test import force_authenticate, APIRequestFactory
 class ResultsTestCase(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        self.object = None
+        self.url = ""
         self.viewset = None
 
     def _test_access(self, user):
@@ -32,4 +34,11 @@ class ResultsTestCase(TestCase):
         if user:
             force_authenticate(request, user=user)
         view = self.viewset.as_view(actions={'put': 'update'})
+        return view(request, pk=1)
+
+    def _test_patch(self, user, data):
+        request = self.factory.patch(self.url + '1/', data)
+        if user:
+            force_authenticate(request, user=user)
+        view = self.viewset.as_view(actions={'patch': 'partial_update'})
         return view(request, pk=1)

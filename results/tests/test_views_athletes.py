@@ -57,7 +57,7 @@ class AthleteTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.update_data:
             if key in ['date_of_birth', 'gender']:
-                self.assertEqual(response.data[key], "*")
+                self.assertNotIn(key, response.data)
             else:
                 self.assertEqual(response.data[key], self.update_data[key])
 
@@ -66,7 +66,7 @@ class AthleteTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.update_data:
             if key in ['date_of_birth', 'gender']:
-                self.assertEqual(response.data[key], "*")
+                self.assertNotIn(key, response.data)
             else:
                 self.assertEqual(response.data[key], self.update_data[key])
 

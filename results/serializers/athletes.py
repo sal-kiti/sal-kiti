@@ -42,10 +42,8 @@ class AthleteSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         if 'request' in self.context and self.context['request'].method != 'POST' and (
                 self.context['request'].user.username not in getattr(settings, 'UNMASKED_ATHLETE_USERS', [])):
-            if 'date_of_birth' in data:
-                data['date_of_birth'] = '*'
-            if 'gender' in data:
-                data['gender'] = '*'
+            for field in ['date_of_birth', 'gender']:
+                data.pop(field, None)
         return data
 
     def validate(self, data):

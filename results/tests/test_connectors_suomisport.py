@@ -47,7 +47,7 @@ class OAuth(object):
                             "modificationTime": "2020-01-01T12:00:01.123Z",
                             "user": {
                                 "birthDate": "1990-03-01",
-                                "firstName": "Matti",
+                                "firstName": "MattiAB",
                                 "gender": "Male",
                                 "lastName": "Meikäläinen",
                                 "sportId": 123456789
@@ -119,7 +119,7 @@ class SuomisportCase(TestCase):
         obj.update_licences(update_only_latest=True, print_to_stdout=False)
         mock_logger.info.assert_called_with('Created new athlete from Suomisport: %s', '987654321')
         self.assertEqual(Athlete.objects.count(), 2)
-        self.assertEqual(Athlete.objects.get(id=1).first_name, 'Matti')
+        self.assertEqual(Athlete.objects.get(id=1).first_name, 'Mattiab')
         self.assertEqual(Athlete.objects.get(id=2).gender, 'W')
         self.assertEqual(Athlete.objects.get(id=2).first_name, 'Maju')
 
@@ -130,5 +130,5 @@ class SuomisportCase(TestCase):
         name = athlete.last_name
         obj = TestSuomiSport()
         obj.update_licences(update_only_latest=True, print_to_stdout=False)
-        self.assertNotEqual(Athlete.objects.get(id=1).first_name, 'Matti')
+        self.assertNotEqual(Athlete.objects.get(id=1).first_name, 'Mattiab')
         self.assertEqual(Athlete.objects.get(id=1).last_name, name)

@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from dry_rest_permissions.generics import DRYPermissionsField
-from rest_framework import serializers
+from rest_framework import serializers, status
 
+from results.utils.custom_validation import CustomValidation
 from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.competitions import Competition, CompetitionLevel, CompetitionResultType, CompetitionType
 from results.models.competitions import CompetitionLayout
@@ -126,6 +128,11 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
                 ('locked' in data and data['locked']) or
                 (not self.instance and data['event'].locked)):
             raise serializers.ValidationError(_('No permission to alter or create a locked competition.'), 403)
+        if settings.COMPETITION_PUBLISH_REQUIRES_STAFF and ((not self.instance or not self.instance.public) and
+                                                            'public' in data and data['public']):
+            raise CustomValidation(_('No permission to publish competition.'), 'publish', status.HTTP_403_FORBIDDEN)
+        if (not self.instance or not self.instance.approved) and 'approved' in data and data['approved']:
+            raise CustomValidation(_('No permission to approve competition.'), 'approved', status.HTTP_403_FORBIDDEN)
         return data
 
 
