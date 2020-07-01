@@ -43,8 +43,8 @@ class RecordsTestCase(TestCase):
                                                                         record_group=1)
         CategoryForCompetitionType.objects.create(type=self.competition.type, category=self.category_M,
                                                   record_group=1)
-        CategoryForCompetitionType.objects.create(type=self.competition.type, category=self.category_W20,
-                                                  record_group=1)
+        self.category_check_W20 = CategoryForCompetitionType.objects.create(
+            type=self.competition.type, category=self.category_W20, record_group=1)
         CategoryForCompetitionType.objects.create(type=self.competition.type, category=self.category_W50,
                                                   record_group=1)
         CategoryForCompetitionType.objects.create(type=self.competition.type, category=self.category_W20_2,
@@ -165,6 +165,27 @@ class RecordsTestCase(TestCase):
             competition=self.competition, athlete=self.athlete_old, category=self.category_W, result=150)
         self.assertEqual(Record.objects.all().count(), 3)
         self.assertEqual(Record.objects.filter(approved=False).count(), 1)
+
+    def test_partial_record_creation(self):
+        self.object = ResultPartialFactory.create(result=self.result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.assertEqual(Record.objects.exclude(partial_result=None).count(), 2)
+
+    def test_partial_record_creation_no_partial_records_for_category(self):
+        self.category_check_W20.check_record_partial = False
+        self.category_check_W20.save()
+        self.object = ResultPartialFactory.create(result=self.result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.assertEqual(Record.objects.exclude(partial_result=None).count(), 0)
+
+    def test_partial_record_creation_no_partial_records_for_category(self):
+        self.category_check_W20.limit_partial.add(self.competition_result_type)
+        self.object = ResultPartialFactory.create(result=self.result,
+                                                  type=self.competition_result_type,
+                                                  value=50)
+        self.assertEqual(Record.objects.exclude(partial_result=None).count(), 0)
 
     @override_settings(CREATE_RECORD_FOR_SAME_RESULT_VALUE=False)
     def test_partial_record_creation_same_value_setting_false(self):
