@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from dry_rest_permissions.generics import allow_staff_or_superuser
 
 from results.mixins.change_log import LogChangesMixing
-from results.models.competitions import CompetitionType
+from results.models.competitions import CompetitionType, CompetitionResultType
 from results.models.sports import Sport
 
 
@@ -123,6 +123,8 @@ class CategoryForCompetitionType(LogChangesMixing, models.Model):
     check_record = models.BooleanField(default=True, verbose_name=_('Check records'))
     check_record_partial = models.BooleanField(default=True, verbose_name=_('Check partial records'))
     record_group = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Record group'))
+    limit_partial = models.ManyToManyField(CompetitionResultType, blank=True,
+                                           verbose_name=_('No partial records for listed result types'))
 
     def __str__(self):
         return '%s %s' % (self.type, self.category)

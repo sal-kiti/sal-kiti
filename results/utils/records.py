@@ -59,19 +59,21 @@ def _get_gender(result):
     return gender
 
 
-def get_categories(result, partial=False):
+def get_categories(result, partial=None):
     """
     Returns the list of possible record categories for the result.
 
     :param result:
-    :param partial: get categories for a partial result
+    :param partial:
     :type result: result object
-    :type partial: boolean
+    :type partial: partial result object
     :return: categories
     :rtype: QuerySet
     """
     check = CategoryForCompetitionType.objects.filter(type=result.competition.type, category=result.category).first()
     if check and ((not partial and not check.check_record) or (partial and not check.check_record_partial)):
+        return Category.objects.none()
+    if check and partial and check.limit_partial.all() and partial.type in check.limit_partial.all():
         return Category.objects.none()
     if not check or not check.record_group:
         return Category.objects.filter(id=result.category.id)
@@ -256,7 +258,7 @@ def check_records_partial(partial):
     Record.objects.filter(partial_result=partial, partial_result__type=partial.type, approved=False).delete()
     if (partial.type.records and partial.value and partial.result.organization and
             not partial.result.organization.external):
-        allowed_categories = get_categories(partial.result, partial=True)
+        allowed_categories = get_categories(partial.result, partial=partial)
         record_levels = RecordLevel.objects.filter(
             Q(area=None) | Q(area__in=partial.result.organization.areas.all()),
             levels=partial.result.competition.level,
