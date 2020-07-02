@@ -37,6 +37,8 @@ class Result(LogChangesMixing, models.Model):
     info = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Additional information'))
     admin_info = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Administrational information'))
     team = models.BooleanField(default=False, verbose_name=_('Team result'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
     def __str__(self):
         return '%s %s %s' % (self.competition, self.last_name, self.first_name)
@@ -105,6 +107,8 @@ class ResultPartial(LogChangesMixing, models.Model):
     code = models.CharField(blank=True, max_length=3, verbose_name=_('Code'))
     decimals = models.SmallIntegerField(default=0, verbose_name=_('Value decimals'))
     time = models.DateTimeField(null=True, blank=True, verbose_name=_('Time'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
     def __str__(self):
         return '%s : %s %s' % (self.result, self.type, self.order)
