@@ -30,6 +30,8 @@ class Event(LogChangesMixing, models.Model):
     safety_plan = models.BooleanField(default=False, verbose_name=_('Safety plan exists'))
     international = models.BooleanField(default=False, verbose_name=_('International competition'))
     toc_agreement = models.BooleanField(default=False, verbose_name=_('Terms and Conditions agreement'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 
     def __str__(self):
         return '%s %s' % (self.date_start, self.name)
