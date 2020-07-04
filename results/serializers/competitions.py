@@ -105,7 +105,7 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         fields = (
             'id', 'name', 'description', 'date_start', 'date_end', 'location', 'organization', 'organization_info',
             'event', 'event_info', 'type', 'type_info', 'level', 'level_info', 'layout', 'locked', 'public',
-            'trial', 'permissions')
+            'trial', 'approved', 'permissions')
 
     def validate(self, data):
         """

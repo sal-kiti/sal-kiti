@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.db.models import Q
-from django_filters import rest_framework as filters
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
+
+from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 
 from results.models.competitions import Competition, CompetitionLevel, CompetitionType, CompetitionResultType
 from results.models.competitions import CompetitionLayout
@@ -29,7 +32,7 @@ class CompetitionFilter(filters.FilterSet):
 
     class Meta:
         model = Competition
-        fields = ['end', 'event', 'level', 'organization', 'public', 'sport', 'start', 'trial', 'type']
+        fields = ['end', 'event', 'level', 'organization', 'public', 'sport', 'start', 'trial', 'type', 'approved']
 
 
 class CompetitionViewSet(viewsets.ModelViewSet):
@@ -58,8 +61,10 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPagePagination
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    filter_backends = [filters.DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend,
+                       SearchFilter]
     filterset_class = CompetitionFilter
+    search_fields = ('name', 'organization__name', 'organization__abbreviation')
 
     def get_queryset(self):
         """
@@ -67,8 +72,12 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         staff or superuser or user is representing the organizer of the competition.
         """
         user = self.request.user
-        if not user.is_superuser and not user.is_staff:
-            self.queryset = self.queryset.filter(Q(public=True) | Q(organization__group__in=user.groups.all()))
+        if settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "staff":
+            if not user.is_superuser and not user.is_staff:
+                self.queryset = self.queryset.filter(Q(public=True) | Q(organization__group__in=user.groups.all()))
+        elif settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "authenticated":
+            if not user.is_authenticated:
+                self.queryset = self.queryset.filter(public=True)
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
         return self.queryset
 
