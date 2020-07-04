@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-17 18:40+0200\n"
+"POT-Creation-Date: 2020-07-04 14:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,499 +18,646 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models/athletes.py:18 models/categories.py:69
+#: results/models/athletes.py:18 results/models/categories.py:69
 msgid "Man"
 msgstr "Mies"
 
-#: models/athletes.py:19 models/categories.py:70
+#: results/models/athletes.py:19 results/models/categories.py:70
 msgid "Woman"
 msgstr "Nainen"
 
-#: models/athletes.py:20 models/categories.py:71
+#: results/models/athletes.py:20 results/models/categories.py:71
 msgid "Other"
 msgstr "Muu"
 
-#: models/athletes.py:21
+#: results/models/athletes.py:21
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: models/athletes.py:23 models/results.py:25
+#: results/models/athletes.py:23 results/models/events.py:90
+#: results/models/results.py:25
 msgid "First name"
 msgstr "Etunimi"
 
-#: models/athletes.py:24 models/results.py:26
+#: results/models/athletes.py:24 results/models/events.py:91
+#: results/models/results.py:26
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: models/athletes.py:25
+#: results/models/athletes.py:25 results/models/organizations.py:61
 msgid "Sport ID"
 msgstr "Sportti-ID"
 
-#: models/athletes.py:26
+#: results/models/athletes.py:26
 msgid "Date of birth"
 msgstr "Syntymäpäivä"
 
-#: models/athletes.py:27 models/categories.py:73
+#: results/models/athletes.py:27 results/models/categories.py:73
 msgid "Gender"
 msgstr "Sukupuoli"
 
-#: models/athletes.py:32
+#: results/models/athletes.py:30
+msgid "No automatic updates"
+msgstr "Ei päivitetä automaattisesti"
+
+#: results/models/athletes.py:33
 msgid "Athlete"
 msgstr "Urheilija"
 
-#: models/athletes.py:33
+#: results/models/athletes.py:34
 msgid "Athletes"
 msgstr "Urheilijat"
 
-#: models/athletes.py:72
-msgid "Type"
-msgstr "Tyyppi"
-
-#: models/athletes.py:73 models/results.py:104
-msgid "Value"
-msgstr "Arvo"
-
-#: models/athletes.py:74 models/competitions.py:221 models/events.py:17
-#: models/records.py:82
-msgid "Start date"
-msgstr "Alkuaika"
-
-#: models/athletes.py:75 models/competitions.py:222 models/events.py:18
-#: models/records.py:83
-msgid "End date"
-msgstr "Loppuaika"
-
-#: models/athletes.py:76 models/competitions.py:230 models/events.py:22
+#: results/models/athletes.py:73 results/models/competitions.py:232
+#: results/models/events.py:24
 msgid "Public"
 msgstr "Julkinen"
 
-#: models/categories.py:12 models/categories.py:59 models/competitions.py:70
-#: models/competitions.py:116 models/competitions.py:170
-#: models/competitions.py:219 models/events.py:15 models/organizations.py:12
-#: models/organizations.py:56 models/records.py:19 models/sports.py:11
+#: results/models/athletes.py:74
+msgid "Authenticated users"
+msgstr "Kirjautuneet käyttäjät"
+
+#: results/models/athletes.py:75
+msgid "Staff users"
+msgstr "Henkilökunta"
+
+#: results/models/athletes.py:76
+msgid "Superuser only"
+msgstr "Vain pääkäyttäjät"
+
+#: results/models/athletes.py:79
+msgid "Type"
+msgstr "Tyyppi"
+
+#: results/models/athletes.py:80 results/models/results.py:106
+msgid "Value"
+msgstr "Arvo"
+
+#: results/models/athletes.py:81 results/models/competitions.py:222
+#: results/models/events.py:18 results/models/records.py:82
+msgid "Start date"
+msgstr "Alkuaika"
+
+#: results/models/athletes.py:82 results/models/competitions.py:223
+#: results/models/events.py:19 results/models/records.py:83
+msgid "End date"
+msgstr "Loppuaika"
+
+#: results/models/athletes.py:83
+msgid "Visibility"
+msgstr "Näkyvyys"
+
+#: results/models/athletes.py:84
+msgid "Suomisport update timestamp"
+msgstr "Suomisport päivityksen aikaleima"
+
+#: results/models/categories.py:12 results/models/categories.py:59
+#: results/models/competitions.py:70 results/models/competitions.py:117
+#: results/models/competitions.py:171 results/models/competitions.py:220
+#: results/models/events.py:16 results/models/organizations.py:12
+#: results/models/organizations.py:56 results/models/records.py:19
+#: results/models/sports.py:11
 msgid "Name"
 msgstr "Nimi"
 
-#: models/categories.py:13 models/categories.py:60 models/competitions.py:71
-#: models/competitions.py:117 models/competitions.py:171
-#: models/organizations.py:13 models/organizations.py:57 models/records.py:20
-#: models/sports.py:12
+#: results/models/categories.py:13 results/models/categories.py:60
+#: results/models/competitions.py:71 results/models/competitions.py:118
+#: results/models/competitions.py:172 results/models/organizations.py:13
+#: results/models/organizations.py:57 results/models/records.py:20
+#: results/models/sports.py:12
 msgid "Abbreviation"
 msgstr "Lyhenne"
 
-#: models/categories.py:14 models/categories.py:75 models/competitions.py:74
-#: models/competitions.py:127 models/records.py:30 models/records.py:85
-#: models/sports.py:14
+#: results/models/categories.py:14 results/models/categories.py:75
+#: results/models/competitions.py:75 results/models/competitions.py:128
+#: results/models/organizations.py:62 results/models/records.py:30
+#: results/models/records.py:85 results/models/sports.py:14
 msgid "Historical"
 msgstr "Historiallinen"
 
-#: models/categories.py:21 models/categories.py:22
+#: results/models/categories.py:21 results/models/categories.py:22
 msgid "Division"
 msgstr "Divisioona"
 
-#: models/categories.py:63
+#: results/models/categories.py:63
 msgid "Maximum age"
 msgstr "Ikä enintään"
 
-#: models/categories.py:64
+#: results/models/categories.py:64
 msgid "Minimum age"
 msgstr "Ikä vähintään"
 
-#: models/categories.py:65
+#: results/models/categories.py:65
 msgid "Age limit checked by the exact day, not year"
-msgstr ""
+msgstr "Ikäraja tarkistetaan tarkan päivän mukaan, ei vuoden"
 
-#: models/categories.py:66
+#: results/models/categories.py:66
 msgid "Team category"
 msgstr "Joukkuesarja"
 
-#: models/categories.py:67
+#: results/models/categories.py:67
 msgid "Number of team members"
 msgstr "Joukkueen jäsenten määrä"
 
-#: models/categories.py:74 models/competitions.py:29 models/competitions.py:72
-#: models/competitions.py:122 models/records.py:29 models/results.py:103
-#: models/sports.py:13
+#: results/models/categories.py:74 results/models/competitions.py:29
+#: results/models/competitions.py:72 results/models/competitions.py:123
+#: results/models/records.py:29 results/models/results.py:105
+#: results/models/sports.py:13
 msgid "Order"
 msgstr "Järjestys"
 
-#: models/categories.py:82
+#: results/models/categories.py:82
 msgid "Category"
 msgstr "Sarja"
 
-#: models/categories.py:83
+#: results/models/categories.py:83
 msgid "Categories"
 msgstr "Sarjat"
 
-#: models/categories.py:120 models/competitions.py:120
-#: models/competitions.py:172
+#: results/models/categories.py:120 results/models/competitions.py:121
+#: results/models/competitions.py:173
 msgid "Maximum result"
 msgstr "Tulos korkeintaan"
 
-#: models/categories.py:121 models/competitions.py:121
-#: models/competitions.py:173
+#: results/models/categories.py:121 results/models/competitions.py:122
+#: results/models/competitions.py:174
 msgid "Minimum result"
 msgstr "Tulos vähintään"
 
-#: models/categories.py:122
+#: results/models/categories.py:122
 msgid "Disallow category for this competition type"
 msgstr "Estä sarja tässä kilpailutyypissä."
 
-#: models/categories.py:123 models/competitions.py:174
+#: results/models/categories.py:123 results/models/competitions.py:175
 msgid "Check records"
 msgstr "Tarkista ennätykset"
 
-#: models/categories.py:124
+#: results/models/categories.py:124
+msgid "Check partial records"
+msgstr "Tarkista osatulosten ennätykset"
+
+#: results/models/categories.py:125
 msgid "Record group"
 msgstr "Ennätysryhmä"
 
-#: models/categories.py:131
+#: results/models/categories.py:127
+msgid "No partial records for listed result types"
+msgstr "Ei osittaisia ennätyksiä listatuille tulostyypeille"
+
+#: results/models/categories.py:134
 msgid "Competition type and category check"
 msgstr "Kilpailutyypin ja kategorian tarkistus"
 
-#: models/categories.py:132
+#: results/models/categories.py:135
 msgid "Competition type and category checks"
 msgstr "Kilpailutyypin ja kategorian tarkistukset"
 
-#: models/competitions.py:23 models/competitions.py:126
-#: models/competitions.py:228
+#: results/models/competitions.py:23 results/models/competitions.py:127
+#: results/models/competitions.py:229
 msgid "Layout type"
 msgstr "Asettelutyyppi"
 
-#: models/competitions.py:24
+#: results/models/competitions.py:24
 msgid "Label"
 msgstr "Nimike"
 
-#: models/competitions.py:25
+#: results/models/competitions.py:25
 msgid "Result type name"
 msgstr "Tylostyypin nimi"
 
-#: models/competitions.py:26
+#: results/models/competitions.py:26
 msgid "Block"
 msgstr "Blokki"
 
-#: models/competitions.py:27
+#: results/models/competitions.py:27
 msgid "Row"
 msgstr "Rivi"
 
-#: models/competitions.py:28
+#: results/models/competitions.py:28
 msgid "Column"
 msgstr "Sarake"
 
-#: models/competitions.py:30
+#: results/models/competitions.py:30
 msgid "Hide on smaller screen"
 msgstr "Piilota pienemmällä näytöällä"
 
-#: models/competitions.py:31
+#: results/models/competitions.py:31
 msgid "Show on larger screen"
 msgstr "Näytä suuremmalla näytöllä"
 
-#: models/competitions.py:38
+#: results/models/competitions.py:38
 msgid "Competition layout"
 msgstr "Kilpailutulosten asettelu"
 
-#: models/competitions.py:39
+#: results/models/competitions.py:39
 msgid "Competition layouts"
 msgstr "Kilpailutulosten asettelut"
 
-#: models/competitions.py:73 models/competitions.py:123
+#: results/models/competitions.py:73 results/models/competitions.py:124
 msgid "Requirements"
 msgstr "Vaatimukset"
 
-#: models/competitions.py:81
+#: results/models/competitions.py:74
+msgid "Require approved competition to add results"
+msgstr "Vaadi hyväksytty kilpailu tulosten lisäämiseen"
+
+#: results/models/competitions.py:82
 msgid "Competition level"
 msgstr "Kilpailutaso"
 
-#: models/competitions.py:82
+#: results/models/competitions.py:83
 msgid "Competition levels"
 msgstr "Kilpailutasot"
 
-#: models/competitions.py:119
+#: results/models/competitions.py:120
 msgid "Number of rounds"
 msgstr "Kierrosten määrä"
 
-#: models/competitions.py:124
+#: results/models/competitions.py:125
 msgid "Personal competition"
 msgstr "Yksilökilpailu"
 
-#: models/competitions.py:125
+#: results/models/competitions.py:126
 msgid "Team competition"
 msgstr "Joukkuekilpailu"
 
-#: models/competitions.py:134
+#: results/models/competitions.py:135
 msgid "Competition type"
 msgstr "Kilpailutyyppi"
 
-#: models/competitions.py:135
+#: results/models/competitions.py:136
 msgid "Competition types"
 msgstr "Kilpailutyypit"
 
-#: models/competitions.py:181
+#: results/models/competitions.py:182
 msgid "Result type"
 msgstr "Tulostyyppi"
 
-#: models/competitions.py:182
+#: results/models/competitions.py:183
 msgid "Result types"
 msgstr "Tulostyypit"
 
-#: models/competitions.py:220 models/events.py:16
+#: results/models/competitions.py:221 results/models/events.py:17
 msgid "Description"
 msgstr "Kuvaus"
 
-#: models/competitions.py:223 models/events.py:19
+#: results/models/competitions.py:224 results/models/events.py:20
 msgid "Location"
 msgstr "Sijainti"
 
-#: models/competitions.py:229 models/events.py:21
-msgid "Edit lock"
-msgstr "Muokkauslukko"
-
-#: models/competitions.py:231
-msgid "Trial competition"
-msgstr "Näyttökilpailu"
-
-#: models/competitions.py:244
-msgid "Competition"
-msgstr "Kilpailu"
-
-#: models/competitions.py:245
-msgid "Competitions"
-msgstr "Kilpailut"
-
-#: models/events.py:29
-msgid "Event"
-msgstr "Tapahtuma"
-
-#: models/events.py:30
-msgid "Events"
-msgstr "Tapahtumat"
-
-#: models/organizations.py:20 models/records.py:23
-msgid "Area"
-msgstr "Alue"
-
-#: models/organizations.py:21 models/organizations.py:59
-msgid "Areas"
-msgstr "Alueet"
-
-#: models/organizations.py:58
-msgid "External"
-msgstr "Ulkoinen"
-
-#: models/organizations.py:60
-msgid "Group"
-msgstr "Ryhmä"
-
-#: models/organizations.py:67
-msgid "Organization"
-msgstr "Järjestö"
-
-#: models/organizations.py:68
-msgid "Organizations"
-msgstr "Järjestöt"
-
-#: models/records.py:24
-msgid "Base results"
-msgstr "Perustulokset"
-
-#: models/records.py:25 models/results.py:114
-msgid "Partial results"
-msgstr "Osatulokset"
-
-#: models/records.py:26
-msgid "Personal"
-msgstr "Yksilö"
-
-#: models/records.py:27
-msgid "Team"
-msgstr "Joukkue"
-
-#: models/records.py:28
-msgid "Decimals"
-msgstr "Desimaalit"
-
-#: models/records.py:37
-msgid "Record level"
-msgstr "Ennätystaso"
-
-#: models/records.py:38
-msgid "Record levels"
-msgstr "Ennätystasot"
-
-#: models/records.py:81 models/results.py:36
+#: results/models/competitions.py:230 results/models/events.py:22
+#: results/models/records.py:81 results/models/results.py:36
 msgid "Approved"
 msgstr "Hyväksytty"
 
-#: models/records.py:84
+#: results/models/competitions.py:231 results/models/events.py:23
+msgid "Edit lock"
+msgstr "Muokkauslukko"
+
+#: results/models/competitions.py:233
+msgid "Trial competition"
+msgstr "Näyttökilpailu"
+
+#: results/models/competitions.py:234 results/models/events.py:33
+#: results/models/records.py:86 results/models/results.py:40
+#: results/models/results.py:110
+msgid "Created at"
+msgstr "Luotu"
+
+#: results/models/competitions.py:235 results/models/events.py:34
+#: results/models/records.py:87 results/models/results.py:41
+#: results/models/results.py:111
+msgid "Updated at"
+msgstr "Päivitetty"
+
+#: results/models/competitions.py:248
+msgid "Competition"
+msgstr "Kilpailu"
+
+#: results/models/competitions.py:249
+msgid "Competitions"
+msgstr "Kilpailut"
+
+#: results/models/events.py:25
+msgid "Competition categories"
+msgstr "Kilpailun sarjat"
+
+#: results/models/events.py:26
+msgid "Optional dates"
+msgstr "Vaihtoehtoiset päivät"
+
+#: results/models/events.py:27
+msgid "Web page"
+msgstr "Nettisivu"
+
+#: results/models/events.py:28
+msgid "Invitation URL"
+msgstr "Kutsun osoite"
+
+#: results/models/events.py:29
+msgid "Generic notes"
+msgstr "Muut huomiot"
+
+#: results/models/events.py:30
+msgid "Safety plan exists"
+msgstr "Turvallisuussuunnitelma on tehty."
+
+#: results/models/events.py:31
+msgid "International competition"
+msgstr "Kansainvälinen kilpailu"
+
+#: results/models/events.py:32
+msgid "Terms and Conditions agreement"
+msgstr "Ehtojen hyväksyntä"
+
+#: results/models/events.py:41
+msgid "Event"
+msgstr "Tapahtuma"
+
+#: results/models/events.py:42
+msgid "Events"
+msgstr "Tapahtumat"
+
+#: results/models/events.py:80
+msgid "Generic contact"
+msgstr "Yleinen yhteystieto"
+
+#: results/models/events.py:81
+msgid "Competition manager"
+msgstr "Kilpailunjohtaja"
+
+#: results/models/events.py:82
+msgid "Head judge"
+msgstr "Päätuomari"
+
+#: results/models/events.py:83
+msgid "Technical manager"
+msgstr "Tekninen vastaava"
+
+#: results/models/events.py:86
+msgid "Phone number may start with \"+\" and only contain digits."
+msgstr "Puhelinnumero voi alkaa \"+\"-merkillä ja sisältää vain numeroita."
+
+#: results/models/events.py:89
+msgid "Contact type"
+msgstr "Yhteystiedon tyyppi"
+
+#: results/models/events.py:92
+msgid "Email address"
+msgstr "Sähköpostiosoite"
+
+#: results/models/events.py:93
+msgid "Phone number"
+msgstr "Puhelinnumero"
+
+#: results/models/organizations.py:20 results/models/records.py:23
+msgid "Area"
+msgstr "Alue"
+
+#: results/models/organizations.py:21 results/models/organizations.py:59
+msgid "Areas"
+msgstr "Alueet"
+
+#: results/models/organizations.py:58
+msgid "External"
+msgstr "Ulkoinen"
+
+#: results/models/organizations.py:60
+msgid "Group"
+msgstr "Ryhmä"
+
+#: results/models/organizations.py:69
+msgid "Organization"
+msgstr "Järjestö"
+
+#: results/models/organizations.py:70
+msgid "Organizations"
+msgstr "Järjestöt"
+
+#: results/models/records.py:24
+msgid "Base results"
+msgstr "Perustulokset"
+
+#: results/models/records.py:25 results/models/results.py:119
+msgid "Partial results"
+msgstr "Osatulokset"
+
+#: results/models/records.py:26
+msgid "Personal"
+msgstr "Yksilö"
+
+#: results/models/records.py:27
+msgid "Team"
+msgstr "Joukkue"
+
+#: results/models/records.py:28
+msgid "Decimals"
+msgstr "Desimaalit"
+
+#: results/models/records.py:37
+msgid "Record level"
+msgstr "Ennätystaso"
+
+#: results/models/records.py:38
+msgid "Record levels"
+msgstr "Ennätystasot"
+
+#: results/models/records.py:84
 msgid "Info"
 msgstr "Tiedot"
 
-#: models/records.py:112
+#: results/models/records.py:114
 msgid "Record"
 msgstr "Ennätys"
 
-#: models/records.py:113
+#: results/models/records.py:115
 msgid "Records"
 msgstr "Ennätykset"
 
-#: models/results.py:31 models/results.py:62
+#: results/models/results.py:31 results/models/results.py:64
 msgid "Result"
 msgstr "Tulos"
 
-#: models/results.py:32
+#: results/models/results.py:32
 msgid "Result code"
 msgstr "Tuloskoodi"
 
-#: models/results.py:33
+#: results/models/results.py:33
 msgid "Result decimals"
 msgstr "Tuloksen desimaalit"
 
-#: models/results.py:34
+#: results/models/results.py:34
 msgid "Position"
 msgstr "Sijoitus"
 
-#: models/results.py:35
+#: results/models/results.py:35
 msgid "Preliminary position"
 msgstr "Alkukilpailun tulos"
 
-#: models/results.py:37
+#: results/models/results.py:37
 msgid "Additional information"
 msgstr "Lisätiedot"
 
-#: models/results.py:38
+#: results/models/results.py:38
 msgid "Administrational information"
 msgstr "Hallinnolliset tiedot"
 
-#: models/results.py:39
+#: results/models/results.py:39
 msgid "Team result"
 msgstr "Joukkuetulos"
 
-#: models/results.py:63
+#: results/models/results.py:65
 msgid "Results"
 msgstr "Tulos"
 
-#: models/results.py:105
+#: results/models/results.py:107
+msgid "Code"
+msgstr "Koodi"
+
+#: results/models/results.py:108
 msgid "Value decimals"
 msgstr "Arvon desimaalit"
 
-#: models/results.py:106
+#: results/models/results.py:109
 msgid "Time"
 msgstr "Aika"
 
-#: models/results.py:113
+#: results/models/results.py:118
 msgid "Partial result"
 msgstr "Osatulos"
 
-#: models/sports.py:21
+#: results/models/sports.py:21
 msgid "Sport"
 msgstr "Laji"
 
-#: models/sports.py:22
+#: results/models/sports.py:22
 msgid "Sports"
 msgstr "Lajit"
 
-#: serializers/athletes.py:59 serializers/competitions.py:117
-#: serializers/events.py:39
+#: results/serializers/athletes.py:57 results/serializers/competitions.py:119
+#: results/serializers/events.py:81
 msgid "User not authenticated"
 msgstr "Käyttäjä ei ole kirjautunut"
 
-#: serializers/athletes.py:63
+#: results/serializers/athletes.py:61
 msgid "No permission to create non external athlete"
 msgstr "Ei oikeutta luoda tai muuttaa urheilijaa"
 
-#: serializers/competitions.py:119 serializers/events.py:41
+#: results/serializers/competitions.py:121 results/serializers/events.py:83
 msgid "Start date may not be later than End date."
 msgstr "Aloituspäivä ei voi olla päättymispäivän jälkeen."
 
-#: serializers/competitions.py:124
+#: results/serializers/competitions.py:126
 msgid "No permission to alter or create an competition."
 msgstr "Ei oikeutta luoda tai muuttaa kilpailua."
 
-#: serializers/competitions.py:128
+#: results/serializers/competitions.py:130
 msgid "No permission to alter or create a locked competition."
 msgstr "Ei oikeutta luoda tai muuttaa lukittua kilpailua."
 
-#: serializers/events.py:46
+#: results/serializers/competitions.py:133
+msgid "No permission to publish competition."
+msgstr "Ei oikeutta julkaista kilpailua."
+
+#: results/serializers/competitions.py:135
+msgid "No permission to approve competition."
+msgstr "Ei oikeutta hyväksyä kilpailua."
+
+#: results/serializers/events.py:69
+msgid "Must agree to the terms and conditions."
+msgstr "Kilpailun ehdot hyväksymättä."
+
+#: results/serializers/events.py:88
 msgid "No permission to alter or create an event."
 msgstr "Ei oikeutta luoda tai muuttaa tapahtumaa."
 
-#: serializers/events.py:49
+#: results/serializers/events.py:91
 msgid "No permission to alter or create a locked event."
 msgstr "Ei oikeutta luoda tai muuttaa lukittua tapahtumaa."
 
-#: serializers/results.py:34 serializers/results.py:266
+#: results/serializers/events.py:94
+msgid "No permission to publish event."
+msgstr "Ei oikeutta julkaista tapahtumaa."
+
+#: results/serializers/events.py:96
+msgid "No permission to approve event."
+msgstr "Ei oikeutta hyväksyä tapahtumaa."
+
+#: results/serializers/results.py:35 results/serializers/results.py:354
 msgid "No permission to alter or create a record."
 msgstr "Ei oikeutta luoda tai muuttaa tulosta."
 
-#: serializers/results.py:36
+#: results/serializers/results.py:37 results/serializers/results.py:323
 msgid "Partial result type does not match competition type."
 msgstr "Osatuloksen tyyppi ei täsmää kilpailutyyppiin."
 
-#: serializers/results.py:38 serializers/results.py:141
+#: results/serializers/results.py:40 results/serializers/results.py:204
+#: results/serializers/results.py:325
 msgid "A result is too low."
 msgstr "Tulos on liian matala."
 
-#: serializers/results.py:40 serializers/results.py:143
+#: results/serializers/results.py:47 results/serializers/results.py:206
+#: results/serializers/results.py:331
 msgid "A result is too high."
 msgstr "Tulos on liian korkea."
 
-#: serializers/results.py:80
+#: results/serializers/results.py:142
 msgid "Athlete is too old for this category."
 msgstr "Urheilija on liian vanha tähän sarjaan."
 
-#: serializers/results.py:88
+#: results/serializers/results.py:150
 msgid "Athlete is too young for this category."
 msgstr "Urheilija on liian nuori tähän sarjaan."
 
-#: serializers/results.py:109
+#: results/serializers/results.py:171
 msgid "Athlete's gender is not allowed for this category."
 msgstr "Urheilijan sukupuoli ei ole sallittu tähän sarjaan."
 
-#: serializers/results.py:117
+#: results/serializers/results.py:179
 msgid "Incorrect number of team members for this category."
 msgstr "Joukkueen jäsenten määrä ei täsmää kategoriaan."
 
-#: serializers/results.py:131
+#: results/serializers/results.py:194
 #, python-format
 msgid "Missing requirement: %s."
 msgstr "Puuttuva vaatimus: %s."
 
-#: serializers/results.py:151
+#: results/serializers/results.py:214
 msgid "Incorrect category for a team result."
 msgstr "Virheellinen sarja joukkuetulokselle."
 
-#: serializers/results.py:153
+#: results/serializers/results.py:216
 msgid "Use team_members instead of athlete field for teams."
 msgstr "Käytä team_members-kenttää athlete-kentän sijaan joukkueille."
 
-#: serializers/results.py:155
+#: results/serializers/results.py:218
 msgid "Team result without team_members."
 msgstr "Joukkuetulos ilman team_members kenttää"
 
-#: serializers/results.py:166
+#: results/serializers/results.py:229
 msgid "Missing category."
 msgstr "Sarja puuttuu"
 
-#: serializers/results.py:187
+#: results/serializers/results.py:244 results/serializers/results.py:252
 msgid "Missing athletes."
 msgstr "Urheilijat puuttuvat"
 
-#: serializers/results.py:199
+#: results/serializers/results.py:264
 msgid "Missing competition."
 msgstr "Kilpailu puuttuu"
 
-#: serializers/results.py:224
+#: results/serializers/results.py:289
 msgid "Category is not allowed for this competition type."
 msgstr "Sarja ei ole sallittu tässä kilpailutyypissä."
 
-#: serializers/results.py:240
+#: results/serializers/results.py:305
 msgid "Entry already exists."
 msgstr "Tietue on jo olemassa."
 
-#: serializers/results.py:248
+#: results/serializers/results.py:313
 msgid "Cannot change team status."
 msgstr "Joukkuestatusta ei voi vaihtaa."
 
-#: serializers/results.py:281
+#: results/serializers/results.py:370
 msgid "No permission to approve results."
 msgstr "Ei oikeutta hyväksyä tuloksia."
