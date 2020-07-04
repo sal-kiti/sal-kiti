@@ -27,6 +27,7 @@ class CompetitionFilter(filters.FilterSet):
     level = NumberInFilter(field_name='level__pk', lookup_expr='in')
     type = NumberInFilter(field_name='type__pk', lookup_expr='in')
     sport = NumberInFilter(field_name='type__sport__pk', lookup_expr='in')
+    until = filters.DateFilter(field_name='date_start', lookup_expr='lte')
     start = filters.DateFilter(field_name='date_start', lookup_expr='gte')
     end = filters.DateFilter(field_name='date_end', lookup_expr='lte')
 
