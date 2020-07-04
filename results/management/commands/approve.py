@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     list_only = False
-    verbosity = 0git
+    verbosity = 0
 
     def add_arguments(self, parser):
         parser.add_argument('-d', type=int, action='store', dest='days',
