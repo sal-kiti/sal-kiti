@@ -49,7 +49,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         model = Event
         fields = (
             'id', 'name', 'description', 'date_start', 'date_end', 'location', 'organization', 'organization_info',
-            'public', 'competitions', 'locked', 'permissions', 'categories', 'optional_dates',
+            'public', 'competitions', 'locked', 'approved', 'permissions', 'categories', 'optional_dates',
             'web_page', 'invitation', 'notes', 'international', 'safety_plan', 'toc_agreement')
 
     def to_representation(self, instance):

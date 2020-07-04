@@ -47,6 +47,9 @@ EVENT_PUBLISH_REQUIRES_STAFF = True
 # Gender and date of birth are available through API to these users
 UNMASKED_ATHLETE_USERS = ['admin']
 
+# Limit visiblity of non public events and competitions, possible values: authenticated / staff / None (no limits)
+LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION = "authenticated"
+
 # memcached is recommended for production use
 CACHES = {
     'default': {

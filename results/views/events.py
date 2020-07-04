@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.db.models import Q
-from django_filters import rest_framework as filters
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
+
+from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 
 from results.models.events import Event, EventContact
 from results.serializers.events import EventSerializer, EventContactSerializer
@@ -27,7 +30,7 @@ class EventFilter(filters.FilterSet):
 
     class Meta:
         model = Event
-        fields = ['level', 'organization', 'public', 'sport', 'type']
+        fields = ['level', 'organization', 'public', 'sport', 'type', 'approved']
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -55,8 +58,10 @@ class EventViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    filter_backends = [filters.DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend,
+                       SearchFilter]
     filterset_class = EventFilter
+    search_fields = ('name', 'organization__name', 'organization__abbreviation')
 
     def get_queryset(self):
         """
@@ -64,8 +69,12 @@ class EventViewSet(viewsets.ModelViewSet):
         staff or superuser or user is representing the organizer of the event.
         """
         user = self.request.user
-        if not user.is_superuser and not user.is_staff:
-            self.queryset = self.queryset.filter(Q(public=True) | Q(organization__group__in=user.groups.all()))
+        if settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "staff":
+            if not user.is_superuser and not user.is_staff:
+                self.queryset = self.queryset.filter(Q(public=True) | Q(organization__group__in=user.groups.all()))
+        elif settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "authenticated":
+            if not user.is_authenticated:
+                self.queryset = self.queryset.filter(public=True)
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
         return self.queryset
 
@@ -98,6 +107,8 @@ class EventContactViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = EventContact.objects.all()
     serializer_class = EventContactSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = ['event', 'type']
 
     def get_queryset(self):
         """
