@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
     def lock_competitions(self, date_limit):
         """Lock past competitions which have not been modified during date limit"""
-        for competition in Competition.objects.filter(date_start__lt=timezone.now(),
+        for competition in Competition.objects.filter(date_start__lte=date_limit,
                                                       updated_at__lt=date_limit,
                                                       locked=False):
             competition.locked = True
@@ -70,7 +70,7 @@ class Command(BaseCommand):
 
     def lock_events(self, date_limit):
         """Lock past events which have not been modified during date limit"""
-        for event in Event.objects.filter(date_start__lt=timezone.now(),
+        for event in Event.objects.filter(date_start__lte=date_limit,
                                           updated_at__lt=date_limit,
                                           locked=False):
             event.locked = True
@@ -86,7 +86,6 @@ class Command(BaseCommand):
         lock_events = options['lock_events']
         self.verbosity = options['verbosity']
         self.list_only = options['list_only']
-
         # Set date range to one year if not given
         if days is None:
             days = 30
@@ -99,6 +98,6 @@ class Command(BaseCommand):
             if lock_competitions:
                 self.lock_competitions(date_limit)
             if lock_events:
-                self.lock_events()
+                self.lock_events(date_limit)
         else:
             self.stderr.write("Error: -d must be positive")
