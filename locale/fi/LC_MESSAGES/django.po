@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-30 17:02+0200\n"
+"POT-Creation-Date: 2020-07-04 14:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: settings/settings.py:113
+#: sal_kiti/settings/settings.py:116
 msgid "Finnish"
 msgstr "Suomi"
 
-#: settings/settings.py:114
+#: sal_kiti/settings/settings.py:117
 msgid "English"
 msgstr "Englanti"
+
+#: sal_kiti/urls.py:27
+msgid "Kiti admin"
+msgstr "Kiti admin"
+
+#: sal_kiti/urls.py:28 sal_kiti/urls.py:29
+msgid "Kiti administration"
+msgstr "Kiti hallinta"
 
 #: templates/registration/login.html:4
 msgid "SAL Kiti - Login"
@@ -84,7 +92,11 @@ msgstr "Salasanan palautus epäonnistui."
 
 #: templates/registration/password_reset_done.html:7
 msgid "Please follow the instructions in the email to reset your password."
-msgstr "Seuraa sähköpostitse saamiaisi ohjeita salasanan palautukseen. Jos sähköposti ei näytä saapuvan, tarkistathan roskapostikansion. Roskapostisuodatus voi myös hidastaa viestin saapumista, mutta sen pitäisi saapua puolen tunnin sisällä."
+msgstr ""
+"Seuraa sähköpostitse saamiaisi ohjeita salasanan palautukseen. Jos "
+"sähköposti ei näytä saapuvan, tarkistathan roskapostikansion. "
+"Roskapostisuodatus voi myös hidastaa viestin saapumista, mutta sen pitäisi "
+"saapua puolen tunnin sisällä."
 
 #: templates/registration/password_reset_email.html:2
 msgid ""
@@ -109,11 +121,3 @@ msgstr "Mene seuraavalle sivulle antaaksesi uuden salasanan:"
 #: templates/registration/password_reset_form.html:7
 msgid "Instructions for resetting password will be send to your email."
 msgstr "Ohjeet salasanan palautukseen lähetetetään sähköpostiisi."
-
-#: urls.py:27
-msgid "Kiti admin"
-msgstr "Kiti admin"
-
-#: urls.py:28 urls.py:29
-msgid "Kiti administration"
-msgstr "Kiti hallinta"
