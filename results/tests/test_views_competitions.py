@@ -129,13 +129,19 @@ class CompetitionTypeTestCase(ResultsTestCase):
         response = self._test_access(user=None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
-            self.assertEqual(response.data[key], self.data[key])
+            if key in ['max_result', 'min_result']:
+                self.assertEqual(response.data[key], str(self.data[key]))
+            else:
+                self.assertEqual(response.data[key], self.data[key])
 
     def test_competition_type_access_object_with_normal_user(self):
         response = self._test_access(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
-            self.assertEqual(response.data[key], self.data[key])
+            if key in ['max_result', 'min_result']:
+                self.assertEqual(response.data[key], str(self.data[key]))
+            else:
+                self.assertEqual(response.data[key], self.data[key])
 
     def test_competition_type_update_without_user(self):
         response = self._test_update(user=None, data=self.newdata)
@@ -221,13 +227,19 @@ class CompetitionResultTypeTestCase(ResultsTestCase):
         response = self._test_access(user=None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
-            self.assertEqual(response.data[key], self.data[key])
+            if key in ['max_result', 'min_result']:
+                self.assertEqual(response.data[key], str(self.data[key]))
+            else:
+                self.assertEqual(response.data[key], self.data[key])
 
     def test_competition_result_type_access_object_with_normal_user(self):
         response = self._test_access(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
-            self.assertEqual(response.data[key], self.data[key])
+            if key in ['max_result', 'min_result']:
+                self.assertEqual(response.data[key], str(self.data[key]))
+            else:
+                self.assertEqual(response.data[key], self.data[key])
 
     def test_competition_result_type_update_without_user(self):
         response = self._test_update(user=None, data=self.newdata)

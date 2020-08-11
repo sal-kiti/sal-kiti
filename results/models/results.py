@@ -28,7 +28,7 @@ class Result(LogChangesMixing, models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     elimination_category = models.ForeignKey(
         Category, on_delete=models.CASCADE, blank=True, null=True, related_name='eliminiation_category')
-    result = models.DecimalField(blank=True, null=True, verbose_name=_('Result'), max_digits=11, decimal_places=2)
+    result = models.DecimalField(blank=True, null=True, verbose_name=_('Result'), max_digits=12, decimal_places=3)
     result_code = models.CharField(blank=True, max_length=3, verbose_name=_('Result code'))
     decimals = models.SmallIntegerField(default=0, verbose_name=_('Result decimals'))
     position = models.SmallIntegerField(null=True, blank=True, verbose_name=_('Position'))
@@ -103,10 +103,11 @@ class ResultPartial(LogChangesMixing, models.Model):
     result = models.ForeignKey(Result, related_name='partial', on_delete=models.CASCADE)
     type = models.ForeignKey(CompetitionResultType, related_name='result_type', on_delete=models.CASCADE)
     order = models.SmallIntegerField(verbose_name=_('Order'))
-    value = models.DecimalField(blank=True, null=True, verbose_name=_('Value'), max_digits=10, decimal_places=1)
+    value = models.DecimalField(blank=True, null=True, verbose_name=_('Value'), max_digits=12, decimal_places=3)
     code = models.CharField(blank=True, max_length=3, verbose_name=_('Code'))
     decimals = models.SmallIntegerField(default=0, verbose_name=_('Value decimals'))
-    time = models.DateTimeField(null=True, blank=True, verbose_name=_('Time'))
+    time = models.TimeField(null=True, blank=True, verbose_name=_('Time'))
+    text = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Text value'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated at'))
 

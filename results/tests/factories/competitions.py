@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 import factory
 from django.conf import settings
@@ -29,8 +30,8 @@ class CompetitionTypeFactory(factory.django.DjangoModelFactory):
     sport = factory.SubFactory(SportFactory)
     layout = 1
     number_of_rounds = 2
-    max_result = 1000
-    min_result = 0
+    max_result = Decimal('1000.000')
+    min_result = Decimal('0.000')
     personal = True
 
 
@@ -57,8 +58,8 @@ class CompetitionResultTypeFactory(factory.django.DjangoModelFactory):
     competition_type = factory.SubFactory(CompetitionTypeFactory)
     name = "Elimination"
     abbreviation = "elim"
-    max_result = 500
-    min_result = 0
+    max_result = Decimal('500.000')
+    min_result = Decimal('0.000')
 
 
 class CompetitionFactory(factory.django.DjangoModelFactory):

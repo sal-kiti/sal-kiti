@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import date
+from datetime import date, time
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import Group, User
@@ -198,7 +198,7 @@ class ResultTestCase(TestCase):
     def test_result_create_with_organization_user_requiring_approval_and_approved(self):
         self.object.competition.level.require_approval = True
         self.object.competition.level.save()
-        self.object.competition.approved=True
+        self.object.competition.approved = True
         self.object.competition.save()
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -400,17 +400,21 @@ class ResultTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_result_update_with_partial_result(self):
-        self.newdata['partial'] = [{"order": 1, "type": self.competition_result_type.pk, "value": 10, "decimals": 0}]
+        self.newdata['partial'] = [
+            {"order": 1, "type": self.competition_result_type.pk, "value": Decimal('10.000'), "decimals": 0}
+        ]
         response = self._test_update(user=self.superuser, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['partial']), 1)
 
     def test_result_update_with_partial_change_result(self):
         self.test_result_update_with_partial_result()
-        self.newdata['partial'] = [{"order": 1, "type": self.competition_result_type.pk, "value": 15, "decimals": 0}]
+        self.newdata['partial'] = [
+            {"order": 1, "type": self.competition_result_type.pk, "value": Decimal('15.000'), "decimals": 0}
+        ]
         response = self._test_update(user=self.superuser, data=self.newdata, locked=True)
         self.assertEqual(len(response.data['partial']), 1)
-        self.assertEqual(response.data['partial'][0]['value'], '15.0')
+        self.assertEqual(response.data['partial'][0]['value'], '15.000')
 
     def test_result_update_with_partial_change_result_too_high(self):
         self.test_result_update_with_partial_result()
@@ -455,7 +459,8 @@ class PartialResultTestCase(TestCase):
         self.result.competition.organization.save()
         self.data = {'result': self.object.result.id, 'type': self.object.type.id, 'order': self.object.order,
                      'value': self.object.value}
-        self.newdata = {'result': self.object.result.id, 'type': self.object.type.id, 'order': 2, 'value': 10.0}
+        self.newdata = {'result': self.object.result.id, 'type': self.object.type.id, 'order': 2,
+                        'value': Decimal('10.000')}
         self.url = '/api/resultpartials/'
         self.viewset = ResultPartialViewSet
         self.model = ResultPartial
@@ -595,6 +600,21 @@ class PartialResultTestCase(TestCase):
         self.object.result.save()
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_partialresult_text_value(self):
+        data = {'result': self.object.result.id, 'type': self.object.type.id, 'order': 2,
+                'text': 'Text result value'}
+        response = self._test_create(user=self.staff_user, data=data, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['text'], 'Text result value')
+        self.assertEqual(response.data['value'], None)
+
+    def test_partialresult_time_value(self):
+        data = {'result': self.object.result.id, 'type': self.object.type.id, 'order': 2,
+                'time': time(hour=14, minute=20, second=29).isoformat()}
+        response = self._test_create(user=self.staff_user, data=data, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['time'], '14:20:29')
 
     def test_partial_result_create_with_normal_user(self):
         response = self._test_create(user=self.user, data=self.newdata, locked=True)
