@@ -72,9 +72,9 @@ class OAuth(object):
                             "user": {
                                 "birthDate": "1980-03-01",
                                 "firstName": "Maija",
-                                "nickname": "Maju",
+                                "nickname": "Maju ",
                                 "gender": "Female",
-                                "lastName": "Meikäläinen",
+                                "lastName": "AINA-MEIKÄLÄINEN",
                                 "sportId": 987654321
                             }
                         }
@@ -122,6 +122,7 @@ class SuomisportCase(TestCase):
         self.assertEqual(Athlete.objects.get(id=1).first_name, 'Mattiab')
         self.assertEqual(Athlete.objects.get(id=2).gender, 'W')
         self.assertEqual(Athlete.objects.get(id=2).first_name, 'Maju')
+        self.assertEqual(Athlete.objects.get(id=2).last_name, 'Aina-Meikäläinen')
 
     def test_ignore_athlete_updates(self):
         User.objects.create_user('log')

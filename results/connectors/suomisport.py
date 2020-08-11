@@ -120,6 +120,13 @@ class Suomisport:
         else:
             return 'U'
 
+    @staticmethod
+    def _capitalize_name(name):
+        parts = name.split('-')
+        for index, part in enumerate(parts):
+            parts[index] = part.strip().capitalize()
+        return '-'.join(parts)
+
     def _update_athletes(self, licences, print_to_stdout=False, only_year=False):
         """
         Update athletes and licences based on Suomisport licence list
@@ -144,10 +151,10 @@ class Suomisport:
             modification_time = isoparse(licence['modificationTime'])
             user = licence['user']
             sport_id = str(user['sportId'])
-            first_name = user['nickname'].capitalize() if 'nickname' in user else None
+            first_name = self._capitalize_name(user['nickname']) if 'nickname' in user else None
             if not first_name:
-                first_name = user['firstName'].split(' ')[0].capitalize()
-            last_name = user['lastName'].capitalize()
+                first_name = self._capitalize_name(user['firstName'].split(' ')[0])
+            last_name = self._capitalize_name(user['lastName'])
             gender = self._parse_gender(user['gender'])
             date_of_birth = datetime.datetime.strptime(user['birthDate'], '%Y-%m-%d').date()
             if only_year:
