@@ -151,6 +151,13 @@ class ResultTestCase(TestCase):
         for key in self.newdata:
             self.assertEqual(response.data[key], self.newdata[key])
 
+    def test_result_create_with_superuser_dry_run(self):
+        data = self.newdata
+        data.update({'dry_run': True})
+        response = self._test_create(user=self.superuser, data=data, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.model.objects.all().count(), 1)
+
     def test_result_create_existing_with_superuser(self):
         response = self._test_create(user=self.superuser, data=self.data, locked=True)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
