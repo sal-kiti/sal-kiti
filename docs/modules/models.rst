@@ -62,6 +62,11 @@ Event
 .. autoclass:: results.models.events.Event
     :members:
 
+EventContact
+--------------
+.. autoclass:: results.models.events.EventContact
+    :members:
+
 Area
 --------------
 .. autoclass:: results.models.organizations.Area

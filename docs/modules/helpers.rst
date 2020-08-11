@@ -10,6 +10,11 @@ Connectors
 Management commands
 -------------------
 
+Approve
+...................
+.. automodule:: results.management.commands.approve
+    :members:
+
 Approve records
 ...................
 .. automodule:: results.management.commands.approverecords
@@ -28,6 +33,11 @@ Create event
 Suomisport import
 ...................
 .. automodule:: results.management.commands.suomisportimport
+    :members:
+
+Suomisport organizations
+........................
+.. automodule:: results.management.commands.suomisportorganizations
     :members:
 
 Middleware
