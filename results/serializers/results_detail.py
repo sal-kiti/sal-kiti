@@ -30,4 +30,4 @@ class ResultDetailSerializer(serializers.ModelSerializer):
         model = Result
         fields = (
             'id', 'competition', 'athlete', 'organization', 'category', 'elimination_category', 'result',
-            'result_code', 'position', 'approved', 'partial')
+            'result_code', 'position', 'approved', 'info', 'partial')

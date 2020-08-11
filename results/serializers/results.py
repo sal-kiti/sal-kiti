@@ -441,7 +441,7 @@ class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, Eag
         fields = (
             'id', 'athlete', 'first_name', 'last_name', 'team_members', 'competition', 'organization', 'category',
             'elimination_category', 'result', 'result_code', 'decimals', 'position', 'position_pre', 'partial',
-            'approved', 'team', 'record')
+            'approved', 'team', 'info', 'record')
 
 
 class ResultLimitedAggregateSerializer(ResultLimitedSerializer):
