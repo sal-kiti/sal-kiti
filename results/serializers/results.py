@@ -65,6 +65,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     """
     Serializer for results
     """
+    dry_run = serializers.BooleanField(required=False)
     partial = ResultPartialNestedSerializer(many=True, required=False)
     permissions = DRYPermissionsField()
 
@@ -73,7 +74,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         fields = (
             'id', 'competition', 'athlete', 'team_members', 'first_name', 'last_name', 'organization', 'category',
             'elimination_category', 'result', 'decimals', 'result_code', 'position', 'position_pre',
-            'approved', 'info', 'team', 'partial', 'permissions')
+            'approved', 'info', 'team', 'partial', 'permissions', 'dry_run')
 
     def create(self, validated_data):
         """
@@ -81,11 +82,16 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         partial_data = validated_data.pop('partial', None)
         team_members = validated_data.pop('team_members', None)
-        result = Result.objects.create(**validated_data)
+        dry_run = validated_data.pop('dry_run', None)
+        if not dry_run:
+            result = Result.objects.create(**validated_data)
+        else:
+            result = Result(**validated_data)
         if partial_data:
             for partial in partial_data:
-                ResultPartial.objects.create(result=result, **partial)
-        if team_members:
+                if not dry_run:
+                    ResultPartial.objects.create(result=result, **partial)
+        if team_members and not dry_run:
             result.team_members.set(team_members)
         return result
 
@@ -93,29 +99,31 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         Nested partial results support in update
         """
-        for data in validated_data:
-            if data not in ['partial', 'team_members']:
-                setattr(instance, data, validated_data[data])
-        if 'team_members' in validated_data:
-            team_members = validated_data.pop('team_members')
-            instance.team_members.set(team_members)
-        instance.save()
-        partial_existing = list(ResultPartial.objects.filter(result=instance).values_list('id', flat=True))
-        if 'partial' in validated_data:
-            partial_data = validated_data.pop('partial')
-            for partial in partial_data:
-                try:
-                    partial_instance = ResultPartial.objects.get(result=instance,
-                                                                 type=partial['type'],
-                                                                 order=partial['order'])
-                    for data in partial:
-                        if data not in ['result', 'type', 'order']:
-                            setattr(partial_instance, data, partial[data])
-                    partial_instance.save()
-                    partial_existing.remove(partial_instance.pk)
-                except ResultPartial.DoesNotExist:
-                    ResultPartial.objects.create(result=instance, **partial)
-            ResultPartial.objects.filter(pk__in=partial_existing).delete()
+        dry_run = validated_data.pop('dry_run', None)
+        if not dry_run:
+            for data in validated_data:
+                if data not in ['partial', 'team_members']:
+                    setattr(instance, data, validated_data[data])
+            if 'team_members' in validated_data:
+                team_members = validated_data.pop('team_members')
+                instance.team_members.set(team_members)
+            instance.save()
+            partial_existing = list(ResultPartial.objects.filter(result=instance).values_list('id', flat=True))
+            if 'partial' in validated_data:
+                partial_data = validated_data.pop('partial')
+                for partial in partial_data:
+                    try:
+                        partial_instance = ResultPartial.objects.get(result=instance,
+                                                                     type=partial['type'],
+                                                                     order=partial['order'])
+                        for data in partial:
+                            if data not in ['result', 'type', 'order']:
+                                setattr(partial_instance, data, partial[data])
+                        partial_instance.save()
+                        partial_existing.remove(partial_instance.pk)
+                    except ResultPartial.DoesNotExist:
+                        ResultPartial.objects.create(result=instance, **partial)
+                ResultPartial.objects.filter(pk__in=partial_existing).delete()
         return instance
 
     @staticmethod
