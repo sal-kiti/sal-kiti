@@ -19,7 +19,7 @@ class ResultPartialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'code', 'time', 'permissions')
+        fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text', 'permissions')
         extra_kwargs = {'code': {'required': False}}
 
     def validate(self, data):
@@ -388,7 +388,7 @@ class ResultPartialLimitedSerializer(ResultPartialSerializer):
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time')
+        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text')
 
 
 class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadingMixin):

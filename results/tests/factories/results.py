@@ -18,7 +18,7 @@ class ResultFactory(factory.django.DjangoModelFactory):
     organization = factory.SubFactory(OrganizationFactory)
     category = factory.SubFactory(CategoryFactory)
     elimination_category = category
-    result = fuzzy.FuzzyDecimal(0.00, 1000.00, 2)
+    result = fuzzy.FuzzyDecimal(0.000, 1000.000, 3)
     decimals = 1
     position = fuzzy.FuzzyInteger(1, 100)
     approved = True
@@ -32,5 +32,5 @@ class ResultPartialFactory(factory.django.DjangoModelFactory):
     result = factory.SubFactory(ResultFactory)
     type = factory.SubFactory(CompetitionResultTypeFactory)
     order = 1
-    value = fuzzy.FuzzyDecimal(0.0, 100.0, 1)
+    value = fuzzy.FuzzyDecimal(0.000, 100.000, 3)
     time = None

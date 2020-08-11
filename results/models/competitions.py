@@ -118,8 +118,10 @@ class CompetitionType(LogChangesMixing, models.Model):
     abbreviation = models.CharField(max_length=15, verbose_name=_('Abbreviation'))
     sport = models.ForeignKey(Sport, on_delete=models.SET_NULL, null=True, blank=True)
     number_of_rounds = models.SmallIntegerField(verbose_name=_('Number of rounds'))
-    max_result = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Maximum result'))
-    min_result = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Minimum result'))
+    max_result = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=3,
+                                     verbose_name=_('Maximum result'))
+    min_result = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=3,
+                                     verbose_name=_('Minimum result'))
     order = models.SmallIntegerField(default=0, verbose_name=_('Order'))
     requirements = models.CharField(blank=True, max_length=100, verbose_name=_('Requirements'))
     personal = models.BooleanField(default=True, verbose_name=_('Personal competition'))
@@ -170,8 +172,10 @@ class CompetitionResultType(LogChangesMixing, models.Model):
     competition_type = models.ForeignKey(CompetitionType, related_name='competition_type', on_delete=models.CASCADE)
     name = models.CharField(max_length=15, verbose_name=_('Name'))
     abbreviation = models.CharField(max_length=10, verbose_name=_('Abbreviation'))
-    max_result = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Maximum result'))
-    min_result = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Minimum result'))
+    max_result = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=3,
+                                     verbose_name=_('Maximum result'))
+    min_result = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=3,
+                                     verbose_name=_('Minimum result'))
     records = models.BooleanField(default=True, verbose_name=_('Check records'))
 
     def __str__(self):
