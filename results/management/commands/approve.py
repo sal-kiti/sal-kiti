@@ -63,20 +63,23 @@ class Command(BaseCommand):
         for competition in Competition.objects.filter(date_start__lte=date_limit,
                                                       updated_at__lt=date_limit,
                                                       locked=False):
-            competition.locked = True
-            self.output("Competition locked: %s" % competition)
-            if not self.list_only:
-                competition.save()
+            if Result.objects.filter(
+                    competition=competition, updated_at__lt=date_limit).exclude(approved=True).count() == 0:
+                competition.locked = True
+                self.output("Competition locked: %s" % competition)
+                if not self.list_only:
+                    competition.save()
 
     def lock_events(self, date_limit):
         """Lock past events which have not been modified during date limit"""
         for event in Event.objects.filter(date_start__lte=date_limit,
                                           updated_at__lt=date_limit,
                                           locked=False):
-            event.locked = True
-            self.output("Event locked: %s" % event)
-            if not self.list_only:
-                event.save()
+            if Competition.objects.filter(event=event, updated_at__lt=date_limit).exclude(locked=True).count() == 0:
+                event.locked = True
+                self.output("Event locked: %s" % event)
+                if not self.list_only:
+                    event.save()
 
     def handle(self, *args, **options):
         days = options['days']
