@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 - 2020-08-14
+### Changes
+- Added group by one support to statistics list
+- Fixed missing user id in logging
+- Changed parameter to limit organizations to users own 
+
 ## 0.3.0 - 2020-08-11
 ### Changes
 - Added support nested partial results in results import
