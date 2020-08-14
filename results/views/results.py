@@ -244,7 +244,9 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             raise exceptions.ParseError()
 
         group_results = self.request.query_params.get('group_results', None)
-        if group_results and group_results.isdigit() and int(group_results) > 1:
+        if group_results and group_results.isdigit() and int(group_results) > 0:
+            # Remove team results as we group by athlete id
+            queryset = queryset.exclude(team=1)
             self.serializer_class = ResultLimitedAggregateSerializer
             self.ordering = None
             self.ordering_fields = None
