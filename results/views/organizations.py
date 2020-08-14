@@ -77,12 +77,11 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         """
         Optionally restricts returned results to user's managed organizations.
         """
-        limit = self.request.query_params.get('limit', None)
-        if limit and limit == 'own':
+        own = self.request.query_params.get('own', None)
+        if own:
             user = self.request.user
             if not user.is_superuser and not user.is_staff:
                 self.queryset = self.queryset.filter(group__in=user.groups.all())
-            self.pagination_class = None
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
         return self.queryset
 
