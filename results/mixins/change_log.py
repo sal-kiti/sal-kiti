@@ -51,7 +51,8 @@ class LogChangesMixing(object):
         Save log entry for data deletion
         """
         object_id = self.pk
-        user_id = get_current_user().id if get_current_user() else settings.DEFAULT_LOG_USER_ID
+        user = get_current_user()
+        user_id = user.id if user and user.id else settings.DEFAULT_LOG_USER_ID
         super(LogChangesMixing, self).delete(*args, **kwargs)
         LogEntry.objects.log_action(
             user_id=user_id,
@@ -98,7 +99,8 @@ class LogChangesMixing(object):
         """
 
         action_flag = CHANGE if self.pk else ADDITION
-        user_id = get_current_user().id if get_current_user() else settings.DEFAULT_LOG_USER_ID
+        user = get_current_user()
+        user_id = user.id if user and user.id else settings.DEFAULT_LOG_USER_ID
         super(LogChangesMixing, self).save(*args, **kwargs)
         change_message = []
         if action_flag == ADDITION:
