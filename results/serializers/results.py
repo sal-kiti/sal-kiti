@@ -54,7 +54,7 @@ class ResultPartialNestedSerializer(ResultPartialSerializer):
     """
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'permissions')
+        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text', 'permissions')
         extra_kwargs = {'code': {'required': False}}
 
     def validate(self, data):
