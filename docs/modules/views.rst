@@ -104,3 +104,9 @@ ResultViewSet
 SportViewSet
 -----------------------
 .. autoclass:: results.views.sports.SportViewSet
+    :members:
+
+StatisticsLinkViewSet
+-----------------------
+.. autoclass:: results.views.statistics.StatisticsLinkViewSet
+    :members:

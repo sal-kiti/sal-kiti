@@ -139,3 +139,9 @@ ResultSerializer
 SportSerializer
 ---------------
 .. autoclass:: results.serializers.sports.SportSerializer
+    :members:
+
+StatisticsLinkSerializer
+------------------------
+.. autoclass:: results.serializers.statistics.StatisticsLinkSerializer
+    :members:

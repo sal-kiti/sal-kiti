@@ -3,10 +3,51 @@ import operator
 from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
+
+from dry_rest_permissions.generics import DRYPermissions
+from rest_framework import viewsets
 from rest_framework.decorators import api_view
 
-from results.models.results import Result
 from results.models.competitions import CompetitionLevel
+from results.models.results import Result
+from results.models.statistics import StatisticsLink
+from results.serializers.statistics import StatisticsLinkSerializer
+
+
+class StatisticsLinkViewSet(viewsets.ModelViewSet):
+    """API endpoint for statistics links.
+
+    list:
+    Returns a list of all the existing statistics links.
+
+    retrieve:
+    Returns the given statistics link.
+
+    create:
+    Creates a new statistics link instance.
+
+    update:
+    Updates a given statistics link.
+
+    partial_update:
+    Updates a given statistics link.
+
+    destroy:
+    Removes the given statistics link.
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = StatisticsLink.objects.all()
+    serializer_class = StatisticsLinkSerializer
+
+    def get_queryset(self):
+        """
+        Restricts the returned information to public links, unless user is
+        staff or superuser.
+        """
+        user = self.request.user
+        if not user.is_superuser and not user.is_staff:
+            self.queryset = self.queryset.filter(public=True)
+        return self.queryset
 
 
 @never_cache

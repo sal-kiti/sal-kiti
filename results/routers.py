@@ -10,6 +10,7 @@ from results.views.records import RecordViewSet, RecordLevelViewSet, RecordList
 from results.views.results import ResultViewSet, ResultPartialViewSet, ResultDetailViewSet
 from results.views.results import ResultList
 from results.views.sports import SportViewSet
+from results.views.statistics import StatisticsLinkViewSet
 
 router = routers.DefaultRouter()
 router.register(r'areas', AreaViewSet)
@@ -33,3 +34,4 @@ router.register(r'partialresults', ResultPartialViewSet)
 router.register(r'resultdetail', ResultDetailViewSet)
 router.register(r'resultlist', ResultList)
 router.register(r'sports', SportViewSet)
+router.register(r'statisticslinks', StatisticsLinkViewSet)

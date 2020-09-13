@@ -7,11 +7,108 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test import RequestFactory, TestCase
 from rest_framework import status
+from rest_framework.test import APIRequestFactory
 
 from results.models.competitions import CompetitionLevel
 from results.tests.factories.competitions import CompetitionFactory
 from results.tests.factories.organizations import OrganizationFactory
 from results.tests.factories.results import ResultFactory
+
+from results.models.statistics import StatisticsLink
+from results.tests.factories.statistics import StatisticsLinkFactory
+from results.tests.utils import ResultsTestCase
+from results.views.statistics import StatisticsLinkViewSet
+
+
+class StatisticsLinkTestCase(ResultsTestCase):
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.user = User.objects.create(username='tester')
+        self.staff_user = User.objects.create(username="staffuser", is_staff=True)
+        self.superuser = User.objects.create(username="superuser", is_superuser=True)
+        self.object = StatisticsLinkFactory.create()
+        self.data = {'name': self.object.name, 'group': self.object.group, 'link': self.object.link,
+                     'public': self.object.public, 'highlight': self.object.highlight, 'order': self.object.order}
+        self.newdata = {'name': 'New Statistics Link', 'group': 'Old Group', 'link': '?new=link'}
+        self.url = '/api/statisticslinks/'
+        self.viewset = StatisticsLinkViewSet
+        self.model = StatisticsLink
+
+    def test_statistics_link_access_list(self):
+        request = self.factory.get(self.url)
+        view = self.viewset.as_view(actions={'get': 'list'})
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_statistics_link_access_object_without_user(self):
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for key in self.data:
+            self.assertEqual(response.data[key], self.data[key])
+
+    def test_statistics_link_access_object_with_normal_user(self):
+        response = self._test_access(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for key in self.data:
+            self.assertEqual(response.data[key], self.data[key])
+
+    def test_statistics_link_update_without_user(self):
+        response = self._test_update(user=None, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_statistics_link_update_with_superuser(self):
+        response = self._test_update(user=self.superuser, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_statistics_link_update_with_staffruser(self):
+        response = self._test_update(user=self.staff_user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_statistics_link_update_with_normal_user(self):
+        response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_statistics_link_create_without_user(self):
+        response = self._test_create(user=None, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_statistics_link_create_with_superuser(self):
+        response = self._test_create(user=self.superuser, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.model.objects.all().count(), 2)
+        for key in self.newdata:
+            self.assertEqual(response.data[key], self.newdata[key])
+
+    def test_statistics_link_create_existing_with_superuser(self):
+        response = self._test_create(user=self.superuser, data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_statistics_link_create_with_staffuser(self):
+        response = self._test_create(user=self.staff_user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.model.objects.all().count(), 2)
+        for key in self.newdata:
+            self.assertEqual(response.data[key], self.newdata[key])
+
+    def test_statistics_link_create_existing_with_staffuser(self):
+        response = self._test_create(user=self.staff_user, data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_statistics_link_create_with_normal_user(self):
+        response = self._test_create(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_statistics_link_delete_with_user(self):
+        response = self._test_delete(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_statistics_link_delete_with_superuser(self):
+        response = self._test_delete(user=self.superuser)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_statistics_link_delete_with_staffuser(self):
+        response = self._test_delete(user=self.staff_user)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class StatisticsPohjolanMaljaTestCase(TestCase):
