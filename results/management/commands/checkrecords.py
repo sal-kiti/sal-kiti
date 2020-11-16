@@ -17,7 +17,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
-        results = Result.objects.filter(organization__external=False).order_by('competition__date_start', '-result')
+        results = Result.objects.filter(organization__external=False).order_by(
+            'competition__date_start', '-result')
         for result in results:
             if verbosity:
                 print(result)
