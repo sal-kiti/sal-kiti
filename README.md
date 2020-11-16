@@ -9,13 +9,10 @@ Backend is written in Python, using [Django](https://www.djangoproject.com/) and
 ## Versioning
 Kiti uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-API should be quite static but some breaking changes are possible in near future. Plan is to release
-1.0.0 before June 2020.
-
 Check [CHANGELOG](CHANGELOG.md) for current status
 
 ## Requirements
-Tested with Python 3.6 - 3.7.
+Tested with Python 3.6 - 3.8.
 
 Install requirements for production from requirements.txt and for development from
 requirements_dev.txt

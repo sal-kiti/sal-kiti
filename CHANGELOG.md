@@ -1,4 +1,8 @@
 # Changelog
+## 1.0.0 - 2020-11-16
+### Changes
+- Requirements version updates
+- Added missing text field to partial result nested serializer
 
 ## 0.4.0 - 2020-08-14
 ### Changes
