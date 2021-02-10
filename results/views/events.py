@@ -21,9 +21,9 @@ class EventFilter(filters.FilterSet):
     """
     Custom filters for the event.
     """
-    level = NumberInFilter(field_name='competition__level__pk', lookup_expr='in')
-    type = NumberInFilter(field_name="competition__type__pk", lookup_expr='in')
-    sport = NumberInFilter(field_name="competition__type__sport__pk", lookup_expr='in')
+    level = NumberInFilter(field_name='competitions__level__pk', lookup_expr='in')
+    type = NumberInFilter(field_name="competitions__type__pk", lookup_expr='in')
+    sport = NumberInFilter(field_name="competitions__type__sport__pk", lookup_expr='in')
     until = filters.DateFilter(field_name='date_start', lookup_expr='lte')
     start = filters.DateFilter(field_name='date_start', lookup_expr='gte')
     end = filters.DateFilter(field_name='date_end', lookup_expr='lte')

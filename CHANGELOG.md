@@ -1,4 +1,8 @@
 # Changelog
+## 1.0.1 - 2021-02-10
+### Changes
+- Fixed field name in event filter
+
 ## 1.0.0 - 2020-11-16
 ### Changes
 - Requirements version updates
