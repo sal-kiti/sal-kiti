@@ -97,11 +97,12 @@ class Record(LogChangesMixing, models.Model):
         if self.approved and "approved" in self.changed_fields:
             if self.partial_result:
                 records = Record.objects.filter(level=self.level, type=self.type, date_end=None, category=self.category,
-                                                partial_result__type=self.partial_result.type,
+                                                historical=False, partial_result__type=self.partial_result.type,
                                                 partial_result__value__lt=self.partial_result.value)
             else:
                 records = Record.objects.filter(level=self.level, type=self.type, date_end=None, category=self.category,
-                                                partial_result=None, result__result__lt=self.result.result)
+                                                historical=False, partial_result=None,
+                                                result__result__lt=self.result.result)
             for record in records:
                 if record.approved:
                     record.date_end = self.date_start
