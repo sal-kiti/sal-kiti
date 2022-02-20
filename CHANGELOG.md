@@ -1,4 +1,16 @@
 # Changelog
+## 1.1.0 - 2022-xx-xx
+### Changes
+- Remove support for Python 3.6
+- Django upgraded to 3.2 series
+- Requirements version updates
+- Add extra searchable fields
+- Ignore historical records in record approval
+- Limit Pohjolan Malja statistics to positive positions
+
+### Updating notes
+Django upgrade includes database changes, run migrations
+
 ## 1.0.1 - 2021-02-10
 ### Changes
 - Fixed field name in event filter
