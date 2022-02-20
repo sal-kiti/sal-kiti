@@ -30,7 +30,7 @@ class EventFilter(filters.FilterSet):
 
     class Meta:
         model = Event
-        fields = ['level', 'organization', 'public', 'sport', 'type', 'approved']
+        fields = ['level', 'name', 'organization', 'public', 'sport', 'type', 'approved']
 
 
 class EventViewSet(viewsets.ModelViewSet):

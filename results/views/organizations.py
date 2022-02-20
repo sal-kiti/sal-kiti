@@ -43,7 +43,7 @@ class OrganizationFilter(filters.FilterSet):
 
     class Meta:
         model = Organization
-        fields = ['external', 'historical']
+        fields = ['abbreviation', 'external', 'historical']
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
