@@ -1,15 +1,15 @@
 # Common requirements
-Django~=2.2.17
-django-cors-headers~=3.5
-django-extensions~=3.0.9
-django-filter~=2.4.0
-djangorestframework~=3.12
-djangorestframework-queryfields~=1.0.0
+Django~=3.2.12
+django-cors-headers~=3.11
+django-extensions~=3.1
+django-filter~=21.1
+djangorestframework~=3.13
+djangorestframework-queryfields~=1.0
 dry-rest-permissions~=0.1.10
-drf_yasg~=1.20.0
-mysqlclient~=2.0
-oauthlib~=3.1
+drf_yasg~=1.20
+mysqlclient~=2.1
+oauthlib~=3.2
 python-memcached~=1.59
 python-dateutil~=2.8
-requests~=2.25
+requests~=2.27
 requests-oauthlib~=1.3
