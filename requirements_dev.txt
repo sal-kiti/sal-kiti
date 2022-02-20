@@ -4,4 +4,3 @@ coverage~=6.3
 factory-boy~=3.2
 Sphinx~=4.4
 sphinxcontrib-django~=0.5
-§
