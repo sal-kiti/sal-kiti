@@ -25,8 +25,8 @@ def statistics_pohjolan_malja(request, year):
     level_list = ['SM']
     max_position = 8
     competition_levels = CompetitionLevel.objects.filter(abbreviation__in=level_list)
-    results = Result.objects.filter(competition__level__in=competition_levels, position__lte=8,
-                                    competition__date_start__year=year)
+    results = Result.objects.filter(competition__level__in=competition_levels, position__lte=max_position,
+                                    position__gte=1, competition__date_start__year=year)
     data_dict = {}
     for result in results:
         points = max_position - result.position + 1
