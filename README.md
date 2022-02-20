@@ -12,7 +12,7 @@ Kiti uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Check [CHANGELOG](CHANGELOG.md) for current status
 
 ## Requirements
-Tested with Python 3.6 - 3.8.
+Tested with Python 3.7 - 3.8.
 
 Install requirements for production from requirements.txt and for development from
 requirements_dev.txt
