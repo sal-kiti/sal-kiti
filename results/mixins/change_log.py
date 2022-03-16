@@ -14,7 +14,12 @@ class LogChangesMixing(object):
     """
     def __init__(self, *args, **kwargs):
         super(LogChangesMixing, self).__init__(*args, **kwargs)
-        self.__initial = self._dict
+        fields = [field.name for field in self._meta.fields]
+        initial = {}
+        for key in self.__dict__:
+            if key in fields:
+                initial[key] = self.__dict__[key]
+        self.__initial = initial
 
     @property
     def changed_fields(self):
@@ -35,7 +40,7 @@ class LogChangesMixing(object):
         """
         d1 = self.__initial
         d2 = self._dict
-        diffs = [(k, (v, d2[k])) for k, v in d1.items() if v != d2[k]]
+        diffs = [(k, (v, d2[k])) for k, v in d1.items() if k in d2 and v != d2[k]]
         return dict(diffs)
 
     @property
@@ -97,7 +102,6 @@ class LogChangesMixing(object):
         """
         Create a log entry for add or change messages
         """
-
         action_flag = CHANGE if self.pk else ADDITION
         user = get_current_user()
         user_id = user.id if user and user.id else settings.DEFAULT_LOG_USER_ID
