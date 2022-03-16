@@ -395,6 +395,15 @@ class ResultTestCase(TestCase):
         response = self._test_delete(user=self.superuser, locked=True)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def test_result_recursive_delete_with_superuser(self):
+        competition_result_type = CompetitionResultTypeFactory.create(
+                competition_type=self.object.competition.type)
+        partial = ResultPartialFactory.create(result=self.object,
+                                              type=competition_result_type).pk
+        response = self._test_delete(user=self.superuser, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResultPartial.objects.filter(pk=partial).count(), 0)
+
     def test_result_delete_with_staffuser(self):
         response = self._test_delete(user=self.staff_user, locked=True)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
