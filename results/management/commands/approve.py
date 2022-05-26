@@ -16,8 +16,26 @@ from results.models.results import Result
 logger = logging.getLogger(__name__)
 
 
+def _check_requirements(result):
+    competition = result.competition
+    if result.athlete:
+        athletes = [result.athlete]
+    else:
+        athletes = result.team_members.all()
+    for requirement in competition.type.requirements.split(',') + competition.level.requirements.split(','):
+        if requirement.strip():
+            for athlete in athletes:
+                if not athlete.organization.external and not athlete.info.filter(
+                        type=requirement.strip(),
+                        date_start__lte=competition.date_start,
+                        date_end__gte=competition.date_start).count():
+                    return False
+    return True
+
+
 class Command(BaseCommand):
     list_only = False
+    check_requirements = False
     verbosity = 0
 
     def add_arguments(self, parser):
@@ -31,6 +49,8 @@ class Command(BaseCommand):
                             help='Lock past events which have not been modified during date limit')
         parser.add_argument('--competition', action='store_true', dest='lock_competitions',
                             help='Lock past competitions which have not been modified during date limit')
+        parser.add_argument('-r', action='store_true', dest='check_requirements',
+                            help='Check competition type and level requirements for result approval')
         parser.add_argument('-l', action='store_true', dest='list_only',
                             help='List only, do not approve')
 
@@ -45,10 +65,13 @@ class Command(BaseCommand):
     def approve_results(self, date_limit):
         """ Approve results which have not been modified during date limits"""
         for result in Result.objects.filter(updated_at__lt=date_limit, approved=False):
-            result.approved = True
-            self.output("Result approved: %s" % result)
-            if not self.list_only:
-                result.save()
+            if _check_requirements(result):
+                result.approved = True
+                self.output("Result approved: %s" % result)
+                if not self.list_only:
+                    result.save()
+            else:
+                self.output("Requirements not met: %s" % result)
 
     def approve_records(self, date_limit):
         """ Approve records which have not been modified during date limits"""

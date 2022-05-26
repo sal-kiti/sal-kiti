@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from drf_queryfields import QueryFieldsMixin
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -365,7 +366,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         category = self._get_category(data)
         competition = self._get_competition(data)
         self._check_existence(data, category)
-        self._check_requirements(competition, athletes)
+        if settings.CHECK_COMPETITION_REQUIREMENTS:
+            self._check_requirements(competition, athletes)
         self._check_number_of_team_members(category, athletes)
         self._check_gender(category, athletes)
         self._check_age(competition, category, athletes)

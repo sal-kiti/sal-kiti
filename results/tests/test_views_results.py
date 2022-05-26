@@ -3,7 +3,7 @@ from datetime import date, time
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import Group, User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
@@ -329,6 +329,7 @@ class ResultTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(response.data['non_field_errors'][0], 'Category is not allowed for this competition type.')
 
+    @override_settings(CHECK_COMPETITION_REQUIREMENTS=True)
     def test_result_create_without_type_requirement(self):
         self.data['athlete'] = self.athlete.pk
         self.object.competition.type.requirements = 'licence'
@@ -337,6 +338,7 @@ class ResultTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(response.data['non_field_errors'][0], 'Missing requirement: licence.')
 
+    @override_settings(CHECK_COMPETITION_REQUIREMENTS=True)
     def test_result_create_with_type_requirement(self):
         self.data['athlete'] = self.athlete.pk
         self.object.competition.type.requirements = 'licence'
@@ -349,6 +351,7 @@ class ResultTestCase(TestCase):
         response = self._test_create(user=self.staff_user, data=self.data, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    @override_settings(CHECK_COMPETITION_REQUIREMENTS=True)
     def test_result_create_without_level_requirement(self):
         self.data['athlete'] = self.athlete.pk
         self.object.competition.level.requirements = 'licence'
@@ -357,6 +360,7 @@ class ResultTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(response.data['non_field_errors'][0], 'Missing requirement: licence.')
 
+    @override_settings(CHECK_COMPETITION_REQUIREMENTS=True)
     def test_result_create_with_level_requirement(self):
         self.data['athlete'] = self.athlete.pk
         self.object.competition.level.requirements = 'licence'
