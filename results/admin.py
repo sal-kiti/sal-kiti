@@ -9,6 +9,7 @@ from results.models.organizations import Area, Organization
 from results.models.records import Record, RecordLevel
 from results.models.results import Result, ResultPartial
 from results.models.sports import Sport
+from results.models.statistics import StatisticsLink
 
 
 class AreaAdmin(admin.ModelAdmin):
@@ -214,3 +215,11 @@ class SportAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Sport, SportAdmin)
+
+
+class StatisticsLinkAdmin(admin.ModelAdmin):
+    list_display = ['group', 'name', 'link', 'order', 'public']
+    search_fields = ['group', 'name']
+
+
+admin.site.register(StatisticsLink, StatisticsLinkAdmin)

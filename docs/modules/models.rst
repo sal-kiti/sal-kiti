@@ -101,3 +101,8 @@ Sport
 --------------
 .. autoclass:: results.models.sports.Sport
     :members:
+
+StatisticsLink
+--------------
+.. autoclass:: results.models.statistics.StatisticsLink
+    :members:
