@@ -10,7 +10,9 @@
 - Add support to saving statistics links
 
 ### Updating notes
-Django upgrade includes database changes, run migrations
+Includes database changes, run migrations
+- Added StatisticsLink model
+- Django upgrade
 
 ## 1.0.1 - 2021-02-10
 ### Changes
@@ -21,19 +23,11 @@ Django upgrade includes database changes, run migrations
 - Requirements version updates
 - Added missing text field to partial result nested serializer
 
-## 0.5.0 - 2020-09-13
-### Changes
-- Added statistics links
-
 ## 0.4.0 - 2020-08-14
 ### Changes
 - Added group by one support to statistics list
 - Fixed missing user id in logging
 - Changed parameter to limit organizations to users own 
-
-### Updating notes
-Includes database changes, run migrations
-- Added StatisticsLink model
 
 ## 0.3.0 - 2020-08-11
 ### Changes
