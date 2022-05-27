@@ -1,5 +1,5 @@
 # Changelog
-## 1.1.0 - 2022-xx-xx
+## 1.1.0 - 2022-05-27
 ### Changes
 - Remove support for Python 3.6
 - Django upgraded to 3.2 series
@@ -7,6 +7,7 @@
 - Add extra searchable fields
 - Ignore historical records in record approval
 - Limit Pohjolan Malja statistics to positive positions
+- Add support to saving statistics links
 
 ### Updating notes
 Django upgrade includes database changes, run migrations
