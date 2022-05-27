@@ -1,6 +1,6 @@
 # Common requirements
-Django~=3.2.12
-django-cors-headers~=3.11
+Django~=3.2.13
+django-cors-headers~=3.12
 django-extensions~=3.1
 django-filter~=21.1
 djangorestframework~=3.13
