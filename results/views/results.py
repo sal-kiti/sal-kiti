@@ -100,6 +100,14 @@ class ResultPartialViewSet(viewsets.ModelViewSet):
                           openapi.IN_QUERY,
                           description='Multiple values may be separated by commas.',
                           type=openapi.TYPE_INTEGER),
+        openapi.Parameter('result_gte',
+                          openapi.IN_QUERY,
+                          description='Result greater or equal than.',
+                          type=openapi.TYPE_NUMBER),
+        openapi.Parameter('result_lte',
+                          openapi.IN_QUERY,
+                          description='Result less or equal than.',
+                          type=openapi.TYPE_NUMBER),
         openapi.Parameter('type',
                           openapi.IN_QUERY,
                           description='Multiple values may be separated by commas.',
@@ -217,6 +225,14 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             if organization:
                 organization_list = [int(c) for c in organization.split(",")]
                 queryset = queryset.filter(organization__in=organization_list)
+
+            result_gte = self.request.query_params.get('result_gte', None)
+            if result_gte:
+                queryset = queryset.filter(result__gte=float(result_gte))
+
+            result_lte = self.request.query_params.get('result_lte', None)
+            if result_lte:
+                queryset = queryset.filter(result__lte=float(result_lte))
 
             start_date = self.request.query_params.get('start', None)
             if start_date:
