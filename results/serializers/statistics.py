@@ -12,4 +12,4 @@ class StatisticsLinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StatisticsLink
-        fields = ('id', 'group', 'name', 'link', 'highlight', 'order', 'public', 'permissions')
+        fields = ('id', 'group', 'name', 'description', 'link', 'highlight', 'order', 'public', 'permissions')

@@ -7,6 +7,7 @@ class StatisticsLink(models.Model):
     """Stores a single statistic link."""
     group = models.CharField(max_length=255, verbose_name=_('Group'))
     name = models.CharField(max_length=255, verbose_name=_('Name'))
+    description = models.TextField(blank=True, verbose_name=_('Description'))
     link = models.TextField(verbose_name=_('Link'))
     highlight = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Highlight'))
     public = models.BooleanField(default=True, verbose_name=_('Public'))
