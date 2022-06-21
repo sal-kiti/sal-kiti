@@ -225,10 +225,14 @@ class Suomisport:
             latest_modification = None
         licence_types = self.get_licence_types(datetime.date.today())
         for licence_type in licence_types:
-            if licence_type['type'] in self.licence_types:
-                licences = self.get_licences(
-                    licence_type['licencePeriodId'], licence_type['id'], ts=latest_modification)
-                self._update_athletes(licences=licences, print_to_stdout=print_to_stdout, only_year=only_year)
+            if 'type' in licence_type:
+                if licence_type['type'] in self.licence_types:
+                    licences = self.get_licences(
+                        licence_type['licencePeriodId'], licence_type['id'], ts=latest_modification)
+                    self._update_athletes(licences=licences, print_to_stdout=print_to_stdout, only_year=only_year)
+            else:
+                if print_to_stdout:
+                    stdout.write("%s: %s\n" % ("WARNING: Licence type does not include type attribute", licence_type))
 
     def get_organizations(self, print_to_stdout=False):
         """
