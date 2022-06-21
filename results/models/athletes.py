@@ -87,12 +87,19 @@ class AthleteInformation(LogChangesMixing, models.Model):
         return '%s, %s' % (self.athlete, self.type)
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
         return True
 
     def has_object_read_permission(self, request):
-        return True
+        if self.visibility == "P":
+            return True
+        elif request.user.is_authenticated and self.visibility == 'A':
+            return True
+        elif (request.user.is_staff or request.user.is_superuser) and self.visibility == 'S':
+            return True
+        elif request.user.is_superuser and self.visibility == 'U':
+            return True
+        return False
 
     @staticmethod
     @allow_staff_or_superuser

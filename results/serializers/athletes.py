@@ -1,3 +1,5 @@
+from abc import ABC
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -8,6 +10,24 @@ from results.models.organizations import Organization
 from results.serializers.organizations import OrganizationSerializer
 
 
+class AthleteInformationListSerializer(serializers.ListSerializer, ABC):
+    """
+    ListSerializer to limit athlete additional information for nested serializer.
+    """
+    def to_representation(self, data):
+        if not isinstance(data, list):
+            user = self.context['request'].user
+            if user.is_superuser:
+                data = data.filter(visibility__in=['P', 'A', 'S', 'U'])
+            elif user.is_staff:
+                data = data.filter(visibility__in=['P', 'A', 'S'])
+            elif user.is_authenticated:
+                data = data.filter(visibility__in=['P', 'A'])
+            else:
+                data = data.filter(visibility__in=['P'])
+        return super().to_representation(data)
+
+
 class AthleteInformationSerializer(serializers.ModelSerializer):
     """
     Serializer for athletes additional information.
@@ -16,6 +36,7 @@ class AthleteInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AthleteInformation
+        list_serializer_class = AthleteInformationListSerializer
         fields = ('id', 'athlete', 'type', 'value', 'date_start', 'date_end', 'visibility', 'permissions')
 
 
@@ -69,11 +90,12 @@ class AthleteLimitedSerializer(AthleteSerializer):
     organization_info = OrganizationSerializer(read_only=True, source='organization')
     organization = serializers.PrimaryKeyRelatedField(
         queryset=Organization.objects.all())
+    info = AthleteInformationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Athlete
         fields = ('id', 'first_name', 'last_name', 'sport_id', 'organization', 'organization_info',
-                  'additional_organizations')
+                  'additional_organizations', 'info')
 
 
 class AthleteNameSerializer(AthleteSerializer):
