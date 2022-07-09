@@ -1,4 +1,16 @@
 # Changelog
+## 1.2.0 - 2022-07-09
+### Changes
+- Add description field to statistic links
+- Add support for result greater or less than filtering
+- Add info to AthleteLimitedSerializer and limit info values
+- Change dry-rest-permissions to supported fork
+- Fix licence check when licence type is not specified
+
+### Updating notes
+Includes database changes, run migrations
+- Updated StatisticsLink model
+
 ## 1.1.0 - 2022-05-27
 ### Changes
 - Remove support for Python 3.6
