@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.contrib.auth.models import Group, User
 from django.test import TestCase, override_settings
 from rest_framework import status
@@ -523,6 +524,18 @@ class CompetitionTestCase(ResultsTestCase):
         self.object.save()
         response = self._test_update(user=self.organization_user, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_competition_patch_future_time_with_staffuser(self):
+        response = self._test_patch(
+            user=self.staff_user,
+            data={'date_end': (self.object.event.date_end + timedelta(days=1)).strftime('%Y-%m-%d')})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_competition_patch_past_time_with_staffuser(self):
+        response = self._test_patch(
+            user=self.staff_user,
+            data={'date_start': (self.object.event.date_start + timedelta(days=-1)).strftime('%Y-%m-%d')})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_competition_update_with_normal_user(self):
         response = self._test_update(user=self.user, data=self.newdata)

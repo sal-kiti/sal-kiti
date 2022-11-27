@@ -107,6 +107,23 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             'event', 'event_info', 'type', 'type_info', 'level', 'level_info', 'layout', 'locked', 'public',
             'trial', 'approved', 'permissions')
 
+    def _check_dates(self, data):
+        """
+        Raises ValidationError if competition dates are incorrect
+        """
+        if 'date_end' in data and 'date_start' in data and data['date_end'] < data['date_start']:
+            raise serializers.ValidationError(_('Start date may not be later than End date.'))
+        if 'event' in data:
+            event = data['event']
+        elif self.instance.event:
+            event = self.instance.event
+        else:
+            event = None
+        if event and 'date_start' in data and data['date_start'] < event.date_start:
+            raise serializers.ValidationError(_('Start date cannot be before event start date.'))
+        if event and 'date_end' in data and data['date_end'] > event.date_end:
+            raise serializers.ValidationError(_('End date cannot be later than event end date.'))
+
     def validate(self, data):
         """
         Checks permissions to create or modify competitions.
@@ -117,8 +134,7 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         user = self.context['request'].user
         if not user.is_authenticated:
             raise serializers.ValidationError(_('User not authenticated'), 403)
-        if 'date_end' in data and 'date_start' in data and data['date_end'] < data['date_start']:
-            raise serializers.ValidationError(_('Start date may not be later than End date.'))
+        self._check_dates(data)
         if user.is_superuser or user.is_staff:
             return data
         if (not (self.instance and self.instance.organization.group in user.groups.all()) and
