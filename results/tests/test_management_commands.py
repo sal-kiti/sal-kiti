@@ -27,8 +27,15 @@ class Approve(TestCase):
 
     def test_approve_objects_within_date_limit(self):
         self.user = User.objects.create(username='logger')
-        ResultFactory.create(approved=False, competition__locked=False, competition__event__locked=False)
+        result = ResultFactory.create(approved=False, competition__locked=False, competition__event__locked=False)
         call_command('approve', days=0, result=True, record=True, event=True, competition=True, verbosity=0)
         self.assertEqual(Result.objects.filter(approved=False).count(), 0)
+        self.assertEqual(Event.objects.filter(locked=False).count(), 1)
+        self.assertEqual(Competition.objects.filter(locked=False).count(), 1)
+        result.competition.date_end = result.competition.date_start
+        result.competition.save()
+        result.competition.event.date_end = result.competition.event.date_start
+        result.competition.event.save()
+        call_command('approve', days=0, result=True, record=True, event=True, competition=True, verbosity=0)
         self.assertEqual(Event.objects.filter(locked=False).count(), 0)
         self.assertEqual(Competition.objects.filter(locked=False).count(), 0)

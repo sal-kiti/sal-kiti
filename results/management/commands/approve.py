@@ -83,7 +83,7 @@ class Command(BaseCommand):
 
     def lock_competitions(self, date_limit):
         """Lock past competitions which have not been modified during date limit"""
-        for competition in Competition.objects.filter(end_start__lte=date_limit,
+        for competition in Competition.objects.filter(date_end__lte=date_limit,
                                                       updated_at__lt=date_limit,
                                                       locked=False):
             if Result.objects.filter(
@@ -95,7 +95,7 @@ class Command(BaseCommand):
 
     def lock_events(self, date_limit):
         """Lock past events which have not been modified during date limit"""
-        for event in Event.objects.filter(end_start__lte=date_limit,
+        for event in Event.objects.filter(date_end__lte=date_limit,
                                           updated_at__lt=date_limit,
                                           locked=False):
             if Competition.objects.filter(event=event, updated_at__lt=date_limit).exclude(locked=True).count() == 0:
