@@ -44,7 +44,7 @@ class AthleteViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter,
                        DjangoFilterBackend]
     search_fields = ('first_name', 'last_name', 'sport_id')
-    filterset_fields = ['sport_id', 'first_name', 'last_name']
+    filterset_fields = ['sport_id', 'first_name', 'last_name', 'organization__id', 'organization__abbreviation']
 
     def get_serializer_class(self):
         """
