@@ -58,7 +58,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         """
         data = super().to_representation(instance)
         user = self.context['request'].user
-        if not user.is_superuser and not user.is_staff and instance.organization not in user.groups.all():
+        if not user.is_superuser and not user.is_staff and instance.organization.group not in user.groups.all():
             for field in ['locked', 'optional_dates', 'notes', 'safety_plan', 'international', 'toc_agreement']:
                 data.pop(field, None)
         return data
