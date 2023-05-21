@@ -158,7 +158,7 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Result.objects.all()
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('competition__start_date', 'category', 'position', 'result')
+    ordering_fields = ('competition__date_start', 'category', 'position', 'result')
     ordering = ('-result')
     serializer_class = ResultLimitedSerializer
 
