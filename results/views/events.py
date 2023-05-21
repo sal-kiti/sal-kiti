@@ -6,7 +6,7 @@ from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 from results.models.events import Event, EventContact
 from results.serializers.events import EventSerializer, EventContactSerializer
@@ -59,8 +59,10 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     filter_backends = [filters.DjangoFilterBackend,
+                       OrderingFilter,
                        SearchFilter]
     filterset_class = EventFilter
+    ordering_fields = ['date_start', 'name']
     search_fields = ('name', 'organization__name', 'organization__abbreviation')
 
     def get_queryset(self):

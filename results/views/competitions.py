@@ -6,7 +6,7 @@ from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 from results.models.competitions import Competition, CompetitionLevel, CompetitionType, CompetitionResultType
 from results.models.competitions import CompetitionLayout
@@ -63,8 +63,10 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     filter_backends = [filters.DjangoFilterBackend,
+                       OrderingFilter,
                        SearchFilter]
     filterset_class = CompetitionFilter
+    ordering_fields = ['date_start', 'name']
     search_fields = ('name', 'organization__name', 'organization__abbreviation')
 
     def get_queryset(self):
