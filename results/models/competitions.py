@@ -71,6 +71,7 @@ class CompetitionLevel(LogChangesMixing, models.Model):
     abbreviation = models.CharField(max_length=15, unique=True, verbose_name=_('Abbreviation'))
     order = models.SmallIntegerField(default=0, verbose_name=_('Order'))
     requirements = models.CharField(blank=True, max_length=100, verbose_name=_('Requirements'))
+    area_competition = models.BooleanField(default=False, verbose_name=_('Area competition'))
     require_approval = models.BooleanField(default=False, verbose_name=_('Require approved competition to add results'))
     historical = models.BooleanField(default=False, verbose_name=_('Historical'))
 
@@ -267,8 +268,9 @@ class Competition(LogChangesMixing, models.Model):
     @authenticated_users
     def has_object_write_permission(self, request):
         if ((request.user.is_staff or request.user.is_superuser) or
-                (self.organization.group in request.user.groups.all() and
-                    self.event.organization.group in request.user.groups.all() and
+                (self.organization.is_area_manager(request.user)
+                 and self.event.organization.is_area_manager(request.user)) or
+                (self.organization.is_manager(request.user) and self.event.organization.is_manager(request.user) and
                     not self.locked and not self.event.locked)):
             return True
         return False
@@ -276,7 +278,8 @@ class Competition(LogChangesMixing, models.Model):
     @authenticated_users
     def has_object_update_permission(self, request):
         if ((request.user.is_staff or request.user.is_superuser) or
-                (self.organization.group in request.user.groups.all() and
+                self.organization.is_area_manager(request.user) or
+                (self.organization.is_manager(request.user) and
                     not self.locked and not self.event.locked)):
             return True
         return False

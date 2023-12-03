@@ -56,16 +56,16 @@ class Event(LogChangesMixing, models.Model):
     @authenticated_users
     def has_object_write_permission(self, request):
         if (request.user.is_staff or request.user.is_superuser or
-                self.organization.group in request.user.groups.all() and
-                not self.locked):
+                self.organization.is_area_manager(request.user) or
+                self.organization.is_manager(request.user) and not self.locked):
             return True
         return False
 
     @authenticated_users
     def has_object_update_permission(self, request):
         if (request.user.is_staff or request.user.is_superuser or
-                self.organization.group in request.user.groups.all() and
-                not self.locked):
+                self.organization.is_area_manager(request.user) or
+                self.organization.is_manager(request.user) and not self.locked):
             return True
         return False
 

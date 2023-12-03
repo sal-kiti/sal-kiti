@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
 from results.models.events import Event
+from results.models.organizations import Area
 from results.tests.factories.events import EventFactory
 from results.tests.utils import ResultsTestCase
 from results.views.events import EventViewSet
@@ -72,6 +73,13 @@ class EventTestCase(ResultsTestCase):
     def test_event_update_with_organizational_user_locked(self):
         response = self._test_update(user=self.organization_user, data=self.newdata)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_event_update_with_area_user_locked(self):
+        area = Area.objects.create(name="Area 1", abbreviation="area1")
+        self.user.groups.add(area.group)
+        self.object.organization.areas.add(area)
+        response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_event_update_with_normal_user(self):
         response = self._test_update(user=self.user, data=self.newdata)

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from dry_rest_permissions.generics import allow_staff_or_superuser
 
@@ -50,6 +51,19 @@ class Area(LogChangesMixing, models.Model):
         return False
 
 
+
+class OrganizationManager(models.Manager):
+    def get_user_organizations(self, user):
+        """Get list of organizations which user has access either directly or through Area
+
+        :param user: user object
+        :return: queryset
+        """
+        groups = user.groups.all()
+        return self.filter(Q(group__in=groups) | Q(areas__group__in=groups))
+
+
+
 class Organization(LogChangesMixing, models.Model):
     """Stores a single organization.
 
@@ -65,6 +79,8 @@ class Organization(LogChangesMixing, models.Model):
     sport_id = models.CharField(max_length=15, unique=True, null=True, blank=True, verbose_name=_('Sport ID'))
     historical = models.BooleanField(default=False, verbose_name=_('Historical'))
 
+    objects = OrganizationManager()
+
     def __str__(self):
         return '%s - %s' % (self.abbreviation, self.name)
 
@@ -73,6 +89,34 @@ class Organization(LogChangesMixing, models.Model):
         verbose_name = _('Organization')
         verbose_name_plural = _('Organizations')
         unique_together = ('name', 'abbreviation')
+
+    def is_manager(self, user):
+        """Check if user is organization manager either directly or through Area
+
+        :param user: user object
+        :return: bool
+        """
+        groups = user.groups.all()
+        try:
+            Organization.objects.filter(Q(group__in=groups) | Q(areas__group__in=groups)).get(pk=self.pk)
+            return True
+        except Organization.DoesNotExist:
+            pass
+        return False
+
+    def is_area_manager(self, user):
+        """Check if user has is area manager for the organization
+
+        :param user: user object
+        :return: bool
+        """
+        groups = user.groups.all()
+        try:
+            Organization.objects.filter(areas__group__in=groups).get(pk=self.pk)
+            return True
+        except Organization.DoesNotExist:
+            pass
+        return False
 
     @staticmethod
     def has_read_permission(request):

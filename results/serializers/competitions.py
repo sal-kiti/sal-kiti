@@ -22,7 +22,7 @@ class CompetitionLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompetitionLevel
         fields = (
-            'id', 'name', 'abbreviation', 'historical', 'order', 'requirements', 'permissions')
+            'id', 'name', 'abbreviation', 'area_competition', 'historical', 'order', 'requirements', 'permissions')
 
 
 class CompetitionTypeSerializer(serializers.ModelSerializer):
@@ -135,7 +135,10 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         if not user.is_authenticated:
             raise serializers.ValidationError(_('User not authenticated'), 403)
         self._check_dates(data)
-        if user.is_superuser or user.is_staff:
+        if user.is_superuser or user.is_staff or ((not self.instance or
+                self.instance.organization.is_area_manager(user) and self.instance.level.area_competition)
+                and ('organization' not in data or
+                     data['organization'].is_area_manager(user) and data['level'].area_competition)):
             return data
         if (not (self.instance and self.instance.organization.group in user.groups.all()) and
                 ('organization' not in data or data['organization'].group not in user.groups.all())):

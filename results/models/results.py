@@ -79,6 +79,7 @@ class Result(LogChangesMixing, models.Model):
     @authenticated_users
     def has_object_update_permission(self, request):
         if (request.user.is_staff or request.user.is_superuser or
+                self.competition.organization.is_area_manager(request.user) or
                 (self.competition.organization.group in request.user.groups.all() and
                  not (self.competition.locked or self.approved))):
             return True
@@ -87,6 +88,7 @@ class Result(LogChangesMixing, models.Model):
     @authenticated_users
     def has_object_write_permission(self, request):
         if (request.user.is_staff or request.user.is_superuser or
+                self.competition.organization.is_area_manager(request.user) or
                 (self.competition.organization.group in request.user.groups.all() and
                  not (self.competition.locked or self.approved))):
             return True

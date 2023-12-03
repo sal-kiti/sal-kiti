@@ -7,6 +7,7 @@ from rest_framework.test import force_authenticate
 
 from results.models.competitions import CompetitionLevel, CompetitionType, CompetitionResultType, Competition
 from results.models.competitions import CompetitionLayout
+from results.models.organizations import Area
 from results.tests.factories.competitions import CompetitionFactory, CompetitionLevelFactory, CompetitionTypeFactory
 from results.tests.factories.competitions import CompetitionResultTypeFactory, CompetitionLayoutFactory
 from results.tests.utils import ResultsTestCase
@@ -518,6 +519,15 @@ class CompetitionTestCase(ResultsTestCase):
     def test_competition_update_with_organizational_user_locked(self):
         response = self._test_update(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_area_competition_update_with_area_user(self):
+        self.object.level.area_competition = True
+        self.object.level.save()
+        area = Area.objects.create(name="Area 1", abbreviation="area1")
+        self.user.groups.add(area.group)
+        self.object.organization.areas.add(area)
+        response = self._test_update(user=self.user, data=self.newdata, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_competition_update_with_organizational_user_event_locked(self):
         self.object.locked = False

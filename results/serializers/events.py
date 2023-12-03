@@ -58,7 +58,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         """
         data = super().to_representation(instance)
         user = self.context['request'].user
-        if not user.is_superuser and not user.is_staff and instance.organization.group not in user.groups.all():
+        if not user.is_superuser and not user.is_staff and not instance.organization.is_manager(user):
             for field in ['locked', 'optional_dates', 'notes', 'safety_plan', 'international', 'toc_agreement']:
                 data.pop(field, None)
         return data
@@ -81,7 +81,8 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             raise serializers.ValidationError(_('User not authenticated'), 403)
         if 'date_end' in data and 'date_start' in data and data['date_end'] < data['date_start']:
             raise serializers.ValidationError(_('Start date may not be later than End date.'))
-        if user.is_superuser or user.is_staff:
+        if user.is_superuser or user.is_staff or ((not self.instance or self.instance.organization.is_area_manager(user))
+                and ('organization' not in data or data['organization'].is_area_manager(user))):
             return data
         if (not (self.instance and self.instance.organization.group in user.groups.all()) and
                 ('organization' not in data or data['organization'].group not in user.groups.all())):

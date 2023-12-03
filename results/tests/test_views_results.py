@@ -10,6 +10,7 @@ from rest_framework.test import force_authenticate
 
 from results.models.athletes import AthleteInformation
 from results.models.categories import CategoryForCompetitionType
+from results.models.organizations import Area
 from results.models.results import Result, ResultPartial
 from results.tests.factories.athletes import AthleteFactory
 from results.tests.factories.competitions import CompetitionResultTypeFactory
@@ -30,6 +31,11 @@ class ResultTestCase(TestCase):
             gender="M", date_of_birth=date.today() - relativedelta(years=18)))
         self.object.competition.organization.group = self.group
         self.object.competition.organization.save()
+        self.object.competition.level.area_competition = True
+        self.object.competition.level.save()
+        self.area_group = Group.objects.create(name="AreaGroup")
+        self.area = Area.objects.create(name="Area", abbreviation="A", group=self.area_group)
+        self.object.competition.organization.areas.add(self.area)
         self.athlete = AthleteFactory.create(gender="M", date_of_birth=date.today() - relativedelta(years=18))
         self.data = {'competition': self.object.competition.id, 'athlete': self.object.athlete.id,
                      'first_name': self.object.athlete.first_name, 'last_name': self.object.athlete.last_name,
@@ -202,6 +208,32 @@ class ResultTestCase(TestCase):
         self.object.competition.save()
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def _test_area_approve(self, data=None):
+        self.object.competition.locked = False
+        self.object.competition.save()
+        self.object.approved = False
+        self.object.save()
+        if data is None:
+            data = {"approved": True}
+        self.object.organization.areas.add(self.area)
+        request = self.factory.put(self.url + str(self.object.pk) + '/', data)
+        force_authenticate(request, user=self.user)
+        view = self.viewset.as_view(actions={'put': 'partial_update'})
+        return view(request, pk=self.object.pk)
+
+    def test_result_approve_area_record_with_normal_user(self):
+        response = self._test_area_approve()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.object.refresh_from_db()
+        self.assertFalse(self.object.approved)
+
+    def test_record_approve_area_record_with_area_user(self):
+        self.user.groups.add(self.area_group)
+        response = self._test_area_approve()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.object.refresh_from_db()
+        self.assertTrue(self.object.approved)
 
     def test_result_create_with_normal_user(self):
         response = self._test_create(user=self.user, data=self.newdata, locked=True)

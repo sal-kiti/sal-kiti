@@ -23,16 +23,45 @@ class ResultPartialSerializer(serializers.ModelSerializer):
         fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text', 'permissions')
         extra_kwargs = {'code': {'required': False}}
 
+    def _check_permission(self, data, user):
+        """
+        Check permissions to add or modify a result.
+
+        Superuser, staff always have access.
+        Area manager has access if competition is area competition and competition nis not locked.
+        Organization managers have access if competition is not locked or a result approved.
+
+        :param data:
+        :param user:
+        :return:
+        """
+        if user.is_superuser or user.is_staff:
+            return True
+        result_data = data['result'] if data['result'] else None
+        result_instance = self.instance.result if self.instance else None
+        if (result_instance and result_instance.competition.locked) or result_data and result_data.competition.locked:
+            return False
+        if ((not result_instance or (result_instance.approved and
+                                     (not self.instance.competition.organization.is_area_manager(user) or
+                                      not self.instance.competition.level.area_competition))) and
+            (not result_data or (result_data.approved and
+                                 (not result_data.competition.organization.is_area_manager(user) or
+                                  not result_data.competition.level.area_competition)))):
+            return False
+        if ((not result_instance or not result_instance.competition.organization.is_manager(user)) and
+                (not result_data or not result_data.competition.organization.is_manager(user))):
+            return False
+        return True
+
+
     def validate(self, data):
         """
         Validates:
          - permissions to create or edit the partial result
          - value limits
         """
-        if (not (self.context['request'].user.is_superuser or self.context['request'].user.is_staff) and
-            ((self.instance and (self.instance.result.competition.locked or self.instance.result.approved)) or
-                data['result'].competition.locked or data['result'].approved or
-                data['result'].competition.organization.group not in self.context['request'].user.groups.all())):
+        user = self.context['request'].user
+        if not self._check_permission(data, user):
             raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
         if data['type'].competition_type != data['result'].competition.type:
             raise serializers.ValidationError(_('Partial result type does not match competition type.'))
@@ -339,6 +368,36 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                     if partial['value'] > max_result:
                         raise serializers.ValidationError(_('A result is too high.'))
 
+    def _check_permission(self, data, user):
+        """
+        Check permissions to add or modify a result.
+
+        Superuser, staff always have access.
+        Area manager has access if competition is area competition and competition is not locked.
+        Organization managers have access if competition is not locked or a result approved.
+
+        :param data:
+        :param user:
+        :return:
+        """
+        if user.is_superuser or user.is_staff:
+            return True
+        competition_data = data['competition'] if 'competition' in data else None
+        competition_instance = self.instance.competition if self.instance else None
+        if (competition_data and competition_data.locked) or competition_instance and competition_instance.locked:
+            return False
+        if ((not competition_instance or (not competition_instance.approved and competition_instance.level.require_approval and
+                                     (not competition_instance.organization.is_area_manager(user) or
+                                      not competition_instance.level.area_competition))) and
+            (not competition_data or (not competition_data.approved and competition_data.level.require_approval and
+                                 (not competition_data.organization.is_area_manager(user) or
+                                  not competition_data.level.area_competition)))):
+            return False
+        if ((not competition_instance or not competition_instance.organization.is_manager(user)) and
+                (not competition_data or not competition_data.organization.is_manager(user))):
+            return False
+        return True
+
     def validate(self, data):
         """
         Validates:
@@ -352,14 +411,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
          - value limits for the result
          - partial results
         """
-        if (not (self.context['request'].user.is_superuser or self.context['request'].user.is_staff) and
-            ((self.instance and
-              (self.instance.competition.locked or self.instance.approved or
-               (self.instance.competition.level.require_approval and not self.instance.competition.approved))) or
-                (data['competition'].locked or
-                 (data['competition'].level.require_approval and not data['competition'].approved) or
-                 ('approved' in data and data['approved']) or
-                 data['competition'].organization.group not in self.context['request'].user.groups.all()))):
+        user = self.context['request'].user
+        if not self._check_permission(data, user):
             raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
         self._check_team_status(data)
         athletes, team = self._get_athletes(data)
@@ -375,8 +428,10 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if result is not None:
             self._check_value_limits(result, category, competition.type)
         self._check_partial(data, competition, category)
-        if 'approved' in data and data['approved'] and not (self.context['request'].user.is_superuser or
-                                                            self.context['request'].user.is_staff):
+        if ('approved' in data and data['approved'] and
+            not (user.is_superuser or user.is_staff or
+                 (competition.organization.is_area_manager(user) and
+                  competition.level.area_competition))):
             raise serializers.ValidationError(_("No permission to approve results."))
         return data
 
