@@ -8,9 +8,13 @@ from results.mixins.change_log import LogChangesMixing
 
 class Area(LogChangesMixing, models.Model):
     """Stores a single organizational area.
+
+    Related to
+     - :class:`django:django.contrib.auth.models.Group`
     """
     name = models.CharField(max_length=100, unique=True, verbose_name=_('Name'))
     abbreviation = models.CharField(max_length=100, unique=True, verbose_name=_('Abbreviation'))
+    group = models.OneToOneField(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Group'))
 
     def __str__(self):
         return self.abbreviation
