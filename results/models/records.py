@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from dry_rest_permissions.generics import allow_staff_or_superuser
+from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
 
 from results.mixins.change_log import LogChangesMixing
 from results.models.categories import Category
@@ -123,9 +123,9 @@ class Record(LogChangesMixing, models.Model):
         return True
 
     @staticmethod
-    @allow_staff_or_superuser
+    @authenticated_users
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -133,6 +133,8 @@ class Record(LogChangesMixing, models.Model):
 
     @allow_staff_or_superuser
     def has_object_update_permission(self, request):
+        if self.level.area and self.level.area.group and self.level.area.group in request.user.groups.all():
+            return True
         return False
 
     @staticmethod

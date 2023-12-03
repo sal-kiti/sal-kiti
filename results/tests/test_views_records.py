@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
@@ -61,7 +61,8 @@ class RecordsTestCase(TestCase):
         self.record_level_partial.types.add(self.competition.type)
         self.record_level.levels.add(self.competition.level)
         self.record_level_partial.levels.add(self.competition.level)
-        self.area = Area.objects.create(name="Area", abbreviation="A")
+        self.area_group = Group.objects.create(name="AreaGroup")
+        self.area = Area.objects.create(name="Area", abbreviation="A", group=self.area_group)
         self.record_level_area = RecordLevel.objects.create(name="Area", abbreviation="A", area=self.area, base=True,
                                                             team=True, decimals=True)
         self.record_level_area.types.add(self.competition.type)
@@ -280,6 +281,37 @@ class RecordsTestCase(TestCase):
     def test_record_update_with_normal_user(self):
         response = self._test_update(user=self.user, data=self.newdata)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def _test_area_approve(self, data=None):
+        if data is None:
+            data = {"approved": True}
+        self.athlete.organization.areas.add(self.area)
+        self.result = ResultFactory.create(
+            competition=self.competition_later, athlete=self.athlete, category=self.category_W, result=150,
+            organization=self.athlete.organization)
+        record = Record.objects.filter(level__area__isnull=False).first()
+        request = self.factory.put(self.url + str(record.pk) + '/', data)
+        force_authenticate(request, user=self.user)
+        view = self.viewset.as_view(actions={'put': 'partial_update'})
+        record.refresh_from_db()
+        return view(request, pk=record.pk)
+
+    def test_record_approve_area_record_with_normal_user(self):
+        response = self._test_area_approve()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(Record.objects.filter(level__area__isnull=False).first().approved)
+
+    def test_record_approve_area_record_with_area_user(self):
+        self.user.groups.add(self.area_group)
+        response = self._test_area_approve()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Record.objects.filter(level__area__isnull=False).first().approved)
+
+    def test_record_update_area_record_with_area_user(self):
+        self.user.groups.add(self.area_group)
+        response = self._test_area_approve(data={"approved": True, 'category': self.object.category.id})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['non_field_errors'][0], "No permission to alter or create a record.")
 
     def test_record_create_without_user(self):
         response = self._test_create(user=None, data=self.newdata)
