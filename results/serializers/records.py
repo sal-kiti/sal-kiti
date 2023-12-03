@@ -25,7 +25,7 @@ class RecordSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if  user.is_superuser or user.is_staff:
             return data
-        if not self.instance or list(data.keys()) != ['approved'] or not (
+        if not self.instance or [i for i in list(data.keys()) if i not in ['approved', 'historical']] != []  or not (
                 self.instance.level.area and self.instance.level.area.group and
                 self.instance.level.area.group in user.groups.all()):
             raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)

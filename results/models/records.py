@@ -131,11 +131,17 @@ class Record(LogChangesMixing, models.Model):
     def has_object_write_permission(self, request):
         return False
 
+    @authenticated_users
     @allow_staff_or_superuser
     def has_object_update_permission(self, request):
         if self.level.area and self.level.area.group and self.level.area.group in request.user.groups.all():
             return True
         return False
+
+    @authenticated_users
+    @allow_staff_or_superuser
+    def has_object_destroy_permission(self, request):
+        return self.has_object_update_permission(request)
 
     @staticmethod
     @allow_staff_or_superuser

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from dry_rest_permissions.generics import DRYPermissionsField
 
 from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.records import Record
@@ -44,6 +45,8 @@ class RecordListSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         slug_field='abbreviation'
     )
 
+    permissions = DRYPermissionsField()
+
     def get_queryset(self):
         """
         Filter to active records
@@ -73,4 +76,4 @@ class RecordListSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     class Meta:
         model = Record
         fields = ('id', 'result', 'partial_result', 'level', 'type', 'category', 'approved',
-                  'date_start', 'date_end', 'info', 'historical')
+                  'date_start', 'date_end', 'info', 'historical', 'permissions')
