@@ -113,7 +113,7 @@ class AreaTestCase(ResultsTestCase):
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = AreaFactory.create()
         self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
-        self.newdata = {'name': 'Club Zero', 'abbreviation': 'Zero'}
+        self.newdata = {'name': 'Area Zero', 'abbreviation': 'AZ'}
         self.url = '/api/area/'
         self.viewset = AreaViewSet
         self.model = Area
@@ -181,6 +181,13 @@ class AreaTestCase(ResultsTestCase):
     def test_area_create_with_normal_user(self):
         response = self._test_create(user=self.user, data=self.newdata)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_area_group_is_created(self):
+        self.assertEqual(Group.objects.all().count(), 1)
+        self._test_create(user=self.superuser, data=self.newdata)
+        self.assertEqual(Group.objects.all().count(), 2)
+        self.assertEqual(Group.objects.get(id=2).name, 'area_AZ')
+        self.assertEqual(Group.objects.get(id=2).area.name, 'Area Zero')
 
     def test_area_delete_with_user(self):
         response = self._test_delete(user=self.user)

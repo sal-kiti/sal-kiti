@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from results.models.organizations import Organization
+from results.models.organizations import Area, Organization
 from results.models.results import Result, ResultPartial
 from results.utils.records import check_records, check_records_partial
 
@@ -35,6 +35,15 @@ def create_organization_group(sender, instance=None, created=False, **kwargs):
     """ Creates group when organization is created."""
     group_name = 'club_' + instance.abbreviation + '_' + str(instance.pk)
     if created and not instance.external and not instance.group and Group.objects.filter(name=group_name).count() == 0:
+        group = Group.objects.create(name=group_name)
+        instance.group = group
+        instance.save()
+
+@receiver(post_save, sender=Area)
+def create_organization_group(sender, instance=None, created=False, **kwargs):
+    """ Creates group when area is created."""
+    group_name = 'area_' + instance.abbreviation
+    if created and not instance.group and Group.objects.filter(name=group_name).count() == 0:
         group = Group.objects.create(name=group_name)
         instance.group = group
         instance.save()
