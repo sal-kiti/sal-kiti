@@ -1,4 +1,20 @@
 # Changelog
+## 1.3.0 - 2023-12-17
+### Changes
+- Add support for area managers
+- Remove support for Python 3.7
+- Update requirements
+- Add validation that competition dates are within event dates
+- Lock competitions and events based on the end date, not start date
+- Add organization id and abbreviation to Athletes filter
+- Add ordering filter to events and competitions
+- Fix permission group check in events serializer
+
+### Updating notes
+Includes database changes, run migrations
+- Add groups to Area model
+- Add area_competition option to competition levels
+
 ## 1.2.0 - 2022-07-09
 ### Changes
 - Add description field to statistic links
