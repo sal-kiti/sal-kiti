@@ -41,7 +41,7 @@ admin.site.register(Athlete, AthleteAdmin)
 class AthleteInformationAdmin(admin.ModelAdmin):
     autocomplete_fields = ["athlete"]
     list_display = ["athlete", "type", "value", "date_start", "date_end", "visibility"]
-    search_fields = ["athlete"]
+    search_fields = ["athlete__sport_id", "athlete__first_name", "athlete__last_name"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -69,7 +69,7 @@ admin.site.register(Category, CategoryAdmin)
 class CategoryForCompetitionTypeAdmin(admin.ModelAdmin):
     autocomplete_fields = ["category", "type"]
     list_display = ["category", "type", "max_result", "min_result"]
-    search_fields = ["category", "type"]
+    search_fields = ["category__abbreviation", "category__name", "type__abbreviation", "type__name"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -157,7 +157,7 @@ admin.site.register(Organization, OrganizationAdmin)
 class RecordAdmin(admin.ModelAdmin):
     autocomplete_fields = ["result", "partial_result", "level", "type", "category"]
     list_display = ["result", "partial_result", "level", "type", "category", "date_start", "date_end"]
-    search_fields = ["result__competition__name"]
+    search_fields = ["result__competition__name", "result__result", "result__competition__date_start"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
