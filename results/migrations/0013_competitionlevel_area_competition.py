@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('results', '0012_area_group'),
+        ("results", "0012_area_group"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='competitionlevel',
-            name='area_competition',
-            field=models.BooleanField(default=False, verbose_name='Area competition'),
+            model_name="competitionlevel",
+            name="area_competition",
+            field=models.BooleanField(default=False, verbose_name="Area competition"),
         ),
     ]

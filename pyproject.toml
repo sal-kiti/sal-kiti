@@ -1,0 +1,6 @@
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+
+[tool.black]
+line-length = 119

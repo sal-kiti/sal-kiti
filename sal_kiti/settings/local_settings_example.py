@@ -8,31 +8,31 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import sys
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'change_me'
+SECRET_KEY = "change_me"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 # List of allowed hosts
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ["localhost"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost"]
-CORS_ALLOWED_ORIGINS = ['http://localhost']
+CORS_ALLOWED_ORIGINS = ["http://localhost"]
 CORS_ALLOW_CREDENTIALS = True
 
-FAKER_LOCALE = 'en_US'
+FAKER_LOCALE = "en_US"
 
 # Write log as this user when running management commands
 DEFAULT_LOG_USER_ID = 1
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydb',
-        'USER': 'mydbuser',
-        'PASSWORD': 'mydbpassword',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mydb",
+        "USER": "mydbuser",
+        "PASSWORD": "mydbpassword",
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -49,15 +49,15 @@ EVENT_PUBLISH_REQUIRES_STAFF = True
 # CHECK_COMPETITION_REQUIREMENTS = True
 
 # Gender and date of birth are available through API to these users
-UNMASKED_ATHLETE_USERS = ['admin']
+UNMASKED_ATHLETE_USERS = ["admin"]
 
 # Limit visiblity of non public events and competitions, possible values: authenticated / staff / None (no limits)
 LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION = "authenticated"
 
 # memcached is recommended for production use
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         # 'LOCATION': '127.0.0.1:11211',
     }
@@ -66,29 +66,26 @@ CACHES = {
 # Automatically create auth tokens for created users
 CREATE_AUTH_TOKENS = True
 
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 60*5
-CACHE_MIDDLEWARE_KEY_PREFIX = ''
+CACHE_MIDDLEWARE_ALIAS = "default"
+CACHE_MIDDLEWARE_SECONDS = 60 * 5
+CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'no-reply@example.org'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@example.org"
 
-STATIC_ROOT = '/path/to/static/'
+STATIC_ROOT = "/path/to/static/"
 
-LOCALE_PATHS = [
-    '/path/to/sal-sal_kiti/locale',
-    '/path/to/sal-sal_kiti/results/locale'
-]
+LOCALE_PATHS = ["/path/to/sal-sal_kiti/locale", "/path/to/sal-sal_kiti/results/locale"]
 
 SUOMISPORT = {
-    'BASE_URL': 'https://www.suomisport.fi/api/public/v2/',
-    'CLIENT_ID': '',
-    'CLIENT_SECRET': '',
-    'ORGANIZATION_ID': '',
-    'TOKEN_URL': 'https://www.suomisport.fi/oauth2/token',
-    'LICENCE_TYPES': ['Competition'],
-    'FETCH_SIZE': 1000
+    "BASE_URL": "https://www.suomisport.fi/api/public/v2/",
+    "CLIENT_ID": "",
+    "CLIENT_SECRET": "",
+    "ORGANIZATION_ID": "",
+    "TOKEN_URL": "https://www.suomisport.fi/oauth2/token",
+    "LICENCE_TYPES": ["Competition"],
+    "FETCH_SIZE": 1000,
 }
 
-if 'test' in sys.argv:
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+if "test" in sys.argv:
+    DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3"}

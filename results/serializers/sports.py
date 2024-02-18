@@ -8,8 +8,9 @@ class SportSerializer(serializers.ModelSerializer):
     """
     Serializer for sports
     """
+
     permissions = DRYPermissionsField()
 
     class Meta:
         model = Sport
-        fields = ('id', 'name', 'abbreviation', 'order', 'historical', 'permissions')
+        fields = ("id", "name", "abbreviation", "order", "historical", "permissions")

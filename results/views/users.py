@@ -16,8 +16,10 @@ def current_user(request):
         last_name = request.user.last_name
         email = request.user.email
         manager = list(
-            Organization.objects.filter(areas__group__in=request.user.groups.all()).order_by("id").values_list(
-                "id", flat=True))
+            Organization.objects.filter(areas__group__in=request.user.groups.all())
+            .order_by("id")
+            .values_list("id", flat=True)
+        )
     else:
         first_name = ""
         last_name = ""
@@ -25,12 +27,12 @@ def current_user(request):
         manager = []
 
     data = {
-        'is_authenticated': request.user.is_authenticated,
-        'is_superuser': request.user.is_superuser,
-        'is_staff': request.user.is_staff,
-        'first_name': first_name,
-        'last_name': last_name,
-        'email': email,
-        'manager': manager
+        "is_authenticated": request.user.is_authenticated,
+        "is_superuser": request.user.is_superuser,
+        "is_staff": request.user.is_staff,
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "manager": manager,
     }
     return JsonResponse(data)

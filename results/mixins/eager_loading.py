@@ -1,4 +1,3 @@
-
 class EagerLoadingMixin:
     """
     Mixin to select_related and prefetch_related queries

@@ -29,6 +29,7 @@ class AreaViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given area.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Area.objects.all()
     serializer_class = AreaSerializer
@@ -38,12 +39,13 @@ class OrganizationFilter(filters.FilterSet):
     """
     Custom filters for a competition.
     """
-    external = filters.BooleanFilter(field_name='external')
-    historical = filters.BooleanFilter(field_name='historical')
+
+    external = filters.BooleanFilter(field_name="external")
+    historical = filters.BooleanFilter(field_name="historical")
 
     class Meta:
         model = Organization
-        fields = ['abbreviation', 'external', 'historical']
+        fields = ["abbreviation", "external", "historical"]
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -67,6 +69,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given organization.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -77,7 +80,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         """
         Optionally restricts returned results to user's managed organizations.
         """
-        own = self.request.query_params.get('own', None)
+        own = self.request.query_params.get("own", None)
         if own:
             user = self.request.user
             if not user.is_superuser and not user.is_staff:

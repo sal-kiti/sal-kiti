@@ -1,20 +1,18 @@
 import json
 import logging
-
 from datetime import date
 
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
 from results.models.competitions import CompetitionLevel
+from results.models.statistics import StatisticsLink
 from results.tests.factories.competitions import CompetitionFactory
 from results.tests.factories.organizations import OrganizationFactory
 from results.tests.factories.results import ResultFactory
-
-from results.models.statistics import StatisticsLink
 from results.tests.factories.statistics import StatisticsLinkFactory
 from results.tests.utils import ResultsTestCase
 from results.views.statistics import StatisticsLinkViewSet
@@ -23,20 +21,26 @@ from results.views.statistics import StatisticsLinkViewSet
 class StatisticsLinkTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = StatisticsLinkFactory.create()
-        self.data = {'name': self.object.name, 'group': self.object.group, 'link': self.object.link,
-                     'public': self.object.public, 'highlight': self.object.highlight, 'order': self.object.order}
-        self.newdata = {'name': 'New Statistics Link', 'group': 'Old Group', 'link': '?new=link'}
-        self.url = '/api/statisticslinks/'
+        self.data = {
+            "name": self.object.name,
+            "group": self.object.group,
+            "link": self.object.link,
+            "public": self.object.public,
+            "highlight": self.object.highlight,
+            "order": self.object.order,
+        }
+        self.newdata = {"name": "New Statistics Link", "group": "Old Group", "link": "?new=link"}
+        self.url = "/api/statisticslinks/"
         self.viewset = StatisticsLinkViewSet
         self.model = StatisticsLink
 
     def test_statistics_link_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -114,8 +118,8 @@ class StatisticsLinkTestCase(ResultsTestCase):
 class StatisticsPohjolanMaljaTestCase(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.url = reverse('sal-pohjolan-malja', kwargs={'year': date.today().year})
-        self.logger = logging.getLogger('django.request')
+        self.url = reverse("sal-pohjolan-malja", kwargs={"year": date.today().year})
+        self.logger = logging.getLogger("django.request")
         self.previous_level = self.logger.getEffectiveLevel()
         self.logger.setLevel(logging.ERROR)
 
@@ -127,13 +131,13 @@ class StatisticsPohjolanMaljaTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_pohjolanmalja_access_object_with_normal_user(self):
-        user = User.objects.create(username='tester', first_name="Testname")
+        user = User.objects.create(username="tester", first_name="Testname")
         self.client.force_login(user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_pohjolanmalja_access_object_with_staff(self):
-        level = CompetitionLevel.objects.create(name='SM', abbreviation='SM')
+        level = CompetitionLevel.objects.create(name="SM", abbreviation="SM")
         org1 = OrganizationFactory.create(abbreviation="A", name="AN")
         org2 = OrganizationFactory.create(abbreviation="B", name="BN")
         competition = CompetitionFactory.create(level=level)
@@ -147,21 +151,7 @@ class StatisticsPohjolanMaljaTestCase(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = [
-            {
-                "organization": {
-                    "id": 1,
-                    "name": "AN",
-                    "abbreviation": "A"
-                },
-                "value": 12
-            },
-            {
-                "organization": {
-                    "id": 2,
-                    "name": "BN",
-                    "abbreviation": "B"
-                },
-                "value": 4
-            }
+            {"organization": {"id": 1, "name": "AN", "abbreviation": "A"}, "value": 12},
+            {"organization": {"id": 2, "name": "BN", "abbreviation": "B"}, "value": 4},
         ]
         self.assertEqual(response.content.decode(), json.dumps({"results": data}))

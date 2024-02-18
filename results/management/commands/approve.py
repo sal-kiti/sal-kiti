@@ -1,10 +1,10 @@
 """
 Approve or lock objects from the database
 """
+
 import logging
 
 from dateutil.relativedelta import relativedelta
-
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -22,13 +22,17 @@ def _check_requirements(result):
         athletes = [result.athlete]
     else:
         athletes = result.team_members.all()
-    for requirement in competition.type.requirements.split(',') + competition.level.requirements.split(','):
+    for requirement in competition.type.requirements.split(",") + competition.level.requirements.split(","):
         if requirement.strip():
             for athlete in athletes:
-                if not athlete.organization.external and not athlete.info.filter(
+                if (
+                    not athlete.organization.external
+                    and not athlete.info.filter(
                         type=requirement.strip(),
                         date_start__lte=competition.date_start,
-                        date_end__gte=competition.date_start).count():
+                        date_end__gte=competition.date_start,
+                    ).count()
+                ):
                     return False
     return True
 
@@ -39,20 +43,40 @@ class Command(BaseCommand):
     verbosity = 0
 
     def add_arguments(self, parser):
-        parser.add_argument('-d', type=int, action='store', dest='days',
-                            help='Date limit for approval or locking, default 30.')
-        parser.add_argument('--result', action='store_true', dest='approve_results',
-                            help='Approve results which have not been modified during date limit')
-        parser.add_argument('--record', action='store_true', dest='approve_records',
-                            help='Approve records which have not been modified during date limit')
-        parser.add_argument('--event', action='store_true', dest='lock_events',
-                            help='Lock past events which have not been modified during date limit')
-        parser.add_argument('--competition', action='store_true', dest='lock_competitions',
-                            help='Lock past competitions which have not been modified during date limit')
-        parser.add_argument('-r', action='store_true', dest='check_requirements',
-                            help='Check competition type and level requirements for result approval')
-        parser.add_argument('-l', action='store_true', dest='list_only',
-                            help='List only, do not approve')
+        parser.add_argument(
+            "-d", type=int, action="store", dest="days", help="Date limit for approval or locking, default 30."
+        )
+        parser.add_argument(
+            "--result",
+            action="store_true",
+            dest="approve_results",
+            help="Approve results which have not been modified during date limit",
+        )
+        parser.add_argument(
+            "--record",
+            action="store_true",
+            dest="approve_records",
+            help="Approve records which have not been modified during date limit",
+        )
+        parser.add_argument(
+            "--event",
+            action="store_true",
+            dest="lock_events",
+            help="Lock past events which have not been modified during date limit",
+        )
+        parser.add_argument(
+            "--competition",
+            action="store_true",
+            dest="lock_competitions",
+            help="Lock past competitions which have not been modified during date limit",
+        )
+        parser.add_argument(
+            "-r",
+            action="store_true",
+            dest="check_requirements",
+            help="Check competition type and level requirements for result approval",
+        )
+        parser.add_argument("-l", action="store_true", dest="list_only", help="List only, do not approve")
 
     def output(self, text):
         if self.list_only:
@@ -63,7 +87,7 @@ class Command(BaseCommand):
             logger.info(text)
 
     def approve_results(self, date_limit):
-        """ Approve results which have not been modified during date limits"""
+        """Approve results which have not been modified during date limits"""
         for result in Result.objects.filter(updated_at__lt=date_limit, approved=False):
             if _check_requirements(result):
                 result.approved = True
@@ -74,7 +98,7 @@ class Command(BaseCommand):
                 self.output("Requirements not met: %s" % result)
 
     def approve_records(self, date_limit):
-        """ Approve records which have not been modified during date limits"""
+        """Approve records which have not been modified during date limits"""
         for record in Record.objects.filter(updated_at__lt=date_limit, approved=False):
             record.approved = True
             self.output("Record approved: %s" % record)
@@ -83,11 +107,15 @@ class Command(BaseCommand):
 
     def lock_competitions(self, date_limit):
         """Lock past competitions which have not been modified during date limit"""
-        for competition in Competition.objects.filter(date_end__lte=date_limit,
-                                                      updated_at__lt=date_limit,
-                                                      locked=False):
-            if Result.objects.filter(
-                    competition=competition, updated_at__lt=date_limit).exclude(approved=True).count() == 0:
+        for competition in Competition.objects.filter(
+            date_end__lte=date_limit, updated_at__lt=date_limit, locked=False
+        ):
+            if (
+                Result.objects.filter(competition=competition, updated_at__lt=date_limit)
+                .exclude(approved=True)
+                .count()
+                == 0
+            ):
                 competition.locked = True
                 self.output("Competition locked: %s" % competition)
                 if not self.list_only:
@@ -95,9 +123,7 @@ class Command(BaseCommand):
 
     def lock_events(self, date_limit):
         """Lock past events which have not been modified during date limit"""
-        for event in Event.objects.filter(date_end__lte=date_limit,
-                                          updated_at__lt=date_limit,
-                                          locked=False):
+        for event in Event.objects.filter(date_end__lte=date_limit, updated_at__lt=date_limit, locked=False):
             if Competition.objects.filter(event=event, updated_at__lt=date_limit).exclude(locked=True).count() == 0:
                 event.locked = True
                 self.output("Event locked: %s" % event)
@@ -105,13 +131,13 @@ class Command(BaseCommand):
                     event.save()
 
     def handle(self, *args, **options):
-        days = options['days']
-        approve_results = options['approve_results']
-        approve_records = options['approve_records']
-        lock_competitions = options['lock_competitions']
-        lock_events = options['lock_events']
-        self.verbosity = options['verbosity']
-        self.list_only = options['list_only']
+        days = options["days"]
+        approve_results = options["approve_results"]
+        approve_records = options["approve_records"]
+        lock_competitions = options["lock_competitions"]
+        lock_events = options["lock_events"]
+        self.verbosity = options["verbosity"]
+        self.list_only = options["list_only"]
         # Set date range to one year if not given
         if days is None:
             days = 30

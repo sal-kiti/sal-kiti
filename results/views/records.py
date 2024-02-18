@@ -4,7 +4,7 @@ from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import mixins, viewsets
 
 from results.models.records import Record, RecordLevel
-from results.serializers.records import RecordSerializer, RecordLevelSerializer
+from results.serializers.records import RecordLevelSerializer, RecordSerializer
 from results.serializers.records_list import RecordListSerializer
 
 
@@ -29,6 +29,7 @@ class RecordViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given record.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
@@ -55,6 +56,7 @@ class RecordLevelViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given record level.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = RecordLevel.objects.all()
     serializer_class = RecordLevelSerializer
@@ -75,21 +77,22 @@ class RecordListFilter(filters.FilterSet):
     """
     Filters for RecordList view.
     """
-    category = NumberInFilter(field_name='category__pk', lookup_expr='in')
-    level = NumberInFilter(field_name='level__pk', lookup_expr='in')
-    type = NumberInFilter(field_name='type__pk', lookup_expr='in')
-    sport = NumberInFilter(field_name='type__sport__pk', lookup_expr='in')
-    historical = filters.BooleanFilter(field_name='historical', widget=BooleanWidget())
-    approved = filters.BooleanFilter(field_name='approved', widget=BooleanWidget())
-    start = filters.DateFilter(field_name='date_start', lookup_expr='gte')
-    end = filters.DateFilter(field_name='date_end', lookup_expr='lte')
+
+    category = NumberInFilter(field_name="category__pk", lookup_expr="in")
+    level = NumberInFilter(field_name="level__pk", lookup_expr="in")
+    type = NumberInFilter(field_name="type__pk", lookup_expr="in")
+    sport = NumberInFilter(field_name="type__sport__pk", lookup_expr="in")
+    historical = filters.BooleanFilter(field_name="historical", widget=BooleanWidget())
+    approved = filters.BooleanFilter(field_name="approved", widget=BooleanWidget())
+    start = filters.DateFilter(field_name="date_start", lookup_expr="gte")
+    end = filters.DateFilter(field_name="date_end", lookup_expr="lte")
 
     o = filters.OrderingFilter(
         fields=(
-            ('type', 'type'),
-            ('category', 'category'),
-            ('approved', 'approved'),
-            ('level', 'level'),
+            ("type", "type"),
+            ("category", "category"),
+            ("approved", "approved"),
+            ("level", "level"),
         )
     )
 
@@ -100,6 +103,7 @@ class RecordList(mixins.ListModelMixin, viewsets.GenericViewSet):
     retrieve:
     Returns the record list, filtered by fields.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Record.objects.filter(date_end=None)
     serializer_class = RecordListSerializer

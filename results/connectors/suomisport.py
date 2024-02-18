@@ -1,18 +1,15 @@
 import datetime
-from dateutil.parser import isoparse
+import logging
 from sys import stdout
 
-from oauthlib.oauth2 import BackendApplicationClient
-from requests_oauthlib import OAuth2Session
-from requests.auth import HTTPBasicAuth
-
+from dateutil.parser import isoparse
 from django.conf import settings
+from oauthlib.oauth2 import BackendApplicationClient
+from requests.auth import HTTPBasicAuth
+from requests_oauthlib import OAuth2Session
 
-from results.models.athletes import Athlete
-from results.models.athletes import AthleteInformation
+from results.models.athletes import Athlete, AthleteInformation
 from results.models.organizations import Organization
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -22,17 +19,18 @@ class Suomisport:
     Connector for updating athlete and licence information from Suomisport
     API description: https://info.suomisport.fi/wp-content/uploads/2020/01/suomisport-API.html
     """
+
     def __init__(self):
         """
         Initialize connection and set setting values.
         """
-        client_id = settings.SUOMISPORT.get('CLIENT_ID', None)
-        client_secret = settings.SUOMISPORT.get('CLIENT_SECRET', None)
-        self.token_url = settings.SUOMISPORT.get('TOKEN_URL', None)
-        self.base_url = settings.SUOMISPORT.get('BASE_URL', None)
-        self.organization_id = settings.SUOMISPORT.get('ORGANIZATION_ID', None)
-        self.licence_types = settings.SUOMISPORT.get('LICENCE_TYPES', None)
-        self.fetch_size = settings.SUOMISPORT.get('FETCH_SIZE', 1000)
+        client_id = settings.SUOMISPORT.get("CLIENT_ID", None)
+        client_secret = settings.SUOMISPORT.get("CLIENT_SECRET", None)
+        self.token_url = settings.SUOMISPORT.get("TOKEN_URL", None)
+        self.base_url = settings.SUOMISPORT.get("BASE_URL", None)
+        self.organization_id = settings.SUOMISPORT.get("ORGANIZATION_ID", None)
+        self.licence_types = settings.SUOMISPORT.get("LICENCE_TYPES", None)
+        self.fetch_size = settings.SUOMISPORT.get("FETCH_SIZE", 1000)
         auth = HTTPBasicAuth(client_id, client_secret)
         client = BackendApplicationClient(client_id=client_id)
         self.oauth = OAuth2Session(client=client)
@@ -52,15 +50,18 @@ class Suomisport:
         content = []
         page = 0
         while True:
-            url = self.base_url + path + '?page=' + str(page) + '&size=' + str(self.fetch_size)
+            url = self.base_url + path + "?page=" + str(page) + "&size=" + str(self.fetch_size)
             if ts:
-                url += '&ts=' + ts.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+                url += "&ts=" + ts.isoformat(timespec="milliseconds").replace("+00:00", "Z")
             result = self.oauth.get(url).json()
-            if not result or 'content' not in result:
+            if not result or "content" not in result:
                 break
-            content += result['content']
-            if ('pageable' not in result or result['pageable']['total'] < result['pageable']['size'] or
-                    (page > 0 and result['pageable']['total'] < result['pageable']['size'] * (page + 1))):
+            content += result["content"]
+            if (
+                "pageable" not in result
+                or result["pageable"]["total"] < result["pageable"]["size"]
+                or (page > 0 and result["pageable"]["total"] < result["pageable"]["size"] * (page + 1))
+            ):
                 break
             page += 1
         return content
@@ -74,12 +75,12 @@ class Suomisport:
         :return: licence types
         :rtype: list
         """
-        url = 'licence/' + self.organization_id
+        url = "licence/" + self.organization_id
         licence_types = self._fetch_from_api(url)
         result = []
         for licence_type in licence_types:
-            start = datetime.datetime.strptime(licence_type['usageStartTime'], '%Y-%m-%d').date()
-            end = datetime.datetime.strptime(licence_type['usageEndTime'], '%Y-%m-%d').date()
+            start = datetime.datetime.strptime(licence_type["usageStartTime"], "%Y-%m-%d").date()
+            end = datetime.datetime.strptime(licence_type["usageEndTime"], "%Y-%m-%d").date()
             if date is None or start <= date <= end:
                 result.append(licence_type)
         return result
@@ -97,7 +98,7 @@ class Suomisport:
         :return: licences
         :rtype: list
         """
-        url = 'user-licence/' + self.organization_id + '/' + str(licence_period_id) + '/' + str(licence_type_id)
+        url = "user-licence/" + self.organization_id + "/" + str(licence_period_id) + "/" + str(licence_type_id)
         licences = self._fetch_from_api(url, ts)
         return licences
 
@@ -111,21 +112,21 @@ class Suomisport:
         :return: gender in Kiti single character format
         :rtype: str
         """
-        if gender == 'Female':
-            return 'W'
-        if gender == 'Male':
-            return 'M'
-        if gender == 'Both':
-            return 'O'
+        if gender == "Female":
+            return "W"
+        if gender == "Male":
+            return "M"
+        if gender == "Both":
+            return "O"
         else:
-            return 'U'
+            return "U"
 
     @staticmethod
     def _capitalize_name(name):
-        parts = name.split('-')
+        parts = name.split("-")
         for index, part in enumerate(parts):
             parts[index] = part.strip().capitalize()
-        return '-'.join(parts)
+        return "-".join(parts)
 
     def _update_athletes(self, licences, print_to_stdout=False, only_year=False):
         """
@@ -138,25 +139,26 @@ class Suomisport:
         """
         for licence in licences:
             try:
-                organization = Organization.objects.get(sport_id=str(licence['licenceOrganizationSportId']))
+                organization = Organization.objects.get(sport_id=str(licence["licenceOrganizationSportId"]))
             except Organization.DoesNotExist:
-                logger.warning('Could not find organization with ID: %s', str(licence['licenceOrganizationSportId']))
+                logger.warning("Could not find organization with ID: %s", str(licence["licenceOrganizationSportId"]))
                 if print_to_stdout:
                     stdout.write(
-                        'Could not find organization with ID: %s\n' % str(licence['licenceOrganizationSportId']))
+                        "Could not find organization with ID: %s\n" % str(licence["licenceOrganizationSportId"])
+                    )
                 continue
-            start = datetime.datetime.strptime(licence['usagePeriodStart'], '%Y-%m-%d').date()
-            end = datetime.datetime.strptime(licence['usagePeriodEnd'], '%Y-%m-%d').date()
-            licence_name = licence['name']
-            modification_time = isoparse(licence['modificationTime'])
-            user = licence['user']
-            sport_id = str(user['sportId'])
-            first_name = self._capitalize_name(user['nickname']) if 'nickname' in user else None
+            start = datetime.datetime.strptime(licence["usagePeriodStart"], "%Y-%m-%d").date()
+            end = datetime.datetime.strptime(licence["usagePeriodEnd"], "%Y-%m-%d").date()
+            licence_name = licence["name"]
+            modification_time = isoparse(licence["modificationTime"])
+            user = licence["user"]
+            sport_id = str(user["sportId"])
+            first_name = self._capitalize_name(user["nickname"]) if "nickname" in user else None
             if not first_name:
-                first_name = self._capitalize_name(user['firstName'].split(' ')[0])
-            last_name = self._capitalize_name(user['lastName'])
-            gender = self._parse_gender(user['gender'])
-            date_of_birth = datetime.datetime.strptime(user['birthDate'], '%Y-%m-%d').date()
+                first_name = self._capitalize_name(user["firstName"].split(" ")[0])
+            last_name = self._capitalize_name(user["lastName"])
+            gender = self._parse_gender(user["gender"])
+            date_of_birth = datetime.datetime.strptime(user["birthDate"], "%Y-%m-%d").date()
             if only_year:
                 date_of_birth = date_of_birth.replace(month=1, day=1)
             try:
@@ -180,29 +182,33 @@ class Suomisport:
                 if modified:
                     if not athlete.no_auto_update:
                         athlete.save()
-                        logger.info('Updated athlete information from Suomisport: %s', sport_id)
+                        logger.info("Updated athlete information from Suomisport: %s", sport_id)
                         if print_to_stdout:
-                            stdout.write('Modified athlete: %s\n' % sport_id)
+                            stdout.write("Modified athlete: %s\n" % sport_id)
                     else:
                         if print_to_stdout:
-                            stdout.write('Athlete update prevented by no_auto_update: %s\n' % sport_id)
+                            stdout.write("Athlete update prevented by no_auto_update: %s\n" % sport_id)
             except Athlete.DoesNotExist:
-                athlete = Athlete.objects.create(sport_id=sport_id,
-                                                 first_name=first_name,
-                                                 last_name=last_name,
-                                                 date_of_birth=date_of_birth,
-                                                 gender=gender,
-                                                 organization=organization)
-                logger.info('Created new athlete from Suomisport: %s', sport_id)
+                athlete = Athlete.objects.create(
+                    sport_id=sport_id,
+                    first_name=first_name,
+                    last_name=last_name,
+                    date_of_birth=date_of_birth,
+                    gender=gender,
+                    organization=organization,
+                )
+                logger.info("Created new athlete from Suomisport: %s", sport_id)
                 if print_to_stdout:
-                    stdout.write('Created athlete: %s\n' % sport_id)
-            AthleteInformation.objects.get_or_create(athlete=athlete,
-                                                     type='licence',
-                                                     value=licence_name,
-                                                     date_start=start,
-                                                     date_end=end,
-                                                     modification_time=modification_time,
-                                                     visibility='A')
+                    stdout.write("Created athlete: %s\n" % sport_id)
+            AthleteInformation.objects.get_or_create(
+                athlete=athlete,
+                type="licence",
+                value=licence_name,
+                date_start=start,
+                date_end=end,
+                modification_time=modification_time,
+                visibility="A",
+            )
 
     def update_licences(self, update_only_latest=True, print_to_stdout=False, only_year=False):
         """
@@ -217,18 +223,22 @@ class Suomisport:
         """
         if update_only_latest:
             try:
-                latest_modification = AthleteInformation.objects.filter(
-                    type='licence', modification_time__isnull=False).latest('modification_time').modification_time
+                latest_modification = (
+                    AthleteInformation.objects.filter(type="licence", modification_time__isnull=False)
+                    .latest("modification_time")
+                    .modification_time
+                )
             except AthleteInformation.DoesNotExist:
                 latest_modification = None
         else:
             latest_modification = None
         licence_types = self.get_licence_types(datetime.date.today())
         for licence_type in licence_types:
-            if 'type' in licence_type:
-                if licence_type['type'] in self.licence_types:
+            if "type" in licence_type:
+                if licence_type["type"] in self.licence_types:
                     licences = self.get_licences(
-                        licence_type['licencePeriodId'], licence_type['id'], ts=latest_modification)
+                        licence_type["licencePeriodId"], licence_type["id"], ts=latest_modification
+                    )
                     self._update_athletes(licences=licences, print_to_stdout=print_to_stdout, only_year=only_year)
             else:
                 if print_to_stdout:
@@ -241,13 +251,13 @@ class Suomisport:
         :param print_to_stdout: print messages to stdout
         :type print_to_stdout: bool
         """
-        url = 'organization/' + self.organization_id + '/list'
+        url = "organization/" + self.organization_id + "/list"
         organizations = self._fetch_from_api(url)
         for item in organizations:
-            sport_id = item['sportId']
-            name = item['name']
-            if 'shortName' in item and item['shortName']:
-                abbreviation = item['shortName']
+            sport_id = item["sportId"]
+            name = item["name"]
+            if "shortName" in item and item["shortName"]:
+                abbreviation = item["shortName"]
             else:
                 abbreviation = None
             organization = Organization.objects.none()
@@ -260,4 +270,3 @@ class Suomisport:
                     stdout.write("%s;%s;%s;%s\n" % ("FOUND", organization[0].abbreviation, sport_id, name))
                 else:
                     stdout.write("%s;%s;%s;%s\n" % ("NOT FOUND", sport_id, name, abbreviation))
-

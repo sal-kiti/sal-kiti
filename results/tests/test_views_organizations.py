@@ -11,19 +11,19 @@ from results.views.organizations import AreaViewSet, OrganizationViewSet
 class OrganizationTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
-        self.staff_user = User.objects.create(username='staffuser', is_staff=True)
-        self.superuser = User.objects.create(username='superuser', is_superuser=True)
+        self.user = User.objects.create(username="tester")
+        self.staff_user = User.objects.create(username="staffuser", is_staff=True)
+        self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = OrganizationFactory.create()
-        self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
-        self.newdata = {'name': 'Club Zero', 'abbreviation': 'Zero'}
-        self.url = '/api/organizations/'
+        self.data = {"name": self.object.name, "abbreviation": self.object.abbreviation}
+        self.newdata = {"name": "Club Zero", "abbreviation": "Zero"}
+        self.url = "/api/organizations/"
         self.viewset = OrganizationViewSet
         self.model = Organization
 
     def test_organization_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -70,8 +70,8 @@ class OrganizationTestCase(ResultsTestCase):
         self.assertEqual(Group.objects.all().count(), 1)
         self._test_create(user=self.superuser, data=self.newdata)
         self.assertEqual(Group.objects.all().count(), 2)
-        self.assertEqual(Group.objects.get(id=2).name, 'club_Zero_2')
-        self.assertEqual(Group.objects.get(id=2).organization.name, 'Club Zero')
+        self.assertEqual(Group.objects.get(id=2).name, "club_Zero_2")
+        self.assertEqual(Group.objects.get(id=2).organization.name, "Club Zero")
 
     def test_organization_create_existing_with_superuser(self):
         response = self._test_create(user=self.superuser, data=self.data)
@@ -107,7 +107,7 @@ class OrganizationTestCase(ResultsTestCase):
 
 class OrganizationManagerTestCase(ResultsTestCase):
     def setUp(self):
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.area1 = Area.objects.create(name="Area 1", abbreviation="area1")
         self.area2 = Area.objects.create(name="Area 2", abbreviation="area2")
         self.organization1 = Organization.objects.create(name="Organization 1", abbreviation="org1")
@@ -138,19 +138,19 @@ class OrganizationManagerTestCase(ResultsTestCase):
 class AreaTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = AreaFactory.create()
-        self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
-        self.newdata = {'name': 'Area Zero', 'abbreviation': 'AZ'}
-        self.url = '/api/area/'
+        self.data = {"name": self.object.name, "abbreviation": self.object.abbreviation}
+        self.newdata = {"name": "Area Zero", "abbreviation": "AZ"}
+        self.url = "/api/area/"
         self.viewset = AreaViewSet
         self.model = Area
 
     def test_area_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -216,8 +216,8 @@ class AreaTestCase(ResultsTestCase):
         self.assertEqual(Group.objects.all().count(), 1)
         self._test_create(user=self.superuser, data=self.newdata)
         self.assertEqual(Group.objects.all().count(), 2)
-        self.assertEqual(Group.objects.get(id=2).name, 'area_AZ')
-        self.assertEqual(Group.objects.get(id=2).area.name, 'Area Zero')
+        self.assertEqual(Group.objects.get(id=2).name, "area_AZ")
+        self.assertEqual(Group.objects.get(id=2).area.name, "Area Zero")
 
     def test_area_delete_with_user(self):
         response = self._test_delete(user=self.user)

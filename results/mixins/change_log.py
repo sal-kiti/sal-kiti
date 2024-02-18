@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.forms.models import model_to_dict
 
@@ -12,6 +12,7 @@ class LogChangesMixing(object):
     Logs add, delete and modified fields for all models using a mixin
     and values for the fields defined in the LOG_VALUE_FIELDS setting.
     """
+
     def __init__(self, *args, **kwargs):
         super(LogChangesMixing, self).__init__(*args, **kwargs)
         fields = [field.name for field in self._meta.fields]
@@ -65,7 +66,7 @@ class LogChangesMixing(object):
             object_id=object_id,
             object_repr=str(self),
             action_flag=DELETION,
-            change_message="Deleted"
+            change_message="Deleted",
         )
 
     def _add_message(self):
@@ -91,8 +92,10 @@ class LogChangesMixing(object):
         """
         change_message = []
         for field in self.changed_fields:
-            if (type(self).__name__ in settings.LOG_VALUE_FIELDS and
-                    field in settings.LOG_VALUE_FIELDS[type(self).__name__]):
+            if (
+                type(self).__name__ in settings.LOG_VALUE_FIELDS
+                and field in settings.LOG_VALUE_FIELDS[type(self).__name__]
+            ):
                 change_message.append(field + ": " + str(self.diff[field][1]))
             else:
                 change_message.append(field)
@@ -108,11 +111,11 @@ class LogChangesMixing(object):
         super(LogChangesMixing, self).save(*args, **kwargs)
         change_message = []
         if action_flag == ADDITION:
-            change_message.append({'added': {}})
-            change_message.append({'changed': {'fields': self._add_message()}})
+            change_message.append({"added": {}})
+            change_message.append({"changed": {"fields": self._add_message()}})
         else:
             if self.changed_fields:
-                change_message.append({'changed': {'fields': self._change_message()}})
+                change_message.append({"changed": {"fields": self._change_message()}})
         if change_message:
             LogEntry.objects.log_action(
                 user_id=user_id,
@@ -120,5 +123,5 @@ class LogChangesMixing(object):
                 object_id=self.pk,
                 object_repr=str(self),
                 action_flag=action_flag,
-                change_message=change_message
+                change_message=change_message,
             )

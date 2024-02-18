@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('results', '0006_partial_result_codes'),
+        ("results", "0006_partial_result_codes"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='categoryforcompetitiontype',
-            name='limit_partial',
-            field=models.ManyToManyField(blank=True, to='results.CompetitionResultType', verbose_name='No partial records for listed result types'),
+            model_name="categoryforcompetitiontype",
+            name="limit_partial",
+            field=models.ManyToManyField(
+                blank=True,
+                to="results.CompetitionResultType",
+                verbose_name="No partial records for listed result types",
+            ),
         ),
     ]

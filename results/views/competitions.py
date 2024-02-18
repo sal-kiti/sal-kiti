@@ -2,17 +2,25 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
-
 from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
 
-from results.models.competitions import Competition, CompetitionLevel, CompetitionType, CompetitionResultType
-from results.models.competitions import CompetitionLayout
-from results.serializers.competitions import CompetitionSerializer, CompetitionLevelSerializer
-from results.serializers.competitions import CompetitionTypeSerializer, CompetitionResultTypeSerializer
-from results.serializers.competitions import CompetitionLayoutSerializer
+from results.models.competitions import (
+    Competition,
+    CompetitionLayout,
+    CompetitionLevel,
+    CompetitionResultType,
+    CompetitionType,
+)
+from results.serializers.competitions import (
+    CompetitionLayoutSerializer,
+    CompetitionLevelSerializer,
+    CompetitionResultTypeSerializer,
+    CompetitionSerializer,
+    CompetitionTypeSerializer,
+)
 from results.utils.pagination import CustomPagePagination
 
 
@@ -24,16 +32,17 @@ class CompetitionFilter(filters.FilterSet):
     """
     Custom filters for a competition.
     """
-    level = NumberInFilter(field_name='level__pk', lookup_expr='in')
-    type = NumberInFilter(field_name='type__pk', lookup_expr='in')
-    sport = NumberInFilter(field_name='type__sport__pk', lookup_expr='in')
-    until = filters.DateFilter(field_name='date_start', lookup_expr='lte')
-    start = filters.DateFilter(field_name='date_start', lookup_expr='gte')
-    end = filters.DateFilter(field_name='date_end', lookup_expr='lte')
+
+    level = NumberInFilter(field_name="level__pk", lookup_expr="in")
+    type = NumberInFilter(field_name="type__pk", lookup_expr="in")
+    sport = NumberInFilter(field_name="type__sport__pk", lookup_expr="in")
+    until = filters.DateFilter(field_name="date_start", lookup_expr="lte")
+    start = filters.DateFilter(field_name="date_start", lookup_expr="gte")
+    end = filters.DateFilter(field_name="date_end", lookup_expr="lte")
 
     class Meta:
         model = Competition
-        fields = ['end', 'event', 'level', 'organization', 'public', 'sport', 'start', 'trial', 'type', 'approved']
+        fields = ["end", "event", "level", "organization", "public", "sport", "start", "trial", "type", "approved"]
 
 
 class CompetitionViewSet(viewsets.ModelViewSet):
@@ -58,16 +67,15 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given competition.
     """
+
     permission_classes = (DRYPermissions,)
     pagination_class = CustomPagePagination
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    filter_backends = [filters.DjangoFilterBackend,
-                       OrderingFilter,
-                       SearchFilter]
+    filter_backends = [filters.DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = CompetitionFilter
-    ordering_fields = ['date_start', 'name']
-    search_fields = ('name', 'organization__name', 'organization__abbreviation')
+    ordering_fields = ["date_start", "name"]
+    search_fields = ("name", "organization__name", "organization__abbreviation")
 
     def get_queryset(self):
         """
@@ -110,6 +118,7 @@ class CompetitionLevelViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given competition level.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = CompetitionLevel.objects.all()
     serializer_class = CompetitionLevelSerializer
@@ -136,11 +145,12 @@ class CompetitionTypeViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given competition type.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = CompetitionType.objects.all()
     serializer_class = CompetitionTypeSerializer
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ['sport']
+    filterset_fields = ["sport"]
 
 
 class CompetitionLayoutViewSet(viewsets.ModelViewSet):
@@ -164,11 +174,12 @@ class CompetitionLayoutViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given competition layout.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = CompetitionLayout.objects.all()
     serializer_class = CompetitionLayoutSerializer
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ['type']
+    filterset_fields = ["type"]
 
 
 class CompetitionResultTypeViewSet(viewsets.ModelViewSet):
@@ -192,8 +203,9 @@ class CompetitionResultTypeViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given competition result type.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = CompetitionResultType.objects.all()
     serializer_class = CompetitionResultTypeSerializer
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ['competition_type']
+    filterset_fields = ["competition_type"]

@@ -27,11 +27,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given category.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['sport']
+    filterset_fields = ["sport"]
 
 
 class DivisionViewSet(viewsets.ModelViewSet):
@@ -55,6 +56,7 @@ class DivisionViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given division.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Division.objects.all()
     serializer_class = DivisionSerializer

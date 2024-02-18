@@ -4,7 +4,11 @@ from rest_framework.test import APIRequestFactory
 
 from results.models.categories import Category, Division
 from results.models.sports import Sport
-from results.tests.factories.categories import CategoryFactory, DivisionFactory, SportFactory
+from results.tests.factories.categories import (
+    CategoryFactory,
+    DivisionFactory,
+    SportFactory,
+)
 from results.tests.utils import ResultsTestCase
 from results.views.categories import CategoryViewSet, DivisionViewSet
 from results.views.sports import SportViewSet
@@ -13,19 +17,19 @@ from results.views.sports import SportViewSet
 class SportTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = SportFactory.create()
-        self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
-        self.newdata = {'name': 'New Sport', 'abbreviation': 'NewS'}
-        self.url = '/api/sports/'
+        self.data = {"name": self.object.name, "abbreviation": self.object.abbreviation}
+        self.newdata = {"name": "New Sport", "abbreviation": "NewS"}
+        self.url = "/api/sports/"
         self.viewset = SportViewSet
         self.model = Sport
 
     def test_sport_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -103,19 +107,19 @@ class SportTestCase(ResultsTestCase):
 class DivisionTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = DivisionFactory.create()
-        self.data = {'name': self.object.name, 'abbreviation': self.object.abbreviation}
-        self.newdata = {'name': 'InnerDiv', 'abbreviation': 'Inner'}
-        self.url = '/api/divisions/'
+        self.data = {"name": self.object.name, "abbreviation": self.object.abbreviation}
+        self.newdata = {"name": "InnerDiv", "abbreviation": "Inner"}
+        self.url = "/api/divisions/"
         self.viewset = DivisionViewSet
         self.model = Division
 
     def test_division_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -193,26 +197,32 @@ class DivisionTestCase(ResultsTestCase):
 class CategoryTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = CategoryFactory.create()
-        self.data = {'name': self.object.name,
-                     'abbreviation': self.object.abbreviation,
-                     'division': self.object.division.pk,
-                     'min_age': self.object.min_age,
-                     'max_age': self.object.max_age,
-                     'gender': self.object.gender,
-                     'historical': self.object.historical}
-        self.newdata = {'name': 'Core Seniors', 'abbreviation': 'CS', 'division': self.object.division.pk,
-                        'historical': False}
-        self.url = '/api/categories/'
+        self.data = {
+            "name": self.object.name,
+            "abbreviation": self.object.abbreviation,
+            "division": self.object.division.pk,
+            "min_age": self.object.min_age,
+            "max_age": self.object.max_age,
+            "gender": self.object.gender,
+            "historical": self.object.historical,
+        }
+        self.newdata = {
+            "name": "Core Seniors",
+            "abbreviation": "CS",
+            "division": self.object.division.pk,
+            "historical": False,
+        }
+        self.url = "/api/categories/"
         self.viewset = CategoryViewSet
         self.model = Category
 
     def test_category_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

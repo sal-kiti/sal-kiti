@@ -1,9 +1,8 @@
 import operator
 
-from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
-
+from django.views.decorators.cache import never_cache
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -35,6 +34,7 @@ class StatisticsLinkViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given statistics link.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = StatisticsLink.objects.all()
     serializer_class = StatisticsLinkSerializer
@@ -62,12 +62,16 @@ def statistics_pohjolan_malja(request, year):
     All SM competitions during a calendar year are counted.
     """
     if not request.user.is_staff:
-        return JsonResponse({'message': 'Forbidden'}, status=403)
-    level_list = ['SM']
+        return JsonResponse({"message": "Forbidden"}, status=403)
+    level_list = ["SM"]
     max_position = 8
     competition_levels = CompetitionLevel.objects.filter(abbreviation__in=level_list)
-    results = Result.objects.filter(competition__level__in=competition_levels, position__lte=max_position,
-                                    position__gte=1, competition__date_start__year=year)
+    results = Result.objects.filter(
+        competition__level__in=competition_levels,
+        position__lte=max_position,
+        position__gte=1,
+        competition__date_start__year=year,
+    )
     data_dict = {}
     for result in results:
         points = max_position - result.position + 1
@@ -79,8 +83,5 @@ def statistics_pohjolan_malja(request, year):
     object_list = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     data = []
     for obj in object_list:
-        data.append({
-            'organization': model_to_dict(obj[0], fields=['id', 'name', 'abbreviation']),
-            'value': obj[1]
-        })
-    return JsonResponse({'results': data})
+        data.append({"organization": model_to_dict(obj[0], fields=["id", "name", "abbreviation"]), "value": obj[1]})
+    return JsonResponse({"results": data})

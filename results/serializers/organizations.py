@@ -9,21 +9,23 @@ class AreaSerializer(serializers.ModelSerializer):
     """
     Serializer for organizational area
     """
+
     permissions = DRYPermissionsField()
 
     class Meta:
         model = Area
-        fields = ('id', 'name', 'abbreviation', 'group', 'permissions')
+        fields = ("id", "name", "abbreviation", "group", "permissions")
 
 
 class OrganizationSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for organizations
     """
+
     permissions = DRYPermissionsField()
 
-    _PREFETCH_RELATED_FIELDS = ['areas']
+    _PREFETCH_RELATED_FIELDS = ["areas"]
 
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'abbreviation', 'external', 'areas', 'group', 'sport_id', 'historical', 'permissions')
+        fields = ("id", "name", "abbreviation", "external", "areas", "group", "sport_id", "historical", "permissions")

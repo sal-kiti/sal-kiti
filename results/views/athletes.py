@@ -5,7 +5,11 @@ from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import filters, viewsets
 
 from results.models.athletes import Athlete, AthleteInformation
-from results.serializers.athletes import AthleteSerializer, AthleteLimitedSerializer, AthleteInformationSerializer
+from results.serializers.athletes import (
+    AthleteInformationSerializer,
+    AthleteLimitedSerializer,
+    AthleteSerializer,
+)
 from results.utils.pagination import CustomPagePagination
 
 
@@ -37,14 +41,14 @@ class AthleteViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given athlete.
     """
+
     permission_classes = (DRYPermissions,)
     pagination_class = CustomPagePagination
-    queryset = Athlete.objects.all().order_by('sport_id')
+    queryset = Athlete.objects.all().order_by("sport_id")
     serializer_class = AthleteSerializer
-    filter_backends = [filters.SearchFilter,
-                       DjangoFilterBackend]
-    search_fields = ('first_name', 'last_name', 'sport_id')
-    filterset_fields = ['sport_id', 'first_name', 'last_name', 'organization__id', 'organization__abbreviation']
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ("first_name", "last_name", "sport_id")
+    filterset_fields = ["sport_id", "first_name", "last_name", "organization__id", "organization__abbreviation"]
 
     def get_serializer_class(self):
         """
@@ -82,11 +86,12 @@ class AthleteInformationViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given athlete information.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = AthleteInformation.objects.all()
     serializer_class = AthleteInformationSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['athlete']
+    filterset_fields = ["athlete"]
 
     def get_queryset(self):
         """
@@ -94,11 +99,11 @@ class AthleteInformationViewSet(viewsets.ModelViewSet):
         staff or superuser.
         """
         if not self.request or not self.request.user.is_authenticated:
-            return self.queryset.filter(visibility='P')
+            return self.queryset.filter(visibility="P")
         elif not (self.request.user.is_staff or self.request.user.is_superuser):
-            return self.queryset.filter(visibility__in=['P', 'A'])
+            return self.queryset.filter(visibility__in=["P", "A"])
         elif not self.request.user.is_superuser:
-            return self.queryset.filter(visibility__in=['P', 'A', 'S'])
+            return self.queryset.filter(visibility__in=["P", "A", "S"])
         return self.queryset
 
     @method_decorator(vary_on_cookie)

@@ -2,14 +2,13 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
-
 from django_filters import rest_framework as filters
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
 
 from results.models.events import Event, EventContact
-from results.serializers.events import EventSerializer, EventContactSerializer
+from results.serializers.events import EventContactSerializer, EventSerializer
 from results.utils.pagination import CustomPagePagination
 
 
@@ -21,16 +20,17 @@ class EventFilter(filters.FilterSet):
     """
     Custom filters for the event.
     """
-    level = NumberInFilter(field_name='competitions__level__pk', lookup_expr='in')
-    type = NumberInFilter(field_name="competitions__type__pk", lookup_expr='in')
-    sport = NumberInFilter(field_name="competitions__type__sport__pk", lookup_expr='in')
-    until = filters.DateFilter(field_name='date_start', lookup_expr='lte')
-    start = filters.DateFilter(field_name='date_start', lookup_expr='gte')
-    end = filters.DateFilter(field_name='date_end', lookup_expr='lte')
+
+    level = NumberInFilter(field_name="competitions__level__pk", lookup_expr="in")
+    type = NumberInFilter(field_name="competitions__type__pk", lookup_expr="in")
+    sport = NumberInFilter(field_name="competitions__type__sport__pk", lookup_expr="in")
+    until = filters.DateFilter(field_name="date_start", lookup_expr="lte")
+    start = filters.DateFilter(field_name="date_start", lookup_expr="gte")
+    end = filters.DateFilter(field_name="date_end", lookup_expr="lte")
 
     class Meta:
         model = Event
-        fields = ['level', 'name', 'organization', 'public', 'sport', 'type', 'approved']
+        fields = ["level", "name", "organization", "public", "sport", "type", "approved"]
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -54,16 +54,15 @@ class EventViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given event.
     """
+
     pagination_class = CustomPagePagination
     permission_classes = (DRYPermissions,)
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    filter_backends = [filters.DjangoFilterBackend,
-                       OrderingFilter,
-                       SearchFilter]
+    filter_backends = [filters.DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = EventFilter
-    ordering_fields = ['date_start', 'name']
-    search_fields = ('name', 'organization__name', 'organization__abbreviation')
+    ordering_fields = ["date_start", "name"]
+    search_fields = ("name", "organization__name", "organization__abbreviation")
 
     def get_queryset(self):
         """
@@ -106,11 +105,12 @@ class EventContactViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given event contact.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = EventContact.objects.all()
     serializer_class = EventContactSerializer
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ['event', 'type']
+    filterset_fields = ["event", "type"]
 
     def get_queryset(self):
         """

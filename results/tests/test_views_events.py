@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group, User
 from django.test import override_settings
-
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
@@ -14,29 +13,38 @@ from results.views.events import EventViewSet
 class EventTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.user = User.objects.create(username='tester')
+        self.user = User.objects.create(username="tester")
         self.group = Group.objects.create(name="testgroup")
-        self.organization_user = User.objects.create(username='tester_2')
+        self.organization_user = User.objects.create(username="tester_2")
         self.organization_user.groups.add(self.group)
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = EventFactory.create()
         self.object.organization.group = self.group
         self.object.organization.save()
-        self.data = {'name': self.object.name, 'date_start': self.object.date_start.strftime('%Y-%m-%d'),
-                     'date_end': self.object.date_end.strftime('%Y-%m-%d'), 'location': self.object.location,
-                     'organization': self.object.organization.pk}
-        self.newdata = {'name': 'New Year', 'date_start': self.object.date_start.strftime('%Y-%m-%d'),
-                        'date_end': self.object.date_end.strftime('%Y-%m-%d'), 'location': 'City Field',
-                        'organization': self.object.organization.pk, 'toc_agreement': True}
-        self.updatedata = {'name': 'Change Event'}
-        self.url = '/api/events/'
+        self.data = {
+            "name": self.object.name,
+            "date_start": self.object.date_start.strftime("%Y-%m-%d"),
+            "date_end": self.object.date_end.strftime("%Y-%m-%d"),
+            "location": self.object.location,
+            "organization": self.object.organization.pk,
+        }
+        self.newdata = {
+            "name": "New Year",
+            "date_start": self.object.date_start.strftime("%Y-%m-%d"),
+            "date_end": self.object.date_end.strftime("%Y-%m-%d"),
+            "location": "City Field",
+            "organization": self.object.organization.pk,
+            "toc_agreement": True,
+        }
+        self.updatedata = {"name": "Change Event"}
+        self.url = "/api/events/"
         self.viewset = EventViewSet
         self.model = Event
 
     def test_event_access_list(self):
         request = self.factory.get(self.url)
-        view = self.viewset.as_view(actions={'get': 'list'})
+        view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

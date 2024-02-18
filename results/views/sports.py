@@ -26,6 +26,7 @@ class SportViewSet(viewsets.ModelViewSet):
     destroy:
     Removes the given sport.
     """
+
     permission_classes = (DRYPermissions,)
     queryset = Sport.objects.all()
     serializer_class = SportSerializer

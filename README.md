@@ -21,3 +21,7 @@ Copy sal_kiti/settings/local_settings_example.py to sal_kiti/settings/local_sett
 
 ## Documentation
 Documentation in the Read the Docs: https://sal-kiti.readthedocs.io/
+
+## Development
+### Style guide
+Use black and isort for formatting and sorting imports.

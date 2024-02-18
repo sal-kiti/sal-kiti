@@ -6,48 +6,56 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('results', '0008_add_timestamps'),
+        ("results", "0008_add_timestamps"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='resultpartial',
-            name='text',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='Text value'),
+            model_name="resultpartial",
+            name="text",
+            field=models.CharField(blank=True, max_length=100, null=True, verbose_name="Text value"),
         ),
         migrations.AlterField(
-            model_name='competitionresulttype',
-            name='max_result',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Maximum result'),
+            model_name="competitionresulttype",
+            name="max_result",
+            field=models.DecimalField(
+                blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Maximum result"
+            ),
         ),
         migrations.AlterField(
-            model_name='competitionresulttype',
-            name='min_result',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Minimum result'),
+            model_name="competitionresulttype",
+            name="min_result",
+            field=models.DecimalField(
+                blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Minimum result"
+            ),
         ),
         migrations.AlterField(
-            model_name='competitiontype',
-            name='max_result',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Maximum result'),
+            model_name="competitiontype",
+            name="max_result",
+            field=models.DecimalField(
+                blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Maximum result"
+            ),
         ),
         migrations.AlterField(
-            model_name='competitiontype',
-            name='min_result',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Minimum result'),
+            model_name="competitiontype",
+            name="min_result",
+            field=models.DecimalField(
+                blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Minimum result"
+            ),
         ),
         migrations.AlterField(
-            model_name='result',
-            name='result',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Result'),
+            model_name="result",
+            name="result",
+            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Result"),
         ),
         migrations.AlterField(
-            model_name='resultpartial',
-            name='time',
-            field=models.TimeField(blank=True, null=True, verbose_name='Time'),
+            model_name="resultpartial",
+            name="time",
+            field=models.TimeField(blank=True, null=True, verbose_name="Time"),
         ),
         migrations.AlterField(
-            model_name='resultpartial',
-            name='value',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name='Value'),
+            model_name="resultpartial",
+            name="value",
+            field=models.DecimalField(blank=True, decimal_places=3, max_digits=12, null=True, verbose_name="Value"),
         ),
     ]

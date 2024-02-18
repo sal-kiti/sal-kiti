@@ -4,13 +4,15 @@ usage: ./manage.py athletebirthyearonly
 """
 
 from django.core.management.base import BaseCommand
+
 from results.models.athletes import Athlete
 
 
 class Command(BaseCommand):
     """Approve records"""
-    args = 'None'
-    help = 'Approve records'
+
+    args = "None"
+    help = "Approve records"
 
     def handle(self, *args, **options):
         athletes = Athlete.objects.filter(date_of_birth__isnull=False)

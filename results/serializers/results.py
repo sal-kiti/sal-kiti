@@ -4,24 +4,28 @@ from drf_queryfields import QueryFieldsMixin
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework import serializers
 
+from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.categories import CategoryForCompetitionType
 from results.models.results import Result, ResultPartial
 from results.serializers.athletes import AthleteLimitedSerializer, AthleteNameSerializer
-from results.serializers.competitions import CompetitionLimitedSerializer, CompetitionResultTypeLimitedSerializer
+from results.serializers.competitions import (
+    CompetitionLimitedSerializer,
+    CompetitionResultTypeLimitedSerializer,
+)
 from results.serializers.records import RecordLimitedSerializer
-from results.mixins.eager_loading import EagerLoadingMixin
 
 
 class ResultPartialSerializer(serializers.ModelSerializer):
     """
     Serializer for partial results
     """
+
     permissions = DRYPermissionsField()
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'result', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text', 'permissions')
-        extra_kwargs = {'code': {'required': False}}
+        fields = ("id", "result", "type", "order", "value", "decimals", "code", "time", "text", "permissions")
+        extra_kwargs = {"code": {"required": False}}
 
     def _check_permission(self, data, user):
         """
@@ -37,22 +41,35 @@ class ResultPartialSerializer(serializers.ModelSerializer):
         """
         if user.is_superuser or user.is_staff:
             return True
-        result_data = data['result'] if data['result'] else None
+        result_data = data["result"] if data["result"] else None
         result_instance = self.instance.result if self.instance else None
         if (result_instance and result_instance.competition.locked) or result_data and result_data.competition.locked:
             return False
-        if ((not result_instance or (result_instance.approved and
-                                     (not self.instance.competition.organization.is_area_manager(user) or
-                                      not self.instance.competition.level.area_competition))) and
-            (not result_data or (result_data.approved and
-                                 (not result_data.competition.organization.is_area_manager(user) or
-                                  not result_data.competition.level.area_competition)))):
+        if (
+            not result_instance
+            or (
+                result_instance.approved
+                and (
+                    not self.instance.competition.organization.is_area_manager(user)
+                    or not self.instance.competition.level.area_competition
+                )
+            )
+        ) and (
+            not result_data
+            or (
+                result_data.approved
+                and (
+                    not result_data.competition.organization.is_area_manager(user)
+                    or not result_data.competition.level.area_competition
+                )
+            )
+        ):
             return False
-        if ((not result_instance or not result_instance.competition.organization.is_manager(user)) and
-                (not result_data or not result_data.competition.organization.is_manager(user))):
+        if (not result_instance or not result_instance.competition.organization.is_manager(user)) and (
+            not result_data or not result_data.competition.organization.is_manager(user)
+        ):
             return False
         return True
-
 
     def validate(self, data):
         """
@@ -60,21 +77,25 @@ class ResultPartialSerializer(serializers.ModelSerializer):
          - permissions to create or edit the partial result
          - value limits
         """
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not self._check_permission(data, user):
-            raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
-        if data['type'].competition_type != data['result'].competition.type:
-            raise serializers.ValidationError(_('Partial result type does not match competition type.'))
-        if ('value' in data and data['result'] and data['type'].min_result is not None and
-                data['value'] < data['type'].min_result):
-            raise serializers.ValidationError(_('A result is too low.'))
-        if data['result'] and data['type'].max_result:
-            max_result = data['type'].max_result
-            category = data['result'].category
+            raise serializers.ValidationError(_("No permission to alter or create a record."), 403)
+        if data["type"].competition_type != data["result"].competition.type:
+            raise serializers.ValidationError(_("Partial result type does not match competition type."))
+        if (
+            "value" in data
+            and data["result"]
+            and data["type"].min_result is not None
+            and data["value"] < data["type"].min_result
+        ):
+            raise serializers.ValidationError(_("A result is too low."))
+        if data["result"] and data["type"].max_result:
+            max_result = data["type"].max_result
+            category = data["result"].category
             if category.team and category.team_size:
                 max_result = max_result * category.team_size
-            if 'value' in data and data['value'] > max_result:
-                raise serializers.ValidationError(_('A result is too high.'))
+            if "value" in data and data["value"] > max_result:
+                raise serializers.ValidationError(_("A result is too high."))
         return data
 
 
@@ -82,10 +103,11 @@ class ResultPartialNestedSerializer(ResultPartialSerializer):
     """
     Serializer for nested partial result updates where validation is done in results serializer
     """
+
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text', 'permissions')
-        extra_kwargs = {'code': {'required': False}}
+        fields = ("id", "type", "order", "value", "decimals", "code", "time", "text", "permissions")
+        extra_kwargs = {"code": {"required": False}}
 
     def validate(self, data):
         return data
@@ -95,6 +117,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     """
     Serializer for results
     """
+
     dry_run = serializers.BooleanField(required=False)
     partial = ResultPartialNestedSerializer(many=True, required=False)
     permissions = DRYPermissionsField()
@@ -102,17 +125,35 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Result
         fields = (
-            'id', 'competition', 'athlete', 'team_members', 'first_name', 'last_name', 'organization', 'category',
-            'elimination_category', 'result', 'decimals', 'result_code', 'position', 'position_pre',
-            'approved', 'info', 'team', 'partial', 'permissions', 'dry_run')
+            "id",
+            "competition",
+            "athlete",
+            "team_members",
+            "first_name",
+            "last_name",
+            "organization",
+            "category",
+            "elimination_category",
+            "result",
+            "decimals",
+            "result_code",
+            "position",
+            "position_pre",
+            "approved",
+            "info",
+            "team",
+            "partial",
+            "permissions",
+            "dry_run",
+        )
 
     def create(self, validated_data):
         """
         Nested partial results support in create
         """
-        partial_data = validated_data.pop('partial', None)
-        team_members = validated_data.pop('team_members', None)
-        dry_run = validated_data.pop('dry_run', None)
+        partial_data = validated_data.pop("partial", None)
+        team_members = validated_data.pop("team_members", None)
+        dry_run = validated_data.pop("dry_run", None)
         if not dry_run:
             result = Result.objects.create(**validated_data)
         else:
@@ -129,25 +170,25 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         Nested partial results support in update
         """
-        dry_run = validated_data.pop('dry_run', None)
+        dry_run = validated_data.pop("dry_run", None)
         if not dry_run:
             for data in validated_data:
-                if data not in ['partial', 'team_members']:
+                if data not in ["partial", "team_members"]:
                     setattr(instance, data, validated_data[data])
-            if 'team_members' in validated_data:
-                team_members = validated_data.pop('team_members')
+            if "team_members" in validated_data:
+                team_members = validated_data.pop("team_members")
                 instance.team_members.set(team_members)
             instance.save()
-            partial_existing = list(ResultPartial.objects.filter(result=instance).values_list('id', flat=True))
-            if 'partial' in validated_data:
-                partial_data = validated_data.pop('partial')
+            partial_existing = list(ResultPartial.objects.filter(result=instance).values_list("id", flat=True))
+            if "partial" in validated_data:
+                partial_data = validated_data.pop("partial")
                 for partial in partial_data:
                     try:
-                        partial_instance = ResultPartial.objects.get(result=instance,
-                                                                     type=partial['type'],
-                                                                     order=partial['order'])
+                        partial_instance = ResultPartial.objects.get(
+                            result=instance, type=partial["type"], order=partial["order"]
+                        )
                         for data in partial:
-                            if data not in ['result', 'type', 'order']:
+                            if data not in ["result", "type", "order"]:
                                 setattr(partial_instance, data, partial[data])
                         partial_instance.save()
                         partial_existing.remove(partial_instance.pk)
@@ -162,9 +203,14 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Returns athlete's age at the time of competition.
         """
         if exact:
-            return competition.date_start.year - athlete.date_of_birth.year -\
-                   ((competition.date_start.month, competition.date_start.day) <
-                    (athlete.date_of_birth.month, athlete.date_of_birth.day))
+            return (
+                competition.date_start.year
+                - athlete.date_of_birth.year
+                - (
+                    (competition.date_start.month, competition.date_start.day)
+                    < (athlete.date_of_birth.month, athlete.date_of_birth.day)
+                )
+            )
         else:
             return competition.date_start.year - athlete.date_of_birth.year
 
@@ -172,19 +218,23 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         Validates athletes maximum age
         """
-        if (athlete.date_of_birth and
-                ((not category.age_exact and
-                  self._age_difference(competition, athlete, category.age_exact) > category.max_age)
-                 or (category.age_exact and
-                     self._age_difference(competition, athlete, category.age_exact) >= category.max_age))):
+        if athlete.date_of_birth and (
+            (
+                not category.age_exact
+                and self._age_difference(competition, athlete, category.age_exact) > category.max_age
+            )
+            or (
+                category.age_exact
+                and self._age_difference(competition, athlete, category.age_exact) >= category.max_age
+            )
+        ):
             raise serializers.ValidationError(_("Athlete is too old for this category."))
 
     def _check_min_age(self, competition, category, athlete):
         """
         Validates athletes minimum age
         """
-        if (athlete.date_of_birth and
-                self._age_difference(competition, athlete, category.age_exact) < category.min_age):
+        if athlete.date_of_birth and self._age_difference(competition, athlete, category.age_exact) < category.min_age:
             raise serializers.ValidationError(_("Athlete is too young for this category."))
 
     def _check_age(self, competition, category, athletes):
@@ -204,8 +254,9 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Validates category's gender requirement.
         """
         for athlete in athletes:
-            if ((category.gender == "W" and athlete.gender == "M") or
-                    (category.gender == "M" and athlete.gender == "W")):
+            if (category.gender == "W" and athlete.gender == "M") or (
+                category.gender == "M" and athlete.gender == "W"
+            ):
                 raise serializers.ValidationError(_("Athlete's gender is not allowed for this category."))
 
     @staticmethod
@@ -222,13 +273,17 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Validates competition level and type requirements for the athletes.
         i.e. licence.
         """
-        for requirement in competition.type.requirements.split(',') + competition.level.requirements.split(','):
+        for requirement in competition.type.requirements.split(",") + competition.level.requirements.split(","):
             if requirement.strip():
                 for athlete in athletes:
-                    if not athlete.organization.external and not athlete.info.filter(
+                    if (
+                        not athlete.organization.external
+                        and not athlete.info.filter(
                             type=requirement.strip(),
                             date_start__lte=competition.date_start,
-                            date_end__gte=competition.date_start).count():
+                            date_end__gte=competition.date_start,
+                        ).count()
+                    ):
                         raise serializers.ValidationError(_("Missing requirement: %s." % requirement.strip()))
 
     def _check_value_limits(self, result, category, competition_type):
@@ -239,28 +294,28 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if category.team and category.team_size and max_result:
             max_result = max_result * category.team_size
         if min_result is not None and result < min_result:
-            raise serializers.ValidationError(_('A result is too low.'))
+            raise serializers.ValidationError(_("A result is too low."))
         if max_result is not None and result > max_result:
-            raise serializers.ValidationError(_('A result is too high.'))
+            raise serializers.ValidationError(_("A result is too high."))
 
     @staticmethod
     def _check_team(data):
         """
         Validates team information.
         """
-        if 'team' in data and data['team'] and not data['category'].team:
+        if "team" in data and data["team"] and not data["category"].team:
             raise serializers.ValidationError(_("Incorrect category for a team result."))
-        if 'athlete' in data and data['athlete'] and data['category'].team:
+        if "athlete" in data and data["athlete"] and data["category"].team:
             raise serializers.ValidationError(_("Use team_members instead of athlete field for teams."))
-        if 'team_members' not in data and data['category'].team:
+        if "team_members" not in data and data["category"].team:
             raise serializers.ValidationError(_("Team result without team_members."))
 
     def _get_category(self, data):
         """
         Returns the result category in data or old instance.
         """
-        if 'category' in data:
-            category = data['category']
+        if "category" in data:
+            category = data["category"]
         elif self.instance:
             category = self.instance.category
         else:
@@ -272,18 +327,18 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Returns the list of athletes in a result and if a result is team.
         """
         athletes = []
-        if (self.instance and self.instance.team) or ('team' in data and data['team']):
+        if (self.instance and self.instance.team) or ("team" in data and data["team"]):
             team = True
-            if 'team_members' in data:
-                athletes = data['team_members']
+            if "team_members" in data:
+                athletes = data["team_members"]
             elif self.instance:
                 athletes = self.instance.team_members.all()
             else:
                 raise serializers.ValidationError(_("Missing athletes."))
         else:
             team = False
-            if 'athlete' in data and data['athlete']:
-                athletes = [data['athlete']]
+            if "athlete" in data and data["athlete"]:
+                athletes = [data["athlete"]]
             elif self.instance:
                 athletes = [self.instance.athlete]
         if not athletes:
@@ -294,8 +349,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         Returns the competition in data or old instance.
         """
-        if 'competition' in data:
-            competition = data['competition']
+        if "competition" in data:
+            competition = data["competition"]
         elif self.instance:
             competition = self.instance.competition
         else:
@@ -306,8 +361,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         Returns the result total in data or old instance.
         """
-        if 'result' in data:
-            result = data['result']
+        if "result" in data:
+            result = data["result"]
         elif self.instance:
             result = self.instance.result
         else:
@@ -334,39 +389,52 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         Raises ValidationError if trying to create new result and it already exists.
         """
         if self.instance is None and (
-                (not category.team and Result.objects.filter(competition=data['competition'],
-                                                             athlete=data['athlete'],
-                                                             category=data['category'])) or
-                (category.team and Result.objects.filter(competition=data['competition'],
-                                                         last_name=data['last_name'],
-                                                         category=data['category']))):
-            raise serializers.ValidationError(_('Entry already exists.'))
+            (
+                not category.team
+                and Result.objects.filter(
+                    competition=data["competition"], athlete=data["athlete"], category=data["category"]
+                )
+            )
+            or (
+                category.team
+                and Result.objects.filter(
+                    competition=data["competition"], last_name=data["last_name"], category=data["category"]
+                )
+            )
+        ):
+            raise serializers.ValidationError(_("Entry already exists."))
 
     def _check_team_status(self, data):
         """
         Raises ValidationError if team status is changed. This is done because of the validation and record checks.
         """
-        if self.instance and (('team' in data and data['team'] and not self.instance.team) or
-                              (self.instance.team and 'team' in data and not data['team'])):
-            raise serializers.ValidationError(_('Cannot change team status.'))
+        if self.instance and (
+            ("team" in data and data["team"] and not self.instance.team)
+            or (self.instance.team and "team" in data and not data["team"])
+        ):
+            raise serializers.ValidationError(_("Cannot change team status."))
 
     @staticmethod
     def _check_partial(data, competition, category):
         """
         Validate partial results
         """
-        if 'partial' in data and len(data['partial']):
-            for partial in data['partial']:
-                if partial['type'].competition_type != competition.type:
-                    raise serializers.ValidationError(_('Partial result type does not match competition type.'))
-                if 'value' in partial and partial['type'].min_result is not None and partial['value'] < partial['type'].min_result:
-                    raise serializers.ValidationError(_('A result is too low.'))
-                if 'value' in partial and partial['type'].max_result is not None:
-                    max_result = partial['type'].max_result
+        if "partial" in data and len(data["partial"]):
+            for partial in data["partial"]:
+                if partial["type"].competition_type != competition.type:
+                    raise serializers.ValidationError(_("Partial result type does not match competition type."))
+                if (
+                    "value" in partial
+                    and partial["type"].min_result is not None
+                    and partial["value"] < partial["type"].min_result
+                ):
+                    raise serializers.ValidationError(_("A result is too low."))
+                if "value" in partial and partial["type"].max_result is not None:
+                    max_result = partial["type"].max_result
                     if category.team and category.team_size:
                         max_result = max_result * category.team_size
-                    if partial['value'] > max_result:
-                        raise serializers.ValidationError(_('A result is too high.'))
+                    if partial["value"] > max_result:
+                        raise serializers.ValidationError(_("A result is too high."))
 
     def _check_permission(self, data, user):
         """
@@ -382,19 +450,35 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         """
         if user.is_superuser or user.is_staff:
             return True
-        competition_data = data['competition'] if 'competition' in data else None
+        competition_data = data["competition"] if "competition" in data else None
         competition_instance = self.instance.competition if self.instance else None
         if (competition_data and competition_data.locked) or competition_instance and competition_instance.locked:
             return False
-        if ((not competition_instance or (not competition_instance.approved and competition_instance.level.require_approval and
-                                     (not competition_instance.organization.is_area_manager(user) or
-                                      not competition_instance.level.area_competition))) and
-            (not competition_data or (not competition_data.approved and competition_data.level.require_approval and
-                                 (not competition_data.organization.is_area_manager(user) or
-                                  not competition_data.level.area_competition)))):
+        if (
+            not competition_instance
+            or (
+                not competition_instance.approved
+                and competition_instance.level.require_approval
+                and (
+                    not competition_instance.organization.is_area_manager(user)
+                    or not competition_instance.level.area_competition
+                )
+            )
+        ) and (
+            not competition_data
+            or (
+                not competition_data.approved
+                and competition_data.level.require_approval
+                and (
+                    not competition_data.organization.is_area_manager(user)
+                    or not competition_data.level.area_competition
+                )
+            )
+        ):
             return False
-        if ((not competition_instance or not competition_instance.organization.is_manager(user)) and
-                (not competition_data or not competition_data.organization.is_manager(user))):
+        if (not competition_instance or not competition_instance.organization.is_manager(user)) and (
+            not competition_data or not competition_data.organization.is_manager(user)
+        ):
             return False
         return True
 
@@ -411,9 +495,9 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
          - value limits for the result
          - partial results
         """
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not self._check_permission(data, user):
-            raise serializers.ValidationError(_('No permission to alter or create a record.'), 403)
+            raise serializers.ValidationError(_("No permission to alter or create a record."), 403)
         self._check_team_status(data)
         athletes, team = self._get_athletes(data)
         category = self._get_category(data)
@@ -428,10 +512,15 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if result is not None:
             self._check_value_limits(result, category, competition.type)
         self._check_partial(data, competition, category)
-        if ('approved' in data and data['approved'] and
-            not (user.is_superuser or user.is_staff or
-                 (competition.organization.is_area_manager(user) and
-                  competition.level.area_competition))):
+        if (
+            "approved" in data
+            and data["approved"]
+            and not (
+                user.is_superuser
+                or user.is_staff
+                or (competition.organization.is_area_manager(user) and competition.level.area_competition)
+            )
+        ):
             raise serializers.ValidationError(_("No permission to approve results."))
         return data
 
@@ -445,72 +534,84 @@ class ResultPartialLimitedSerializer(ResultPartialSerializer):
 
     class Meta:
         model = ResultPartial
-        fields = ('id', 'type', 'order', 'value', 'decimals', 'code', 'time', 'text')
+        fields = ("id", "type", "order", "value", "decimals", "code", "time", "text")
 
 
 class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for limited result information
     """
+
     athlete = AthleteLimitedSerializer(read_only=True)
     team_members = AthleteNameSerializer(read_only=True, many=True)
     competition = CompetitionLimitedSerializer(read_only=True)
     partial = ResultPartialLimitedSerializer(many=True, read_only=True)
     record = RecordLimitedSerializer(many=True, read_only=True)
 
-    category = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='abbreviation'
-    )
-    elimination_category = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='abbreviation'
-    )
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='abbreviation'
-    )
+    category = serializers.SlugRelatedField(read_only=True, slug_field="abbreviation")
+    elimination_category = serializers.SlugRelatedField(read_only=True, slug_field="abbreviation")
+    organization = serializers.SlugRelatedField(read_only=True, slug_field="abbreviation")
 
-    _PREFETCH_RELATED_FIELDS = ['athlete',
-                                'athlete__info',
-                                'athlete__organization',
-                                'athlete__organization__areas',
-                                'athlete__additional_organizations',
-                                'category',
-                                'competition',
-                                'competition__event',
-                                'competition__level',
-                                'competition__organization',
-                                'competition__organization__areas',
-                                'competition__type',
-                                'organization',
-                                'elimination_category',
-                                'partial',
-                                'partial__type',
-                                'record',
-                                'record__level',
-                                'record__category',
-                                'team_members'
-                                ]
+    _PREFETCH_RELATED_FIELDS = [
+        "athlete",
+        "athlete__info",
+        "athlete__organization",
+        "athlete__organization__areas",
+        "athlete__additional_organizations",
+        "category",
+        "competition",
+        "competition__event",
+        "competition__level",
+        "competition__organization",
+        "competition__organization__areas",
+        "competition__type",
+        "organization",
+        "elimination_category",
+        "partial",
+        "partial__type",
+        "record",
+        "record__level",
+        "record__category",
+        "team_members",
+    ]
 
     class Meta:
         model = Result
         fields = (
-            'id', 'athlete', 'first_name', 'last_name', 'team_members', 'competition', 'organization', 'category',
-            'elimination_category', 'result', 'result_code', 'decimals', 'position', 'position_pre', 'partial',
-            'approved', 'team', 'info', 'record')
+            "id",
+            "athlete",
+            "first_name",
+            "last_name",
+            "team_members",
+            "competition",
+            "organization",
+            "category",
+            "elimination_category",
+            "result",
+            "result_code",
+            "decimals",
+            "position",
+            "position_pre",
+            "partial",
+            "approved",
+            "team",
+            "info",
+            "record",
+        )
 
 
 class ResultLimitedAggregateSerializer(ResultLimitedSerializer):
     """
     Serializer for limited aggregate result information
     """
-    _PREFETCH_RELATED_FIELDS = ['athlete',
-                                'athlete__organization',
-                                'athlete__organization__areas',
-                                'athlete__additional_organizations',
-                                ]
+
+    _PREFETCH_RELATED_FIELDS = [
+        "athlete",
+        "athlete__organization",
+        "athlete__organization__areas",
+        "athlete__additional_organizations",
+    ]
 
     class Meta:
         model = Result
-        fields = ('id', 'athlete', 'result')
+        fields = ("id", "athlete", "result")
