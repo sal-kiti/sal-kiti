@@ -1,4 +1,8 @@
 # Changelog
+
+## 1.4.0 - Upcoming
+- Updated to Django 4.2
+
 ## 1.3.0 - 2023-12-17
 ### Changes
 - Add support for area managers

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from drf_queryfields import QueryFieldsMixin
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework import serializers
@@ -116,7 +116,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         if not dry_run:
             result = Result.objects.create(**validated_data)
         else:
-            result = Result(**validated_data)
+            result = Result(**validated_data, pk=9999999999)
         if partial_data:
             for partial in partial_data:
                 if not dry_run:

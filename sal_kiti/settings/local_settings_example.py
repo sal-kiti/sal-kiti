@@ -15,8 +15,8 @@ DEBUG = False
 
 # List of allowed hosts
 ALLOWED_HOSTS = ['localhost']
-
-CORS_ORIGIN_WHITELIST = []
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CORS_ALLOWED_ORIGINS = ['http://localhost']
 CORS_ALLOW_CREDENTIALS = True
 
 FAKER_LOCALE = 'en_US'
