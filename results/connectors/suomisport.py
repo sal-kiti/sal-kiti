@@ -149,6 +149,8 @@ class Suomisport:
                 continue
             start = datetime.datetime.strptime(licence["usagePeriodStart"], "%Y-%m-%d").date()
             end = datetime.datetime.strptime(licence["usagePeriodEnd"], "%Y-%m-%d").date()
+            if start > datetime.date.today() or end < datetime.date.today():
+                continue
             licence_name = licence["name"]
             modification_time = isoparse(licence["modificationTime"])
             user = licence["user"]
