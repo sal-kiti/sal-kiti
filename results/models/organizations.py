@@ -98,7 +98,7 @@ class Organization(LogChangesMixing, models.Model):
         """
         groups = user.groups.all()
         try:
-            Organization.objects.filter(Q(group__in=groups) | Q(areas__group__in=groups)).get(pk=self.pk)
+            Organization.objects.filter(Q(group__in=groups) | Q(areas__group__in=groups)).distinct().get(pk=self.pk)
             return True
         except Organization.DoesNotExist:
             pass
@@ -112,7 +112,7 @@ class Organization(LogChangesMixing, models.Model):
         """
         groups = user.groups.all()
         try:
-            Organization.objects.filter(areas__group__in=groups).get(pk=self.pk)
+            Organization.objects.filter(areas__group__in=groups).distinct().get(pk=self.pk)
             return True
         except Organization.DoesNotExist:
             pass
