@@ -5,6 +5,7 @@ from rest_framework.test import APIRequestFactory
 
 from results.models.events import Event
 from results.models.organizations import Area
+from results.tests.factories.competitions import CompetitionFactory
 from results.tests.factories.events import EventFactory
 from results.tests.utils import ResultsTestCase
 from results.views.events import EventViewSet
@@ -164,6 +165,38 @@ class EventTestCase(ResultsTestCase):
         self.object.save()
         response = self._test_delete(user=self.organization_user)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(APPROVE_COMPETITIONS_WITH_EVENT=False)
+    def test_event_approval_do_not_approve_competitions(self):
+        competition = CompetitionFactory.create(event=self.object)
+        self._test_patch(user=self.staff_user, data={"approved": True})
+        competition.refresh_from_db()
+        self.assertFalse(competition.approved)
+
+    @override_settings(APPROVE_COMPETITIONS_WITH_EVENT=True)
+    def test_event_approval_approve_competitions(self):
+        competition = CompetitionFactory.create(event=self.object)
+        self._test_patch(user=self.staff_user, data={"approved": True})
+        competition.refresh_from_db()
+        self.assertTrue(competition.approved)
+
+    @override_settings(REMOVE_COMPETITION_APPROVAL_WITH_EVENT=False)
+    def test_event_remove_approval_do_not_remove_competition_approval(self):
+        self.object.approved = True
+        self.object.save()
+        competition = CompetitionFactory.create(event=self.object, approved=True)
+        self._test_patch(user=self.staff_user, data={"approved": False})
+        competition.refresh_from_db()
+        self.assertTrue(competition.approved)
+
+    @override_settings(REMOVE_COMPETITION_APPROVAL_WITH_EVENT=True)
+    def test_event_remove_approval_remove_competition_approval(self):
+        self.object.approved = True
+        self.object.save()
+        competition = CompetitionFactory.create(event=self.object, approved=True)
+        self._test_patch(user=self.staff_user, data={"approved": False})
+        competition.refresh_from_db()
+        self.assertFalse(competition.approved)
 
     def test_event_delete_with_superuser(self):
         response = self._test_delete(user=self.superuser)

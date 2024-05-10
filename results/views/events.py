@@ -83,6 +83,27 @@ class EventViewSet(viewsets.ModelViewSet):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+    def perform_update(self, serializer):
+        if (
+            settings.APPROVE_COMPETITIONS_WITH_EVENT
+            and not serializer.instance.approved
+            and serializer.initial_data
+            and serializer.initial_data.get("approved")
+        ):
+            for competition in serializer.instance.competitions.filter(approved=False):
+                competition.approved = True
+                competition.save()
+        if (
+            settings.REMOVE_COMPETITION_APPROVAL_WITH_EVENT
+            and serializer.instance.approved
+            and serializer.initial_data
+            and serializer.initial_data.get("approved") == False
+        ):
+            for competition in serializer.instance.competitions.filter(approved=True):
+                competition.approved = False
+                competition.save()
+        serializer.save()
+
 
 class EventContactViewSet(viewsets.ModelViewSet):
     """API endpoint for event contacts.

@@ -44,6 +44,10 @@ CREATE_RECORD_FOR_SAME_RESULT_VALUE = False
 COMPETITION_PUBLISH_REQUIRES_STAFF = True
 EVENT_PUBLISH_REQUIRES_STAFF = True
 
+# Set to True to change approval status of all event's competitions with the event.
+APPROVE_COMPETITIONS_WITH_EVENT = False
+REMOVE_COMPETITION_APPROVAL_WITH_EVENT = False
+
 # Check competition type and level requirements when importing results.
 # Turn False to ignore requirements check during import.
 # CHECK_COMPETITION_REQUIREMENTS = True
