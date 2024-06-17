@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
 from django_filters.rest_framework import DjangoFilterBackend
@@ -49,6 +51,22 @@ class AthleteViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ("first_name", "last_name", "sport_id")
     filterset_fields = ["sport_id", "first_name", "last_name", "organization__id", "organization__abbreviation"]
+
+    def get_queryset(self):
+        """
+        Custom filtering with query parameters.
+        """
+        queryset = Athlete.objects.all()
+        info = self.request.query_params.get("info", None)
+        if info:
+            visibility = AthleteInformation.get_visibility(self.request.user)
+            queryset = queryset.filter(
+                info__type=info,
+                info__date_end__gte=date.today(),
+                info__date_start__lte=date.today(),
+                info__visibility__in=visibility,
+            )
+        return queryset
 
     def get_serializer_class(self):
         """

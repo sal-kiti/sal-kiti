@@ -15,6 +15,12 @@ class ResultsTestCase(TestCase):
         view = self.viewset.as_view(actions={"get": "retrieve"})
         return view(request, pk=self.object.pk)
 
+    def _test_list(self, user):
+        request = self.factory.get(self.url)
+        force_authenticate(request, user=user)
+        view = self.viewset.as_view(actions={"get": "list"})
+        return view(request)
+
     def _test_create(self, user, data):
         request = self.factory.post(self.url, data)
         if user:

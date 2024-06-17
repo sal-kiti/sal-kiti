@@ -1,4 +1,4 @@
-from datetime import timedelta, date
+from datetime import date, timedelta
 
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -59,6 +59,15 @@ class AthleteTestCase(ResultsTestCase):
         view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_athlete_access_list_filter_medal(self):
+        AthleteInformationFactory.create(athlete=self.object, date_start=date.today(), date_end=date.today())
+        self.url = "/api/athletes/?info=unknown"
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 0)
+        self.url = "/api/athletes/?info=Medal"
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_athlete_access_object_without_user(self):
         response = self._test_access(user=None)

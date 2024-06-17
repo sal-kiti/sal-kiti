@@ -91,6 +91,23 @@ class AthleteInformation(LogChangesMixing, models.Model):
         return "%s, %s" % (self.athlete, self.type)
 
     @staticmethod
+    def get_visibility(user):
+        """
+        Returns the list of allowed visibility for user
+
+        :param user:
+        :return: list
+        """
+        if not user or not user.is_authenticated:
+            return ["P"]
+        elif user.is_superuser:
+            return ["P", "A", "S", "U"]
+        elif user.is_staff:
+            return ["P", "A", "S"]
+        else:
+            return ["P", "A"]
+
+    @staticmethod
     def has_read_permission(request):
         return True
 
