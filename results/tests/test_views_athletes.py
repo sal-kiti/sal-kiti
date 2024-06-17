@@ -1,3 +1,5 @@
+from datetime import timedelta, date
+
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
@@ -69,6 +71,26 @@ class AthleteTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.limited_data:
             self.assertEqual(response.data[key], self.data[key])
+
+    def test_athlete_access_past_information_with_normal_user(self):
+        AthleteInformationFactory.create(
+            athlete=self.object,
+            date_start=(date.today() - timedelta(days=2)),
+            date_end=(date.today() - timedelta(days=1)),
+        )
+        response = self._test_access(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["info"], [])
+
+    def test_athlete_access_past_information_with_superuser(self):
+        AthleteInformationFactory.create(
+            athlete=self.object,
+            date_start=(date.today() - timedelta(days=2)),
+            date_end=(date.today() - timedelta(days=1)),
+        )
+        response = self._test_access(user=self.superuser)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["info"]), 1)
 
     def test_athlete_update_without_user(self):
         response = self._test_update(user=None, data=self.update_data)

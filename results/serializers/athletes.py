@@ -1,4 +1,5 @@
 from abc import ABC
+from datetime import date
 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -23,9 +24,9 @@ class AthleteInformationListSerializer(serializers.ListSerializer, ABC):
             elif user.is_staff:
                 data = data.filter(visibility__in=["P", "A", "S"])
             elif user.is_authenticated:
-                data = data.filter(visibility__in=["P", "A"])
+                data = data.filter(visibility__in=["P", "A"], date_start__lte=date.today(), date_end__gte=date.today())
             else:
-                data = data.filter(visibility__in=["P"])
+                data = data.filter(visibility__in=["P"], date_start__lte=date.today(), date_end__gte=date.today())
         return super().to_representation(data)
 
 
