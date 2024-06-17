@@ -85,6 +85,67 @@ class Suomisport:
                 result.append(licence_type)
         return result
 
+    def get_sports(self):
+        """
+        Get sports for organization.
+
+        :return: sports
+        :rtype: list
+        """
+        url = "sport/" + self.organization_id
+        sports = self._fetch_from_api(url)
+        return sports
+
+    def get_merit_groups(self):
+        """
+        Get merit groups for organization.
+
+        :return: merit groups types
+        :rtype: list
+        """
+        url = "merit-group/" + self.organization_id
+        merit_groups = self._fetch_from_api(url)
+        return merit_groups
+
+    def get_merits(self, merit_group_id):
+        """
+        Get merits of a merit group.
+
+        :param merit_group_id: merit group id
+        :type merit_group_id: int
+        :return: merits
+        :rtype: list
+        """
+        url = "merit/" + str(merit_group_id)
+        merits = self._fetch_from_api(url)
+        return merits
+
+    def get_granted_merits(self, merit_id):
+        """
+        Get merits granted to the users.
+
+        :param merit_id: merit id
+        :type merit_id: int
+        :return: merits
+        :rtype: list
+        """
+        url = "granted-merit/" + str(merit_id)
+        merits = self._fetch_from_api(url)
+        return merits
+
+    def get_user_info(self, user_id):
+        """
+        Get user information.
+
+        :param user_id: user id
+        :type user_id: int
+        :return: user information
+        :rtype: dict
+        """
+        url = "user-info/" + str(user_id)
+        user = self.oauth.get(self.base_url + url).json()
+        return user
+
     def get_licences(self, licence_period_id, licence_type_id, ts=None):
         """
         Get licences
@@ -92,8 +153,8 @@ class Suomisport:
         :param licence_period_id: licence period id
         :param licence_type_id: licence type id
         :param ts: fetch only results updates since ts
-        :param licence_period_id: int
-        :param licence_type_id: int
+        :type licence_period_id: int
+        :typelicence_type_id: int
         :param ts: datetime
         :return: licences
         :rtype: list
@@ -272,3 +333,66 @@ class Suomisport:
                     stdout.write("%s;%s;%s;%s\n" % ("FOUND", organization[0].abbreviation, sport_id, name))
                 else:
                     stdout.write("%s;%s;%s;%s\n" % ("NOT FOUND", sport_id, name, abbreviation))
+
+    def update_merit_user(self, sport_id, granted_merit, sport=None, print_to_stdout=True):
+        merit_info = granted_merit.get("grantedMerit")
+        if sport:
+            merit_name = merit_info.get("meritName") + ", " + sport
+        else:
+            merit_name = merit_info.get("meritName")
+        merit_start_date = datetime.datetime.strptime(merit_info["grantingDate"], "%Y-%m-%d").date()
+        merit_end_date = datetime.datetime.strptime(merit_info["validUntilDate"], "%Y-%m-%d").date()
+        if merit_end_date < datetime.date.today():
+            return
+        try:
+            athlete = Athlete.objects.get(sport_id=sport_id)
+        except Athlete.DoesNotExist:
+            first_name = self._capitalize_name(granted_merit["nickname"]) if "nickname" in granted_merit else None
+            if not first_name:
+                first_name = self._capitalize_name(granted_merit["firstName"].split(" ")[0])
+            last_name = self._capitalize_name(granted_merit["lastName"].split(" ")[0])
+            athlete = Athlete.objects.create(sport_id=sport_id, first_name=first_name, last_name=last_name, gender="U")
+            logger.info("Created new athlete from Suomisport: %s", sport_id)
+            if print_to_stdout:
+                stdout.write("Created athlete: %s\n" % sport_id)
+        AthleteInformation.objects.get_or_create(
+            athlete=athlete,
+            type="merit",
+            value=merit_name,
+            date_start=merit_start_date,
+            date_end=merit_end_date,
+            modification_time=None,
+            visibility="A",
+        )
+
+    def update_merit(self, merit, sport=None, print_to_stdout=False):
+        granted_merits = self.get_granted_merits(merit.get("id"))
+        for granted_merit in granted_merits:
+            user = self.get_user_info(granted_merit.get("id"))
+            if user.get("sportId"):
+                self.update_merit_user(
+                    sport_id=user.get("sportId"),
+                    granted_merit=granted_merit,
+                    sport=sport,
+                    print_to_stdout=print_to_stdout,
+                )
+
+    def update_judge_merits(self, print_to_stdout=False):
+        merit_groups = self.get_merit_groups()
+        sports = self.get_sports()
+        judge_merit_names = settings.SUOMISPORT_JUDGE_MERITS
+        for group in merit_groups:
+            update_merit_group = False
+            for judge_merit_name in judge_merit_names:
+                if judge_merit_name in group.get("name").lower():
+                    update_merit_group = True
+            if update_merit_group:
+                sport_name = None
+                if group.get("isSportBound"):
+                    for sport in sports:
+                        if sport.get("id") == group.get("sportId"):
+                            sport_name = sport.get("name")
+                            break
+                merits = self.get_merits(group.get("id"))
+                for merit in merits:
+                    self.update_merit(merit, sport=sport_name, print_to_stdout=print_to_stdout)

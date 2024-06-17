@@ -16,6 +16,19 @@ class OAuth(object):
 
     def json(self):
         today = datetime.date.today().isoformat()
+        if self.url.startswith("sport"):
+            return {
+                "content": [
+                    {
+                        "id": 1,
+                        "name": "Sport A",
+                    },
+                    {
+                        "id": 2,
+                        "name": "Sport B",
+                    },
+                ]
+            }
         if self.url.startswith("licence"):
             return {
                 "content": [
@@ -77,6 +90,49 @@ class OAuth(object):
                     ],
                     "pageable": {"page": 1, "size": 2, "total": 2},
                 }
+        if self.url.startswith("merit-group"):
+            return {
+                "content": [
+                    {"id": 1, "name": "International judge, sport B", "isSportBound": True, "sportId": 2},
+                    {
+                        "id": 2,
+                        "name": "Generic merit",
+                    },
+                ]
+            }
+        if self.url.startswith("merit"):
+            return {
+                "content": [
+                    {
+                        "id": 1,
+                        "name": "A Judge",
+                    },
+                ]
+            }
+        if self.url.startswith("granted-merit"):
+            return {
+                "content": [
+                    {
+                        "id": 6,
+                        "firstName": "Merja",
+                        "nickname": "Merry",
+                        "lastName": "Merit",
+                        "grantedMerit": {
+                            "grantingDate": today,
+                            "validUntilDate": today,
+                            "meritName": "A Judge",
+                        },
+                    }
+                ],
+            }
+        if self.url.startswith("user-info"):
+            return {
+                "id": 6,
+                "firstName": "Merja",
+                "nickname": "Merry",
+                "lastName": "Merit",
+                "sportId": 567890123,
+            }
         return {}
 
 
@@ -125,3 +181,16 @@ class SuomisportCase(TestCase):
         obj.update_licences(update_only_latest=True, print_to_stdout=False)
         self.assertNotEqual(Athlete.objects.get(id=1).first_name, "Mattiab")
         self.assertEqual(Athlete.objects.get(id=1).last_name, name)
+
+    @patch("results.connectors.suomisport.logger")
+    def test_update_merits(self, mock_logger):
+        User.objects.create_user("log")
+        OrganizationFactory.create(sport_id=1)
+        obj = TestSuomiSport()
+        obj.update_judge_merits(print_to_stdout=False)
+        mock_logger.info.assert_called_with("Created new athlete from Suomisport: %s", 567890123)
+        self.assertEqual(Athlete.objects.count(), 1)
+        self.assertEqual(Athlete.objects.get(id=1).first_name, "Merry")
+        self.assertEqual(Athlete.objects.get(id=1).last_name, "Merit")
+        self.assertEqual(Athlete.objects.get(id=1).gender, "U")
+        self.assertEqual(Athlete.objects.get(id=1).info.first().value, "A Judge, Sport B")

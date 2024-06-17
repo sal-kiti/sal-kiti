@@ -139,6 +139,8 @@ STATIC_URL = "/static/"
 API_TITLE = "SAL Kiti"
 API_VERSION = "0.2.0"
 
+SUOMISPORT_JUDGE_MERITS = ["tuomari", "judge"]
+
 try:
     from sal_kiti.settings.local_settings import *
 except ImportError:
