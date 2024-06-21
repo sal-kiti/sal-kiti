@@ -1,7 +1,13 @@
 # Changelog
 
-## 1.4.0 - Upcoming
+## 1.4.0 - 2024-06-21
 - Updated to Django 4.2
+- Updated requirements
+- Added support to SuomiSport merits
+- Fixed signal name for area group creation
+- Updated type choices for event contacts
+- Added missing basenames to routers
+- Filter athlete information to currently valid
 
 ## 1.3.0 - 2023-12-17
 ### Changes
