@@ -89,7 +89,8 @@ class EventContact(LogChangesMixing, models.Model):
     TYPE_CHOICES = [
         ("contact", _("Generic contact")),
         ("manager", _("Competition manager")),
-        ("head judge", _("Head judge")),
+        ("chiefjudge", _("Chief judge")),
+        ("chiefrange", _("Chief range officer")),
         ("technical", _("Technical manager")),
     ]
     phone_regex = RegexValidator(
