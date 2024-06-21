@@ -41,7 +41,7 @@ def create_organization_group(sender, instance=None, created=False, **kwargs):
 
 
 @receiver(post_save, sender=Area)
-def create_organization_group(sender, instance=None, created=False, **kwargs):
+def create_area_group(sender, instance=None, created=False, **kwargs):
     """Creates group when area is created."""
     group_name = "area_" + instance.abbreviation
     if created and not instance.group and Group.objects.filter(name=group_name).count() == 0:
