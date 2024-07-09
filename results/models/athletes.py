@@ -6,6 +6,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser, authenticate
 
 from results.mixins.change_log import LogChangesMixing
 from results.models.organizations import Organization
+from results.models.sports import Sport
 
 
 class Athlete(LogChangesMixing, models.Model):
@@ -83,7 +84,11 @@ class AthleteInformation(LogChangesMixing, models.Model):
         ("U", _("Superuser only")),
     )
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE, related_name="info")
+    sport = models.ForeignKey(
+        Sport, on_delete=models.CASCADE, blank=True, null=True, default=None, related_name="athlete_info"
+    )
     type = models.CharField(max_length=100, verbose_name=_("Type"))
+    suomisport_id = models.IntegerField(blank=True, null=True, default=None, verbose_name=_("Suomisport ID"))
     value = models.CharField(max_length=100, verbose_name=_("Value"))
     date_start = models.DateField(blank=True, null=True, verbose_name=_("Start date"))
     date_end = models.DateField(blank=True, null=True, verbose_name=_("End date"))

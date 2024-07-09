@@ -13,4 +13,4 @@ class SportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sport
-        fields = ("id", "name", "abbreviation", "order", "historical", "permissions")
+        fields = ("id", "name", "abbreviation", "suomisport_id", "order", "historical", "permissions")

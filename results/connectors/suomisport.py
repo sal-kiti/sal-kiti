@@ -10,6 +10,7 @@ from requests_oauthlib import OAuth2Session
 
 from results.models.athletes import Athlete, AthleteInformation
 from results.models.organizations import Organization
+from results.models.sports import Sport
 
 logger = logging.getLogger(__name__)
 
@@ -208,10 +209,11 @@ class Suomisport:
                         "Could not find organization with ID: %s\n" % str(licence["licenceOrganizationSportId"])
                     )
                 continue
-            start = datetime.datetime.strptime(licence["usagePeriodStart"], "%Y-%m-%d").date()
-            end = datetime.datetime.strptime(licence["usagePeriodEnd"], "%Y-%m-%d").date()
-            if start > datetime.date.today() or end < datetime.date.today():
+            licence_start_date = datetime.datetime.strptime(licence["usagePeriodStart"], "%Y-%m-%d").date()
+            licence_end_date = datetime.datetime.strptime(licence["usagePeriodEnd"], "%Y-%m-%d").date()
+            if licence_start_date > datetime.date.today() or licence_end_date < datetime.date.today():
                 continue
+            licence_id = licence["id"]
             licence_name = licence["name"]
             modification_time = isoparse(licence["modificationTime"])
             user = licence["user"]
@@ -263,14 +265,18 @@ class Suomisport:
                 logger.info("Created new athlete from Suomisport: %s", sport_id)
                 if print_to_stdout:
                     stdout.write("Created athlete: %s\n" % sport_id)
-            AthleteInformation.objects.get_or_create(
+            AthleteInformation.objects.update_or_create(
                 athlete=athlete,
                 type="licence",
                 value=licence_name,
-                date_start=start,
-                date_end=end,
-                modification_time=modification_time,
-                visibility="A",
+                suomisport_id=licence_id,
+                defaults={
+                    "value": licence_name,
+                    "date_start": licence_start_date,
+                    "date_end": licence_end_date,
+                    "visibility": "A",
+                    "modification_time": modification_time,
+                },
             )
 
     def update_licences(self, update_only_latest=True, print_to_stdout=False, only_year=False):
@@ -336,10 +342,8 @@ class Suomisport:
 
     def update_merit_user(self, sport_id, granted_merit, sport=None, print_to_stdout=True):
         merit_info = granted_merit.get("grantedMerit")
-        if sport:
-            merit_name = merit_info.get("meritName") + ", " + sport
-        else:
-            merit_name = merit_info.get("meritName")
+        merit_name = merit_info.get("meritName")
+        merit_id = merit_info.get("id")
         merit_start_date = datetime.datetime.strptime(merit_info["grantingDate"], "%Y-%m-%d").date()
         merit_end_date = datetime.datetime.strptime(merit_info["validUntilDate"], "%Y-%m-%d").date()
         if merit_end_date < datetime.date.today():
@@ -355,14 +359,18 @@ class Suomisport:
             logger.info("Created new athlete from Suomisport: %s", sport_id)
             if print_to_stdout:
                 stdout.write("Created athlete: %s\n" % sport_id)
-        AthleteInformation.objects.get_or_create(
+        AthleteInformation.objects.update_or_create(
             athlete=athlete,
+            sport=sport,
             type="merit",
-            value=merit_name,
-            date_start=merit_start_date,
-            date_end=merit_end_date,
-            modification_time=None,
-            visibility="A",
+            suomisport_id=merit_id,
+            defaults={
+                "value": merit_name,
+                "date_start": merit_start_date,
+                "date_end": merit_end_date,
+                "visibility": "A",
+                "modification_time": None,
+            },
         )
 
     def update_merit(self, merit, sport=None, print_to_stdout=False):
@@ -379,7 +387,6 @@ class Suomisport:
 
     def update_judge_merits(self, print_to_stdout=False):
         merit_groups = self.get_merit_groups()
-        sports = self.get_sports()
         judge_merit_names = settings.SUOMISPORT_JUDGE_MERITS
         for group in merit_groups:
             update_merit_group = False
@@ -387,12 +394,14 @@ class Suomisport:
                 if judge_merit_name in group.get("name").lower():
                     update_merit_group = True
             if update_merit_group:
-                sport_name = None
+                sport = None
                 if group.get("isSportBound"):
-                    for sport in sports:
-                        if sport.get("id") == group.get("sportId"):
-                            sport_name = sport.get("name")
-                            break
+                    try:
+                        sport = Sport.objects.get(suomisport_id=group.get("sportId"))
+                    except Sport.DoesNotExist:
+                        if print_to_stdout:
+                            stdout.write("Sport not found with Suomisport ID: %s\n" % group.get("sportId"))
+                        continue
                 merits = self.get_merits(group.get("id"))
                 for merit in merits:
-                    self.update_merit(merit, sport=sport_name, print_to_stdout=print_to_stdout)
+                    self.update_merit(merit, sport=sport, print_to_stdout=print_to_stdout)

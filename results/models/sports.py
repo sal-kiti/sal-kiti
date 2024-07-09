@@ -10,6 +10,9 @@ class Sport(LogChangesMixing, models.Model):
 
     name = models.CharField(max_length=100, verbose_name=_("Name"))
     abbreviation = models.CharField(max_length=15, verbose_name=_("Abbreviation"))
+    suomisport_id = models.IntegerField(
+        blank=True, null=True, unique=True, default=None, verbose_name=_("Suomisport ID")
+    )
     order = models.SmallIntegerField(default=0, verbose_name=_("Order"))
     historical = models.BooleanField(default=False, verbose_name=_("Historical"))
 
