@@ -35,6 +35,7 @@ class Athlete(LogChangesMixing, models.Model):
     no_auto_update = models.BooleanField(default=False, verbose_name=_("No automatic updates"))
 
     class Meta:
+        ordering = ["last_name", "first_name", "sport_id"]
         verbose_name = _("Athlete")
         verbose_name_plural = _("Athletes")
 
