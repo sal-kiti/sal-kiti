@@ -559,6 +559,7 @@ class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, Eag
 
     _PREFETCH_RELATED_FIELDS = [
         "athlete",
+        "athlete__info__sport",
         "athlete__organization",
         "athlete__organization__areas",
         "athlete__additional_organizations",

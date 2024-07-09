@@ -7,6 +7,7 @@ from django.test import TestCase
 from results.connectors.suomisport import Suomisport
 from results.models.athletes import Athlete
 from results.tests.factories.athletes import AthleteFactory
+from results.tests.factories.categories import SportFactory
 from results.tests.factories.organizations import OrganizationFactory
 
 
@@ -53,6 +54,7 @@ class OAuth(object):
                 return {
                     "content": [
                         {
+                            "id": 1,
                             "licenceOrganizationSportId": 1,
                             "usagePeriodEnd": today,
                             "usagePeriodStart": today,
@@ -73,6 +75,7 @@ class OAuth(object):
                 return {
                     "content": [
                         {
+                            "id": 2,
                             "licenceOrganizationSportId": 1,
                             "usagePeriodEnd": today,
                             "usagePeriodStart": today,
@@ -186,6 +189,7 @@ class SuomisportCase(TestCase):
     def test_update_merits(self, mock_logger):
         User.objects.create_user("log")
         OrganizationFactory.create(sport_id=1)
+        sport = SportFactory.create(suomisport_id=2)
         obj = TestSuomiSport()
         obj.update_judge_merits(print_to_stdout=False)
         mock_logger.info.assert_called_with("Created new athlete from Suomisport: %s", 567890123)
@@ -193,4 +197,5 @@ class SuomisportCase(TestCase):
         self.assertEqual(Athlete.objects.get(id=1).first_name, "Merry")
         self.assertEqual(Athlete.objects.get(id=1).last_name, "Merit")
         self.assertEqual(Athlete.objects.get(id=1).gender, "U")
-        self.assertEqual(Athlete.objects.get(id=1).info.first().value, "A Judge, Sport B")
+        self.assertEqual(Athlete.objects.get(id=1).info.first().value, "A Judge")
+        self.assertEqual(Athlete.objects.get(id=1).info.first().sport, sport)

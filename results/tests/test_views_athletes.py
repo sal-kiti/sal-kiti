@@ -6,6 +6,7 @@ from rest_framework.test import APIRequestFactory
 
 from results.models.athletes import Athlete, AthleteInformation
 from results.tests.factories.athletes import AthleteFactory, AthleteInformationFactory
+from results.tests.factories.categories import SportFactory
 from results.tests.utils import ResultsTestCase
 from results.views.athletes import AthleteInformationViewSet, AthleteViewSet
 
@@ -179,6 +180,7 @@ class AthleteTestCase(ResultsTestCase):
 class AthleteInformationTestCase(ResultsTestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        self.sport = SportFactory.create(suomisport_id=2)
         self.user = User.objects.create(username="tester")
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
@@ -188,6 +190,7 @@ class AthleteInformationTestCase(ResultsTestCase):
         self.data = {
             "id": 1,
             "athlete": self.object.athlete.pk,
+            "sport": None,
             "type": self.object.type,
             "value": self.object.value,
             "visibility": self.object.visibility,
@@ -195,12 +198,14 @@ class AthleteInformationTestCase(ResultsTestCase):
         self.update_data = {
             "id": 1,
             "athlete": self.object.athlete.pk,
+            "sport": self.sport.name,
             "type": self.object.type,
             "value": "Field Champion 2018",
             "visibility": self.object.visibility,
         }
         self.newdata = {
             "athlete": self.object.athlete.pk,
+            "sport": self.sport.name,
             "type": self.object.type,
             "value": "Field Champion 2000",
             "visibility": "A",

@@ -6,6 +6,7 @@ from rest_framework import serializers
 from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.athletes import Athlete, AthleteInformation
 from results.models.organizations import Organization
+from results.models.sports import Sport
 from results.serializers.organizations import OrganizationSerializer
 
 
@@ -14,11 +15,13 @@ class AthleteInformationSerializer(serializers.ModelSerializer, EagerLoadingMixi
     Serializer for athletes additional information.
     """
 
+    sport = serializers.SlugRelatedField(slug_field="name", queryset=Sport.objects.all(), allow_null=True)
+
     permissions = DRYPermissionsField()
 
     class Meta:
         model = AthleteInformation
-        fields = ("id", "athlete", "type", "value", "date_start", "date_end", "visibility", "permissions")
+        fields = ("id", "athlete", "sport", "type", "value", "date_start", "date_end", "visibility", "permissions")
 
 
 class AthleteSerializer(serializers.ModelSerializer, EagerLoadingMixin):
@@ -33,6 +36,7 @@ class AthleteSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     permissions = DRYPermissionsField()
 
     _PREFETCH_RELATED_FIELDS = [
+        "info__sport",
         "organization",
         "organization__areas",
         "additional_organizations",

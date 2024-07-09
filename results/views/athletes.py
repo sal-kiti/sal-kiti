@@ -67,11 +67,14 @@ class AthleteViewSet(viewsets.ModelViewSet):
                 info__date_start__lte=date.today(),
                 info__visibility__in=visibility,
             )
+            sport = self.request.query_params.get("sport", None)
+            if sport:
+                queryset = queryset.filter(info__sport=sport)
         athlete_information_queryset = AthleteInformation.get_visibility_queryset(
             user=self.request.user, queryset=AthleteInformation.objects.all()
         )
         prefetch = [Prefetch("info", queryset=athlete_information_queryset)]
-        queryset = self.get_serializer_class().setup_eager_loading(queryset, prefetch=prefetch)
+        queryset = self.get_serializer_class().setup_eager_loading(queryset, prefetch=prefetch).distinct()
         return queryset
 
     def get_serializer_class(self):
