@@ -51,7 +51,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         """
         Prefetch partial results
         """
-        self.queryset = self.queryset.prefetch_related("partial")
+        self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
 
         return self.queryset
 

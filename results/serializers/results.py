@@ -113,7 +113,7 @@ class ResultPartialNestedSerializer(ResultPartialSerializer):
         return data
 
 
-class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for results
     """
@@ -121,6 +121,11 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     dry_run = serializers.BooleanField(required=False)
     partial = ResultPartialNestedSerializer(many=True, required=False)
     permissions = DRYPermissionsField()
+
+    _PREFETCH_RELATED_FIELDS = [
+        "partial",
+        "team_members",
+    ]
 
     class Meta:
         model = Result
