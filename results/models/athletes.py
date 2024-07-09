@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
@@ -106,6 +108,24 @@ class AthleteInformation(LogChangesMixing, models.Model):
             return ["P", "A", "S"]
         else:
             return ["P", "A"]
+
+    @staticmethod
+    def get_visibility_queryset(user, queryset):
+        """
+        Returns the queryset of athlete information allowed for user
+
+        :param user:
+        :param queryset:
+        :return: queryset
+        """
+        if not user or not user.is_authenticated:
+            return queryset.filter(visibility__in=["P"], date_start__lte=date.today(), date_end__gte=date.today())
+        elif user.is_superuser:
+            return queryset.filter(visibility__in=["P", "A", "S", "U"])
+        elif user.is_staff:
+            return queryset.filter(visibility__in=["P", "A", "S"])
+        else:
+            return queryset.filter(visibility__in=["P", "A"], date_start__lte=date.today(), date_end__gte=date.today())
 
     @staticmethod
     def has_read_permission(request):

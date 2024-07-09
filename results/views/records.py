@@ -1,8 +1,10 @@
+from django.db.models import Prefetch
 from django_filters import rest_framework as filters
 from django_filters.widgets import BooleanWidget
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import mixins, viewsets
 
+from results.models.athletes import AthleteInformation
 from results.models.records import Record, RecordLevel
 from results.serializers.records import RecordLevelSerializer, RecordSerializer
 from results.serializers.records_list import RecordListSerializer
@@ -114,5 +116,12 @@ class RecordList(mixins.ListModelMixin, viewsets.GenericViewSet):
         """
         Setup eager loading of linked models
         """
-        self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
+        athlete_information_queryset = AthleteInformation.get_visibility_queryset(
+            user=self.request.user, queryset=AthleteInformation.objects.all()
+        )
+        prefetch = [
+            Prefetch("result__athlete__info", queryset=athlete_information_queryset),
+            Prefetch("result__team_members__info", queryset=athlete_information_queryset),
+        ]
+        self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset, prefetch=prefetch)
         return self.queryset

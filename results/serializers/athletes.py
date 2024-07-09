@@ -1,36 +1,15 @@
-from abc import ABC
-from datetime import date
-
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework import serializers
 
+from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.athletes import Athlete, AthleteInformation
 from results.models.organizations import Organization
 from results.serializers.organizations import OrganizationSerializer
 
 
-class AthleteInformationListSerializer(serializers.ListSerializer, ABC):
-    """
-    ListSerializer to limit athlete additional information for nested serializer.
-    """
-
-    def to_representation(self, data):
-        if not isinstance(data, list):
-            user = self.context["request"].user
-            if user.is_superuser:
-                data = data.filter(visibility__in=["P", "A", "S", "U"])
-            elif user.is_staff:
-                data = data.filter(visibility__in=["P", "A", "S"])
-            elif user.is_authenticated:
-                data = data.filter(visibility__in=["P", "A"], date_start__lte=date.today(), date_end__gte=date.today())
-            else:
-                data = data.filter(visibility__in=["P"], date_start__lte=date.today(), date_end__gte=date.today())
-        return super().to_representation(data)
-
-
-class AthleteInformationSerializer(serializers.ModelSerializer):
+class AthleteInformationSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for athletes additional information.
     """
@@ -39,11 +18,10 @@ class AthleteInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AthleteInformation
-        list_serializer_class = AthleteInformationListSerializer
         fields = ("id", "athlete", "type", "value", "date_start", "date_end", "visibility", "permissions")
 
 
-class AthleteSerializer(serializers.ModelSerializer):
+class AthleteSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for athletes.
     """
@@ -53,6 +31,12 @@ class AthleteSerializer(serializers.ModelSerializer):
     info = AthleteInformationSerializer(many=True, read_only=True)
 
     permissions = DRYPermissionsField()
+
+    _PREFETCH_RELATED_FIELDS = [
+        "organization",
+        "organization__areas",
+        "additional_organizations",
+    ]
 
     class Meta:
         model = Athlete
