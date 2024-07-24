@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from dry_rest_permissions.generics import authenticated_users
 
 from results.mixins.change_log import LogChangesMixing
+from results.models.athletes import Athlete
 from results.models.organizations import Organization
 
 
@@ -99,6 +100,7 @@ class EventContact(LogChangesMixing, models.Model):
 
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, verbose_name=_("Contact type"))
+    athlete = models.ForeignKey(Athlete, on_delete=models.SET_NULL, default=None, blank=True, null=True)
     first_name = models.CharField(max_length=100, verbose_name=_("First name"))
     last_name = models.CharField(max_length=100, verbose_name=_("Last name"))
     email = models.EmailField(blank=True, verbose_name=_("Email address"))
