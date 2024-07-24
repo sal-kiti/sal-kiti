@@ -7,6 +7,7 @@ from results.mixins.eager_loading import EagerLoadingMixin
 from results.models.competitions import Competition
 from results.models.events import Event, EventContact
 from results.models.organizations import Organization
+from results.serializers.athletes import AthleteLimitedSerializer
 from results.serializers.organizations import OrganizationSerializer
 from results.utils.custom_validation import CustomValidation
 
@@ -131,12 +132,22 @@ class EventLimitedSerializer(EventSerializer):
         fields = ("id", "name", "description")
 
 
-class EventContactSerializer(serializers.ModelSerializer):
+class EventContactSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     """
     Serializer for event contacts
     """
 
+    athlete_info = AthleteLimitedSerializer(read_only=True, source="athlete")
+
+    _PREFETCH_RELATED_FIELDS = [
+        "athlete",
+        "athlete__additional_organizations",
+        "athlete__info__sport",
+        "athlete__organization",
+        "athlete__organization__areas",
+    ]
+
     class Meta:
         model = EventContact
-        fields = ("id", "event", "type", "first_name", "last_name", "email", "phone")
+        fields = ("id", "event", "type", "athlete", "athlete_info", "first_name", "last_name", "email", "phone")
         extra_kwargs = {"email": {"required": False}, "phone": {"required": False}}

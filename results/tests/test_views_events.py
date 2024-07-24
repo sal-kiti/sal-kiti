@@ -3,12 +3,13 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
-from results.models.events import Event
+from results.models.events import Event, EventContact
 from results.models.organizations import Area
+from results.tests.factories.athletes import AthleteFactory
 from results.tests.factories.competitions import CompetitionFactory
-from results.tests.factories.events import EventFactory
+from results.tests.factories.events import EventContactFactory, EventFactory
 from results.tests.utils import ResultsTestCase
-from results.views.events import EventViewSet
+from results.views.events import EventContactViewSet, EventViewSet
 
 
 class EventTestCase(ResultsTestCase):
@@ -205,3 +206,75 @@ class EventTestCase(ResultsTestCase):
     def test_event_delete_with_staffuser(self):
         response = self._test_delete(user=self.staff_user)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class EventContactTestCase(ResultsTestCase):
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.user = User.objects.create(username="tester")
+        self.group = Group.objects.create(name="testgroup")
+        self.organization_user = User.objects.create(username="tester_2")
+        self.organization_user.groups.add(self.group)
+        self.staff_user = User.objects.create(username="staffuser", is_staff=True)
+        self.athlete = AthleteFactory.create()
+        self.object = EventContactFactory.create(athlete=self.athlete)
+        self.object.event.organization.group = self.group
+        self.object.event.organization.save()
+        self.data = {
+            "event": self.object.event.pk,
+            "first_name": self.object.first_name,
+            "last_name": self.object.last_name,
+            "type": self.object.type,
+            "email": self.object.email,
+            "phone": self.object.phone,
+        }
+        self.newdata = {
+            "event": self.object.event.pk,
+            "first_name": self.athlete.first_name,
+            "last_name": self.athlete.last_name,
+            "type": "manager",
+            "email": "manager@example.org",
+            "phone": "+1234567890",
+            "athlete": self.athlete.id,
+        }
+        self.url = "/api/eventcontacts/"
+        self.viewset = EventContactViewSet
+        self.model = EventContact
+
+    def test_eventcontact_access_list(self):
+        request = self.factory.get(self.url)
+        view = self.viewset.as_view(actions={"get": "list"})
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_eventcontact_access_object_without_user(self):
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_eventcontact_access_object_with_normal_user(self):
+        response = self._test_access(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_eventcontact_access_object_with_organization_user(self):
+        response = self._test_access(user=self.organization_user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for key in self.data:
+            self.assertEqual(response.data[key], self.data[key])
+
+    def test_eventcontact_create_existing_with_staffuser(self):
+        response = self._test_create(user=self.staff_user, data=self.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_eventcontact_create_with_organization_user(self):
+        response = self._test_create(user=self.organization_user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_eventcontact_delete_with_organization_user(self):
+        self.object.event.locked = False
+        self.object.event.save()
+        response = self._test_delete(user=self.organization_user)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_eventcontact_delete_with_organization_user_locked_event(self):
+        response = self._test_delete(user=self.organization_user)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

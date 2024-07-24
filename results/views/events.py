@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
@@ -7,6 +7,7 @@ from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter, SearchFilter
 
+from results.models.athletes import AthleteInformation
 from results.models.events import Event, EventContact
 from results.serializers.events import EventContactSerializer, EventSerializer
 from results.utils.pagination import CustomPagePagination
@@ -141,4 +142,11 @@ class EventContactViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if not user.is_superuser and not user.is_staff:
             self.queryset = self.queryset.filter(Q(event__organization__group__in=user.groups.all()))
+        athlete_information_queryset = AthleteInformation.get_visibility_queryset(
+            user=self.request.user, queryset=AthleteInformation.objects.all()
+        )
+        prefetch = [
+            Prefetch("athlete__info", queryset=athlete_information_queryset),
+        ]
+        self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset, prefetch=prefetch)
         return self.queryset
