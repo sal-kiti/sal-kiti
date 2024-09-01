@@ -81,6 +81,7 @@ class RecordListFilter(filters.FilterSet):
     """
 
     category = NumberInFilter(field_name="category__pk", lookup_expr="in")
+    division = NumberInFilter(field_name="category__division__pk", lookup_expr="in")
     level = NumberInFilter(field_name="level__pk", lookup_expr="in")
     type = NumberInFilter(field_name="type__pk", lookup_expr="in")
     sport = NumberInFilter(field_name="type__sport__pk", lookup_expr="in")
