@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 119
+extend-ignore = E203,E701
+per-file-ignores =
+    sal_kiti/settings/*: F401,F403,F405
+exclude = venv,.*sal_kiti/,sal_kiti/settings/local*

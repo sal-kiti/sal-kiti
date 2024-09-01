@@ -3,6 +3,7 @@
 black==24.4.2
 coverage==7.5.3
 factory-boy==3.3.0
+flake8==7.1.1
 isort==5.13.2
 Sphinx==7.3.7
 sphinxcontrib-django==2.5

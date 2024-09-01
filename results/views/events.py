@@ -98,7 +98,7 @@ class EventViewSet(viewsets.ModelViewSet):
             settings.REMOVE_COMPETITION_APPROVAL_WITH_EVENT
             and serializer.instance.approved
             and serializer.initial_data
-            and serializer.initial_data.get("approved") == False
+            and serializer.initial_data.get("approved") is False
         ):
             for competition in serializer.instance.competitions.filter(approved=True):
                 competition.approved = False

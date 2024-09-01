@@ -216,7 +216,7 @@ class RecordsTestCase(TestCase):
         self.object = ResultPartialFactory.create(result=self.result, type=self.competition_result_type, value=50)
         self.assertEqual(Record.objects.exclude(partial_result=None).count(), 0)
 
-    def test_partial_record_creation_no_partial_records_for_category(self):
+    def test_partial_record_creation_limit_partial(self):
         self.category_check_W20.limit_partial.add(self.competition_result_type)
         self.object = ResultPartialFactory.create(result=self.result, type=self.competition_result_type, value=50)
         self.assertEqual(Record.objects.exclude(partial_result=None).count(), 0)

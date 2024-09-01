@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
+from dry_rest_permissions.generics import allow_staff_or_superuser
 
 
 class StatisticsLink(models.Model):

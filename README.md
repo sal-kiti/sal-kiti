@@ -25,3 +25,4 @@ Documentation in the Read the Docs: https://sal-kiti.readthedocs.io/
 ## Development
 ### Style guide
 Use black and isort for formatting and sorting imports.
+Use flake8 for linting.
