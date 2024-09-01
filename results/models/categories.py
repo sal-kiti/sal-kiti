@@ -12,13 +12,15 @@ class Division(LogChangesMixing, models.Model):
 
     name = models.CharField(max_length=100, verbose_name=_("Name"))
     abbreviation = models.CharField(max_length=15, verbose_name=_("Abbreviation"))
+    sport = models.ForeignKey(Sport, on_delete=models.SET_NULL, null=True, blank=True)
     historical = models.BooleanField(default=False, verbose_name=_("Historical"))
+    order = models.SmallIntegerField(default=0, verbose_name=_("Order"))
 
     def __str__(self):
         return "%s - %s" % (self.abbreviation, self.name)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["sport", "order", "name"]
         verbose_name = _("Division")
         verbose_name_plural = _("Division")
 

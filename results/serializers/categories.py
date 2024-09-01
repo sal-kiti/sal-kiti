@@ -13,7 +13,7 @@ class DivisionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Division
-        fields = ("id", "name", "abbreviation", "historical", "permissions")
+        fields = ("id", "name", "abbreviation", "sport", "order", "historical", "permissions")
 
 
 class CategorySerializer(serializers.ModelSerializer):

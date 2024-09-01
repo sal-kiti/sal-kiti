@@ -60,3 +60,5 @@ class DivisionViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Division.objects.all()
     serializer_class = DivisionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["sport"]

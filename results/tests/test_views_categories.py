@@ -111,8 +111,9 @@ class DivisionTestCase(ResultsTestCase):
         self.staff_user = User.objects.create(username="staffuser", is_staff=True)
         self.superuser = User.objects.create(username="superuser", is_superuser=True)
         self.object = DivisionFactory.create()
+        self.sport = SportFactory.create()
         self.data = {"name": self.object.name, "abbreviation": self.object.abbreviation}
-        self.newdata = {"name": "InnerDiv", "abbreviation": "Inner"}
+        self.newdata = {"sport": self.sport.id, "name": "InnerDiv", "abbreviation": "Inner"}
         self.url = "/api/divisions/"
         self.viewset = DivisionViewSet
         self.model = Division
@@ -122,6 +123,17 @@ class DivisionTestCase(ResultsTestCase):
         view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_division_filter_list(self):
+        request = self.factory.get(self.url + "?sport=" + str(self.sport.id))
+        view = self.viewset.as_view(actions={"get": "list"})
+        response = view(request)
+        self.assertEqual(response.data["count"], 0)
+        self.object.sport = self.sport
+        self.object.save()
+        self.object.refresh_from_db()
+        response = view(request)
+        self.assertEqual(response.data["count"], 1)
 
     def test_division_access_object_without_user(self):
         response = self._test_access(user=None)
