@@ -108,6 +108,12 @@ class ResultPartialViewSet(viewsets.ModelViewSet):
                 type=openapi.TYPE_INTEGER,
             ),
             openapi.Parameter(
+                "division",
+                openapi.IN_QUERY,
+                description="Multiple values may be separated by commas.",
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
                 "level",
                 openapi.IN_QUERY,
                 description="Multiple values may be separated by commas.",
@@ -251,6 +257,11 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             if competition_type:
                 competition_type_list = [int(c) for c in competition_type.split(",")]
                 queryset = queryset.filter(competition__type__pk__in=competition_type_list)
+
+            division = self.request.query_params.get("division", None)
+            if division:
+                division_list = [int(c) for c in division.split(",")]
+                queryset = queryset.filter(category__division__pk__in=division_list)
 
             organization = self.request.query_params.get("organization", None)
             if organization:
