@@ -93,6 +93,7 @@ class EventContact(LogChangesMixing, models.Model):
         ("chiefjudge", _("Chief judge")),
         ("chiefrange", _("Chief range officer")),
         ("technical", _("Technical manager")),
+        ("range", _("Range officer")),
     ]
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{7,15}$", message=_('Phone number may start with "+" and only contain digits.')
