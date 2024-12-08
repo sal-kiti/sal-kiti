@@ -129,7 +129,7 @@ class EventLimitedSerializer(EventSerializer):
 
     class Meta:
         model = Event
-        fields = ("id", "name", "description")
+        fields = ("id", "name", "description", "date_start", "date_end")
 
 
 class EventContactSerializer(serializers.ModelSerializer, EagerLoadingMixin):
@@ -138,6 +138,7 @@ class EventContactSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     """
 
     athlete_info = AthleteLimitedSerializer(read_only=True, source="athlete")
+    event_info = EventLimitedSerializer(read_only=True, source="event")
 
     _PREFETCH_RELATED_FIELDS = [
         "athlete",
@@ -145,9 +146,21 @@ class EventContactSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         "athlete__info__sport",
         "athlete__organization",
         "athlete__organization__areas",
+        "event",
     ]
 
     class Meta:
         model = EventContact
-        fields = ("id", "event", "type", "athlete", "athlete_info", "first_name", "last_name", "email", "phone")
+        fields = (
+            "id",
+            "event",
+            "event_info",
+            "type",
+            "athlete",
+            "athlete_info",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+        )
         extra_kwargs = {"email": {"required": False}, "phone": {"required": False}}
