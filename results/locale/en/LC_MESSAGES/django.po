@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-16 17:30+0200\n"
+"POT-Creation-Date: 2024-12-16 17:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,6 +86,7 @@ msgid "Superuser only"
 msgstr ""
 
 #: results/models/athletes.py:90
+#: results/templates/notification/competition_creation_message.html:5
 msgid "Type"
 msgstr ""
 
@@ -99,11 +100,15 @@ msgstr ""
 
 #: results/models/athletes.py:93 results/models/competitions.py:233
 #: results/models/events.py:20 results/models/records.py:85
+#: results/templates/notification/competition_creation_message.html:11
+#: results/templates/notification/event_creation_message.html:6
 msgid "Start date"
 msgstr ""
 
 #: results/models/athletes.py:94 results/models/competitions.py:234
 #: results/models/events.py:21 results/models/records.py:86
+#: results/templates/notification/competition_creation_message.html:12
+#: results/templates/notification/event_creation_message.html:7
 msgid "End date"
 msgstr ""
 
@@ -121,6 +126,8 @@ msgstr ""
 #: results/models/events.py:18 results/models/organizations.py:17
 #: results/models/organizations.py:74 results/models/records.py:20
 #: results/models/sports.py:11 results/models/statistics.py:10
+#: results/templates/notification/competition_creation_message.html:8
+#: results/templates/notification/event_creation_message.html:3
 msgid "Name"
 msgstr ""
 
@@ -312,6 +319,8 @@ msgid "Description"
 msgstr ""
 
 #: results/models/competitions.py:235 results/models/events.py:22
+#: results/templates/notification/competition_creation_message.html:10
+#: results/templates/notification/event_creation_message.html:5
 msgid "Location"
 msgstr ""
 
@@ -381,6 +390,7 @@ msgid "Terms and Conditions agreement"
 msgstr ""
 
 #: results/models/events.py:43
+#: results/templates/notification/competition_creation_message.html:3
 msgid "Event"
 msgstr ""
 
@@ -550,6 +560,7 @@ msgid "Partial result"
 msgstr ""
 
 #: results/models/sports.py:24
+#: results/templates/notification/competition_creation_message.html:4
 msgid "Sport"
 msgstr ""
 
@@ -708,4 +719,31 @@ msgstr ""
 
 #: results/serializers/results.py:529
 msgid "No permission to approve results."
+msgstr ""
+
+#: results/templates/notification/competition_creation_message.html:1
+msgid "New competition created."
+msgstr ""
+
+#: results/templates/notification/competition_creation_message.html:6
+msgid "Level"
+msgstr ""
+
+#: results/templates/notification/competition_creation_message.html:9
+#: results/templates/notification/event_creation_message.html:4
+msgid "Organizer"
+msgstr ""
+
+#: results/templates/notification/competition_creation_subject.html:1
+#, python-format
+msgid "New competition created by %(creator)s"
+msgstr ""
+
+#: results/templates/notification/event_creation_message.html:1
+msgid "New event created."
+msgstr ""
+
+#: results/templates/notification/event_creation_subject.html:1
+#, python-format
+msgid "New event created by %(creator)s"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-16 17:30+0200\n"
+"POT-Creation-Date: 2024-12-16 17:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,6 +86,7 @@ msgid "Superuser only"
 msgstr "Vain pääkäyttäjät"
 
 #: results/models/athletes.py:90
+#: results/templates/notification/competition_creation_message.html:5
 msgid "Type"
 msgstr "Tyyppi"
 
@@ -99,11 +100,15 @@ msgstr "Arvo"
 
 #: results/models/athletes.py:93 results/models/competitions.py:233
 #: results/models/events.py:20 results/models/records.py:85
+#: results/templates/notification/competition_creation_message.html:11
+#: results/templates/notification/event_creation_message.html:6
 msgid "Start date"
 msgstr "Alkuaika"
 
 #: results/models/athletes.py:94 results/models/competitions.py:234
 #: results/models/events.py:21 results/models/records.py:86
+#: results/templates/notification/competition_creation_message.html:12
+#: results/templates/notification/event_creation_message.html:7
 msgid "End date"
 msgstr "Loppuaika"
 
@@ -121,6 +126,8 @@ msgstr "Suomisport päivityksen aikaleima"
 #: results/models/events.py:18 results/models/organizations.py:17
 #: results/models/organizations.py:74 results/models/records.py:20
 #: results/models/sports.py:11 results/models/statistics.py:10
+#: results/templates/notification/competition_creation_message.html:8
+#: results/templates/notification/event_creation_message.html:3
 msgid "Name"
 msgstr "Nimi"
 
@@ -312,6 +319,8 @@ msgid "Description"
 msgstr "Kuvaus"
 
 #: results/models/competitions.py:235 results/models/events.py:22
+#: results/templates/notification/competition_creation_message.html:10
+#: results/templates/notification/event_creation_message.html:5
 msgid "Location"
 msgstr "Sijainti"
 
@@ -381,6 +390,7 @@ msgid "Terms and Conditions agreement"
 msgstr "Ehtojen hyväksyntä"
 
 #: results/models/events.py:43
+#: results/templates/notification/competition_creation_message.html:3
 msgid "Event"
 msgstr "Tapahtuma"
 
@@ -543,13 +553,14 @@ msgstr "Aika"
 
 #: results/models/results.py:128
 msgid "Text value"
-msgstr ""
+msgstr "Tekstiarvo"
 
 #: results/models/results.py:137
 msgid "Partial result"
 msgstr "Osatulos"
 
 #: results/models/sports.py:24
+#: results/templates/notification/competition_creation_message.html:4
 msgid "Sport"
 msgstr "Laji"
 
@@ -559,19 +570,19 @@ msgstr "Lajit"
 
 #: results/models/statistics.py:12
 msgid "Link"
-msgstr ""
+msgstr "Linkki"
 
 #: results/models/statistics.py:13
 msgid "Highlight"
-msgstr ""
+msgstr "Korostus"
 
 #: results/models/statistics.py:22
 msgid "Statistics link"
-msgstr ""
+msgstr "Tilastolinkki"
 
 #: results/models/statistics.py:23
 msgid "Statistics links"
-msgstr ""
+msgstr "Tilastolinkit"
 
 #: results/serializers/athletes.py:83 results/serializers/competitions.py:178
 #: results/serializers/events.py:98
@@ -680,19 +691,19 @@ msgstr "Käytä team_members-kenttää athlete-kentän sijaan joukkueille."
 
 #: results/serializers/results.py:316
 msgid "Team result without team_members."
-msgstr "Joukkuetulos ilman team_members kenttää"
+msgstr "Joukkuetulos ilman team_members kenttää."
 
 #: results/serializers/results.py:327
 msgid "Missing category."
-msgstr "Sarja puuttuu"
+msgstr "Sarja puuttuu."
 
 #: results/serializers/results.py:342 results/serializers/results.py:350
 msgid "Missing athletes."
-msgstr "Urheilijat puuttuvat"
+msgstr "Urheilijat puuttuvat."
 
 #: results/serializers/results.py:362
 msgid "Missing competition."
-msgstr "Kilpailu puuttuu"
+msgstr "Kilpailu puuttuu."
 
 #: results/serializers/results.py:387
 msgid "Category is not allowed for this competition type."
@@ -709,3 +720,29 @@ msgstr "Joukkuestatusta ei voi vaihtaa."
 #: results/serializers/results.py:529
 msgid "No permission to approve results."
 msgstr "Ei oikeutta hyväksyä tuloksia."
+
+#: results/templates/notification/competition_creation_message.html:1
+msgid "New competition created."
+msgstr "Uusi kilpailu luotu."
+
+#: results/templates/notification/competition_creation_message.html:6
+msgid "Level"
+msgstr "Taso"
+
+#: results/templates/notification/competition_creation_message.html:9
+#: results/templates/notification/event_creation_message.html:4
+msgid "Organizer"
+msgstr "Järjestäjä"
+
+#: results/templates/notification/competition_creation_subject.html:1
+msgid "New competition created by %(creator)s"
+msgstr "Uusi kilpailuo luotu %(creator)s toimesta"
+
+#: results/templates/notification/event_creation_message.html:1
+msgid "New event created."
+msgstr "Uusi tapahtuma luotu."
+
+#: results/templates/notification/event_creation_subject.html:1
+#, python-format
+msgid "New event created by %(creator)s"
+msgstr "Uusi tapahtuma luotu %(creator)s toimesta"

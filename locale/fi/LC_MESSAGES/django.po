@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-04 14:31+0300\n"
+"POT-Creation-Date: 2024-12-08 18:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: sal_kiti/settings/settings.py:116
+#: sal_kiti/settings/settings.py:122
 msgid "Finnish"
 msgstr "Suomi"
 
-#: sal_kiti/settings/settings.py:117
+#: sal_kiti/settings/settings.py:123
 msgid "English"
 msgstr "Englanti"
 
-#: sal_kiti/urls.py:27
+#: sal_kiti/urls.py:24
 msgid "Kiti admin"
 msgstr "Kiti admin"
 
-#: sal_kiti/urls.py:28 sal_kiti/urls.py:29
+#: sal_kiti/urls.py:25 sal_kiti/urls.py:26
 msgid "Kiti administration"
 msgstr "Kiti hallinta"
 

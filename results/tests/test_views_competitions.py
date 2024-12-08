@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth.models import Group, User
+from django.core import mail
 from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -20,6 +21,7 @@ from results.tests.factories.competitions import (
     CompetitionResultTypeFactory,
     CompetitionTypeFactory,
 )
+from results.tests.factories.events import EventFactory
 from results.tests.utils import ResultsTestCase
 from results.views.competitions import (
     CompetitionLayoutViewSet,
@@ -446,6 +448,34 @@ class CompetitionLayoutTestCase(TestCase):
         view = self.viewset.as_view(actions={"delete": "destroy"})
         response = view(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class CompetitionNotificationTestCase(ResultsTestCase):
+    def setUp(self):
+        self.superuser = User.objects.create(username="superuser", is_superuser=True)
+
+    def test_competition_create_no_notification(self):
+        competition = CompetitionFactory.create()
+        self.assertEqual(
+            "New event created by " + competition.event.organization.abbreviation,
+            mail.outbox[len(mail.outbox) - 1].subject,
+        )
+
+    def test_competition_create_notification_event_approved(self):
+        event = EventFactory.create(approved=True)
+        competition = CompetitionFactory.create(event=event)
+        self.assertEqual(
+            "New competition created by " + competition.organization.abbreviation,
+            mail.outbox[len(mail.outbox) - 1].subject,
+        )
+
+    @override_settings(COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED=True)
+    def test_competition_create_notification(self):
+        competition = CompetitionFactory.create()
+        self.assertEqual(
+            "New competition created by " + competition.organization.abbreviation,
+            mail.outbox[len(mail.outbox) - 1].subject,
+        )
 
 
 class CompetitionTestCase(ResultsTestCase):
