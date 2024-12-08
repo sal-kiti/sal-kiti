@@ -64,6 +64,7 @@ class EventViewSet(viewsets.ModelViewSet):
     filterset_class = EventFilter
     ordering_fields = ["date_start", "name"]
     search_fields = ("name", "organization__name", "organization__abbreviation")
+    include_competitions = False
 
     def get_queryset(self):
         """
@@ -84,25 +85,39 @@ class EventViewSet(viewsets.ModelViewSet):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def perform_update(self, serializer):
-        if (
-            settings.APPROVE_COMPETITIONS_WITH_EVENT
-            and not serializer.instance.approved
-            and serializer.initial_data
-            and serializer.initial_data.get("approved")
-        ):
-            for competition in serializer.instance.competitions.filter(approved=False):
-                competition.approved = True
+    def partial_update(self, request, *args, **kwargs):
+        self.include_competitions = request.data.get("include_competitions", False)
+        return super().partial_update(request, *args, **kwargs)
+
+    def _update_competitions(self, param, serializer):
+        for competition in serializer.instance.competitions.all():
+            if getattr(competition, param) != serializer.initial_data[param]:
+                setattr(competition, param, serializer.initial_data[param])
                 competition.save()
-        if (
+
+    def perform_update(self, serializer):
+        if self.include_competitions:
+            for param in ["public", "locked", "approved"]:
+                if (
+                    serializer.initial_data
+                    and param in serializer.initial_data
+                    and serializer.initial_data[param] != getattr(serializer.instance, param)
+                ):
+                    self._update_competitions(param, serializer)
+        elif (
             settings.REMOVE_COMPETITION_APPROVAL_WITH_EVENT
             and serializer.instance.approved
-            and serializer.initial_data
-            and serializer.initial_data.get("approved") is False
+            and "approved" in serializer.validated_data
+            and not serializer.validated_data["approved"]
         ):
-            for competition in serializer.instance.competitions.filter(approved=True):
-                competition.approved = False
-                competition.save()
+            self._update_competitions("approved", serializer)
+        elif (
+            settings.APPROVE_COMPETITIONS_WITH_EVENT
+            and not serializer.instance.approved
+            and "approved" in serializer.validated_data
+            and serializer.validated_data["approved"]
+        ):
+            self._update_competitions("approved", serializer)
         serializer.save()
 
 

@@ -199,6 +199,20 @@ class EventTestCase(ResultsTestCase):
         competition.refresh_from_db()
         self.assertFalse(competition.approved)
 
+    def test_event_include_competitions(self):
+        competition = CompetitionFactory.create(event=self.object)
+        self._test_patch(user=self.staff_user, data={"approved": True, "include_competitions": True})
+        competition.refresh_from_db()
+        self.assertTrue(competition.approved)
+
+    def test_event_include_competitions_remove(self):
+        self.object.approved = True
+        self.object.save()
+        competition = CompetitionFactory.create(event=self.object, approved=True)
+        self._test_patch(user=self.staff_user, data={"approved": False, "include_competitions": True})
+        competition.refresh_from_db()
+        self.assertFalse(competition.approved)
+
     def test_event_delete_with_superuser(self):
         response = self._test_delete(user=self.superuser)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
