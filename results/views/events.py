@@ -147,7 +147,7 @@ class EventContactViewSet(viewsets.ModelViewSet):
     queryset = EventContact.objects.all()
     serializer_class = EventContactSerializer
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ["event", "type"]
+    filterset_fields = ["event", "type", "athlete"]
 
     def get_queryset(self):
         """
