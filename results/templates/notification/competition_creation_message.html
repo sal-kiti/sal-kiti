@@ -1,0 +1,12 @@
+{% load i18n %}{% trans "New competition created." %}
+
+{% trans "Event" %}: {{ competition.event.name }}
+{% trans "Sport" %}: {{ competition.type.sport.name }}
+{% trans "Type" %}: {{ competition.type.name }}
+{% trans "Level" %}: {{ competition.level.name }}
+
+{% trans "Name" %}: {{ competition.name }}
+{% trans "Organizer" %}: {{ competition.organization.name }}
+{% trans "Location" %}: {{ competition.location }}
+{% trans "Start date" %}: {{ competition.date_start }}
+{% trans "End date" %}: {{ competition.date_end }}

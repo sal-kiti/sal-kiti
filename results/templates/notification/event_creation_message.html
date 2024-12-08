@@ -1,0 +1,7 @@
+{% load i18n %}{% trans "New event created." %}
+
+{% trans "Name" %}: {{ event.name }}
+{% trans "Organizer" %}: {{ event.organization.name }}
+{% trans "Location" %}: {{ event.location }}
+{% trans "Start date" %}: {{ event.date_start }}
+{% trans "End date" %}:  {{ event.date_end }}

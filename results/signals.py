@@ -4,8 +4,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
+from results.models.competitions import Competition
+from results.models.events import Event
 from results.models.organizations import Area, Organization
 from results.models.results import Result, ResultPartial
+from results.utils.notification import (
+    competition_creation_notification,
+    event_creation_notification,
+)
 from results.utils.records import check_records, check_records_partial
 
 
@@ -48,3 +54,17 @@ def create_area_group(sender, instance=None, created=False, **kwargs):
         group = Group.objects.create(name=group_name)
         instance.group = group
         instance.save()
+
+
+@receiver(post_save, sender=Competition)
+def notify_competition_creation(sender, instance=None, created=False, **kwargs):
+    """Notify when competition is created."""
+    if created:
+        competition_creation_notification(instance)
+
+
+@receiver(post_save, sender=Event)
+def notify_event_creation(sender, instance=None, created=False, **kwargs):
+    """Notify when event is created."""
+    if created:
+        event_creation_notification(instance)

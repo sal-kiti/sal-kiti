@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group, User
+from django.core import mail
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
@@ -146,6 +147,7 @@ class EventTestCase(ResultsTestCase):
     def test_event_create_with_organization_user(self):
         response = self._test_create(user=self.organization_user, data=self.newdata)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(mail.outbox[0].subject, "New event created by " + self.object.organization.abbreviation)
 
     def test_event_create_with_normal_user(self):
         response = self._test_create(user=self.user, data=self.newdata)

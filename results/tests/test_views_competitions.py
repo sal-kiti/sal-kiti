@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth.models import Group, User
+from django.core import mail
 from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -640,6 +641,10 @@ class CompetitionTestCase(ResultsTestCase):
         self.assertEqual(self.model.objects.all().count(), 2)
         for key in self.newdata:
             self.assertEqual(response.data[key], self.newdata[key])
+        self.assertEqual(
+            mail.outbox[len(mail.outbox) - 1].subject,
+            "New competition created by " + self.object.organization.abbreviation,
+        )
 
     def test_competition_create_existing_with_superuser(self):
         response = self._test_create(user=self.superuser, data=self.data)
