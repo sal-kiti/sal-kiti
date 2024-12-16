@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.0 - 2024-12-16
+- Added notifications for new events and competitions
+- Added option to include competitions in event status change
+- Added new event contact type
+- Added athlete to EventContact filters
+- Added limited event info to EventContact serializer
+- Updated requirements
+
+### Updating notes
+Includes database changes, run migrations
+- Added new event contact type
+
 ## 1.4.0 - 2024-06-21
 - Updated to Django 4.2
 - Updated requirements
