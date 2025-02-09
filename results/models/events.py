@@ -60,8 +60,10 @@ class Event(LogChangesMixing, models.Model):
         if (
             request.user.is_staff
             or request.user.is_superuser
-            or self.organization.is_area_manager(request.user)
-            or self.organization.is_manager(request.user)
+            or self.organization
+            and self.organization.is_area_manager(request.user)
+            or self.organization
+            and self.organization.is_manager(request.user)
             and not self.locked
         ):
             return True
@@ -72,8 +74,10 @@ class Event(LogChangesMixing, models.Model):
         if (
             request.user.is_staff
             or request.user.is_superuser
-            or self.organization.is_area_manager(request.user)
-            or self.organization.is_manager(request.user)
+            or self.organization
+            and self.organization.is_area_manager(request.user)
+            or self.organization
+            and self.organization.is_manager(request.user)
             and not self.locked
         ):
             return True
@@ -127,7 +131,8 @@ class EventContact(LogChangesMixing, models.Model):
         if (
             request.user.is_staff
             or request.user.is_superuser
-            or self.event.organization.group in request.user.groups.all()
+            or self.event.organization
+            and self.event.organization.group in request.user.groups.all()
             and not self.event.locked
         ):
             return True
@@ -138,7 +143,8 @@ class EventContact(LogChangesMixing, models.Model):
         if (
             request.user.is_staff
             or request.user.is_superuser
-            or self.event.organization.group in request.user.groups.all()
+            or self.event.organization
+            and self.event.organization.group in request.user.groups.all()
             and not self.event.locked
         ):
             return True
