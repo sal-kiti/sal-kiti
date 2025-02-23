@@ -1,10 +1,30 @@
 from django.http import JsonResponse
 from django.views.decorators.cache import never_cache
+from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import api_view
 
 from results.models.organizations import Organization
 
 
+@extend_schema(
+    responses={
+        200: {
+            "type": "object",
+            "properties": {
+                "is_authenticated": {"type": "boolean"},
+                "is_superuser": {"type": "boolean"},
+                "is_staff": {"type": "boolean"},
+                "first_name": {"type": "string"},
+                "last_name": {"type": "string"},
+                "email": {"type": "string"},
+                "manager": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                },
+            },
+        }
+    },
+)
 @never_cache
 @api_view()
 def current_user(request):

@@ -3,6 +3,7 @@ import operator
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.cache import never_cache
+from drf_spectacular.utils import extend_schema
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -50,6 +51,32 @@ class StatisticsLinkViewSet(viewsets.ModelViewSet):
         return self.queryset
 
 
+@extend_schema(
+    responses={
+        200: {
+            "type": "object",
+            "properties": {
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "organization": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {"type": "integer"},
+                                    "name": {"type": "string"},
+                                    "abbreviation": {"type": "string"},
+                                },
+                            },
+                            "value": {"type": "integer"},
+                        },
+                    },
+                }
+            },
+        }
+    },
+)
 @never_cache
 @api_view()
 def statistics_pohjolan_malja(request, year):

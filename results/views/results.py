@@ -2,10 +2,9 @@ import re
 from datetime import datetime
 
 from django.db.models import Prefetch
-from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import exceptions, filters, mixins, viewsets
 
@@ -85,99 +84,94 @@ class ResultPartialViewSet(viewsets.ModelViewSet):
     serializer_class = ResultPartialSerializer
 
 
-@method_decorator(
-    name="list",
-    decorator=swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "athlete",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "category",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "competition",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "division",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "level",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "organization",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "result_gte", openapi.IN_QUERY, description="Result greater or equal than.", type=openapi.TYPE_NUMBER
-            ),
-            openapi.Parameter(
-                "result_lte", openapi.IN_QUERY, description="Result less or equal than.", type=openapi.TYPE_NUMBER
-            ),
-            openapi.Parameter(
-                "type",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "sport",
-                openapi.IN_QUERY,
-                description="Multiple values may be separated by commas.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "start_date",
-                openapi.IN_QUERY,
-                description="Date in %Y-%m-%d (i.e. 2019-01-01) format.",
-                type=openapi.TYPE_STRING,
-            ),
-            openapi.Parameter(
-                "end_date",
-                openapi.IN_QUERY,
-                description="Date in %Y-%m-%d (i.e. 2019-01-01) format.",
-                type=openapi.TYPE_STRING,
-            ),
-            openapi.Parameter(
-                "approved", openapi.IN_QUERY, description="Limit to approved results.", type=openapi.TYPE_BOOLEAN
-            ),
-            openapi.Parameter(
-                "trial", openapi.IN_QUERY, description="Limit to trial competitions.", type=openapi.TYPE_BOOLEAN
-            ),
-            openapi.Parameter(
-                "external", openapi.IN_QUERY, description="Include external athletes.", type=openapi.TYPE_BOOLEAN
-            ),
-            openapi.Parameter(
-                "group_results",
-                openapi.IN_QUERY,
-                description="Sum of x best results by athlete.",
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                "fields",
-                openapi.IN_QUERY,
-                description="Include only fields in results. Use != for excluding fields.",
-                type=openapi.TYPE_STRING,
-            ),
-        ]
-    ),
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="athlete",
+            type=OpenApiTypes.INT,
+            description="Multiple values may be separated by commas.",
+        ),
+        OpenApiParameter(
+            "category",
+            type=OpenApiTypes.INT,
+            description="Multiple values may be separated by commas.",
+        ),
+        OpenApiParameter(
+            "competition",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "division",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "level",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "organization",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "result_gte",
+            description="Result greater or equal than.",
+            type=OpenApiTypes.NUMBER,
+        ),
+        OpenApiParameter(
+            "result_lte",
+            description="Result less or equal than.",
+            type=OpenApiTypes.NUMBER,
+        ),
+        OpenApiParameter(
+            "type",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "sport",
+            description="Multiple values may be separated by commas.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "start_date",
+            description="Date in %Y-%m-%d (i.e. 2019-01-01) format.",
+            type=OpenApiTypes.STR,
+        ),
+        OpenApiParameter(
+            "end_date",
+            description="Date in %Y-%m-%d (i.e. 2019-01-01) format.",
+            type=OpenApiTypes.STR,
+        ),
+        OpenApiParameter(
+            "approved",
+            description="Limit to approved results.",
+            type=OpenApiTypes.BOOL,
+        ),
+        OpenApiParameter(
+            "trial",
+            description="Limit to trial competitions.",
+            type=OpenApiTypes.BOOL,
+        ),
+        OpenApiParameter(
+            "external",
+            description="Include external athletes.",
+            type=OpenApiTypes.BOOL,
+        ),
+        OpenApiParameter(
+            "group_results",
+            description="Sum of x best results by athlete.",
+            type=OpenApiTypes.INT,
+        ),
+        OpenApiParameter(
+            "fields",
+            description="Include only fields in results. Use != for excluding fields.",
+            type=OpenApiTypes.STR,
+        ),
+    ]
 )
 class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
     """API endpoint for retrieving result lists.

@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     "dry_rest_permissions",
     "rest_framework.authtoken",
     "django_extensions",
-    "drf_yasg",
+    "drf_spectacular",
     "django_filters",
 ]
 
@@ -50,7 +50,18 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 500,
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Kiti API",
+    "DESCRIPTION": "REST API for competition and results information.",
+    "VERSION": "1.5.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
+    "ENUM_NAME_OVERRIDES": {
+        "SizeChoicesEnum": "results.models.competitions.CompetitionLayout.SIZE_CHOICES",
+    },
 }
 
 CREATE_AUTH_TOKENS = True
@@ -135,9 +146,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
-
-API_TITLE = "SAL Kiti"
-API_VERSION = "0.2.0"
 
 SUOMISPORT_JUDGE_MERITS = ["tuomari", "judge"]
 

@@ -1,25 +1,17 @@
-from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
+from django.views.generic.base import RedirectView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+)
 from rest_framework.documentation import include_docs_urls
 
 from results.routers import router
 from results.views.statistics import statistics_pohjolan_malja
 from results.views.users import current_user
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title=settings.API_TITLE,
-        default_version=settings.API_VERSION,
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
 
 admin.site.site_title = _("Kiti admin")
 admin.site.site_header = _("Kiti administration")
@@ -32,6 +24,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("django.contrib.auth.urls")),
     path("docs/", include_docs_urls(title="SAL Kiti", description="SAL Kiti")),
-    re_path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("swagger/", RedirectView.as_view(url="/api/schema/swagger/")),
     path("", TemplateView.as_view(template_name="index.html")),
 ]
