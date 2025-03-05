@@ -78,7 +78,7 @@ class RecordsTestCase(TestCase):
         self.record_level.levels.add(self.competition.level)
         self.record_level_partial.levels.add(self.competition.level)
         self.area_group = Group.objects.create(name="AreaGroup")
-        self.area = Area.objects.create(name="Area", abbreviation="A", group=self.area_group)
+        self.area = Area.objects.create(name="Area", abbreviation="A", manager=self.area_group)
         self.record_level_area = RecordLevel.objects.create(
             name="Area", abbreviation="A", area=self.area, base=True, team=True, decimals=True
         )
@@ -330,19 +330,36 @@ class RecordsTestCase(TestCase):
         record.refresh_from_db()
         return view(request, pk=record.pk)
 
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
     def test_record_approve_area_record_with_normal_user(self):
         response = self._test_area_approve()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertFalse(Record.objects.filter(level__area__isnull=False).first().approved)
 
-    def test_record_approve_area_record_with_area_user(self):
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+    def test_record_approve_area_record_with_area_manager(self):
         self.user.groups.add(self.area_group)
         response = self._test_area_approve()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Record.objects.filter(level__area__isnull=False).first().approved)
 
-    def test_record_update_area_record_with_area_user(self):
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+    def test_record_update_area_record_with_area_manager(self):
         self.user.groups.add(self.area_group)
+        response = self._test_area_approve(data={"approved": True, "category": self.object.category.id})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["non_field_errors"][0], "No permission to alter or create a record.")
+
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+    def test_record_approve_area_record_with_sport_manager(self):
+        self.user.groups.add(self.object.result.competition.type.sport.manager)
+        response = self._test_area_approve()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Record.objects.filter(level__area__isnull=False).first().approved)
+
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+    def test_record_update_area_record_with_sport_manager(self):
+        self.user.groups.add(self.object.result.competition.type.sport.manager)
         response = self._test_area_approve(data={"approved": True, "category": self.object.category.id})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["non_field_errors"][0], "No permission to alter or create a record.")

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from dry_rest_permissions.generics import allow_staff_or_superuser
@@ -14,6 +15,8 @@ class Sport(LogChangesMixing, models.Model):
         blank=True, null=True, unique=True, default=None, verbose_name=_("Suomisport ID")
     )
     order = models.SmallIntegerField(default=0, verbose_name=_("Order"))
+    manager = models.OneToOneField(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_("Manager"))
+
     historical = models.BooleanField(default=False, verbose_name=_("Historical"))
 
     def __str__(self):
@@ -23,6 +26,20 @@ class Sport(LogChangesMixing, models.Model):
         ordering = ["order"]
         verbose_name = _("Sport")
         verbose_name_plural = _("Sports")
+
+    def is_manager(self, user):
+        """Check if user is sports manager
+
+        :param user: user object
+        :return: bool
+        """
+        groups = user.groups.all()
+        try:
+            Sport.objects.filter(manager__in=groups).get(pk=self.pk)
+            return True
+        except Sport.DoesNotExist:
+            pass
+        return False
 
     @staticmethod
     def has_read_permission(request):

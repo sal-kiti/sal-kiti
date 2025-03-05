@@ -19,10 +19,11 @@ class CompetitionInfoSerializer(serializers.ModelSerializer):
 
     type = serializers.SlugRelatedField(read_only=True, slug_field="name")
     level = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    sport = serializers.PrimaryKeyRelatedField(read_only=True, source="type.sport")
 
     class Meta:
         model = Competition
-        fields = ("id", "type", "level", "public")
+        fields = ("id", "type", "sport", "level", "public")
 
 
 class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
@@ -41,6 +42,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         "competitions",
         "competitions__level",
         "competitions__type",
+        "competitions__type__sport",
     ]
 
     class Meta:
@@ -69,13 +71,28 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             "toc_agreement",
         )
 
+    def is_sport_manager(self, user, event):
+        """
+        Check if the user is a sport manager for any of the competition sports in the event.
+        """
+        for competition in event.competitions.all():
+            if competition.type.sport.is_manager(user):
+                return True
+        return False
+
     def to_representation(self, instance):
         """
         Hide some fields if user is not organizers representative, staff or superuser
         """
         data = super().to_representation(instance)
         user = self.context["request"].user
-        if not user.is_superuser and not user.is_staff and not instance.organization.is_manager(user):
+        if not user.is_authenticated or (
+            not user.is_superuser
+            and not user.is_staff
+            and not instance.organization.is_manager(user)
+            and not instance.organization.is_area_manager(user)
+            and not self.is_sport_manager(user, instance)
+        ):
             for field in ["locked", "optional_dates", "notes", "safety_plan", "international", "toc_agreement"]:
                 data.pop(field, None)
         return data
@@ -107,6 +124,10 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             )
         ):
             return data
+        if self.instance:
+            for competition in self.instance.competitions.all():
+                if competition.type.sport.is_manager(user):
+                    return data
         if not (self.instance and self.instance.organization.group in user.groups.all()) and (
             "organization" not in data or data["organization"].group not in user.groups.all()
         ):

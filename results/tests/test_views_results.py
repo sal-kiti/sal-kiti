@@ -34,7 +34,7 @@ class ResultTestCase(TestCase):
         self.object.competition.level.area_competition = True
         self.object.competition.level.save()
         self.area_group = Group.objects.create(name="AreaGroup")
-        self.area = Area.objects.create(name="Area", abbreviation="A", group=self.area_group)
+        self.area = Area.objects.create(name="Area", abbreviation="A", manager=self.area_group)
         self.object.competition.organization.areas.add(self.area)
         self.athlete = AthleteFactory.create(gender="M", date_of_birth=date.today() - relativedelta(years=18))
         self.data = {
@@ -166,6 +166,16 @@ class ResultTestCase(TestCase):
         response = self._test_update(user=self.user, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_result_update_with_sport_manager_locked(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_update(user=self.user, data=self.newdata, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_result_update_with_sport_manager(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_update(user=self.user, data=self.newdata, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_result_create_without_user(self):
         response = self._test_create(user=None, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -202,6 +212,11 @@ class ResultTestCase(TestCase):
     def test_result_create_with_staff_user_not_locked_competition(self):
         response = self._test_create(user=self.staff_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_no_permission_to_create_result_with_sport_manager(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_create(user=self.user, data=self.newdata, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_result_create_existing_with_staffuser(self):
         response = self._test_create(user=self.staff_user, data=self.data, locked=True)
@@ -242,13 +257,13 @@ class ResultTestCase(TestCase):
         view = self.viewset.as_view(actions={"put": "partial_update"})
         return view(request, pk=self.object.pk)
 
-    def test_result_approve_area_record_with_normal_user(self):
+    def test_result_approve_area_result_with_normal_user(self):
         response = self._test_area_approve()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.object.refresh_from_db()
         self.assertFalse(self.object.approved)
 
-    def test_record_approve_area_record_with_area_user(self):
+    def test_result_approve_area_result_with_area_user(self):
         self.user.groups.add(self.area_group)
         response = self._test_area_approve()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -453,6 +468,16 @@ class ResultTestCase(TestCase):
         self.object.save()
         response = self._test_delete(user=self.organization_user, locked=False)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_result_delete_with_sport_manager_locked(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_delete(user=self.user, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_result_delete_with_sport_manager(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_delete(user=self.user, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_result_delete_with_superuser(self):
         response = self._test_delete(user=self.superuser, locked=True)
@@ -724,10 +749,10 @@ class PartialResultTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_partial_result_delete_approved_with_organization_user(self):
-        self.object.result.approved = False
+        self.object.result.approved = True
         self.object.result.save()
         response = self._test_delete(user=self.organization_user, locked=False)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_partial_result_delete_with_superuser(self):
         response = self._test_delete(user=self.superuser, locked=True)

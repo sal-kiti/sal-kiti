@@ -45,6 +45,8 @@ class ResultPartialSerializer(serializers.ModelSerializer):
         result_instance = self.instance.result if self.instance else None
         if (result_instance and result_instance.competition.locked) or result_data and result_data.competition.locked:
             return False
+        if result_instance and result_instance.competition.type.sport.is_manager(user):
+            return True
         if (
             not result_instance
             or (
@@ -79,7 +81,7 @@ class ResultPartialSerializer(serializers.ModelSerializer):
         """
         user = self.context["request"].user
         if not self._check_permission(data, user):
-            raise serializers.ValidationError(_("No permission to alter or create a record."), 403)
+            raise serializers.ValidationError(_("No permission to alter or create a result."), 403)
         if data["type"].competition_type != data["result"].competition.type:
             raise serializers.ValidationError(_("Partial result type does not match competition type."))
         if (
@@ -459,6 +461,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
         competition_instance = self.instance.competition if self.instance else None
         if (competition_data and competition_data.locked) or competition_instance and competition_instance.locked:
             return False
+        if self.instance and self.instance.competition.type.sport.is_manager(user):
+            return True
         if (
             not competition_instance
             or (
@@ -502,7 +506,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
         """
         user = self.context["request"].user
         if not self._check_permission(data, user):
-            raise serializers.ValidationError(_("No permission to alter or create a record."), 403)
+            raise serializers.ValidationError(_("No permission to alter or create a result."), 403)
         self._check_team_status(data)
         athletes, team = self._get_athletes(data)
         category = self._get_category(data)
@@ -524,6 +528,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
                 user.is_superuser
                 or user.is_staff
                 or (competition.organization.is_area_manager(user) and competition.level.area_competition)
+                or competition.type.sport.is_manager(user)
             )
         ):
             raise serializers.ValidationError(_("No permission to approve results."))

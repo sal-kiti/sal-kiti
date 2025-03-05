@@ -7,6 +7,7 @@ from results.models.categories import Category
 from results.models.competitions import CompetitionLevel, CompetitionType
 from results.models.organizations import Area
 from results.models.results import Result, ResultPartial
+from results.utils.cache import get_user_groups
 
 
 class RecordLevel(LogChangesMixing, models.Model):
@@ -149,7 +150,15 @@ class Record(LogChangesMixing, models.Model):
     @authenticated_users
     @allow_staff_or_superuser
     def has_object_update_permission(self, request):
-        if self.level.area and self.level.area.group and self.level.area.group in request.user.groups.all():
+        user_groups = get_user_groups(request.user.pk)
+        if (
+            self.level.area
+            and self.level.area.manager
+            and self.level.area.manager in user_groups
+            or self.type.sport
+            and self.type.sport.manager
+            and self.type.sport.manager in user_groups
+        ):
             return True
         return False
 

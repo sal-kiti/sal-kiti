@@ -22,10 +22,14 @@ Organization users are authenticated users who are included in the same group(s)
 Organization users may create new events and competitions for this organization and add or modify results until
 staff users either locks the event or competition or confirms results.
 
-Area managers are authenticated users who are included in the same group(s) as the area(s).
+Area managers are users who are included in the same group(s) as the area(s).
 Area users have organization user rights to every organization in the area. They also have permissions
 to approve events, competitions, results and records in their area, if the competition level is checked as area
 competition.
+
+Sport managers are users who are included in the same group(s) as the sport(s).
+Sport users have permissions to manage competitions, results and records for their sport. They can also
+manage events if event includes at least one competition of their sport.
 
 Staff users are users who may create or modify events, competitions and results for any organizations.
 They also have access to Django admin interface and may be permitted access to various models there.

@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from dry_rest_permissions.generics import authenticated_users
+from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
 
 from results.mixins.change_log import LogChangesMixing
 from results.models.athletes import Athlete
@@ -56,32 +56,24 @@ class Event(LogChangesMixing, models.Model):
         return True
 
     @authenticated_users
+    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if (
-            request.user.is_staff
-            or request.user.is_superuser
-            or self.organization
+            self.organization
             and self.organization.is_area_manager(request.user)
             or self.organization
             and self.organization.is_manager(request.user)
             and not self.locked
         ):
             return True
+        for competition in self.competitions.all():
+            if competition.type.sport.is_manager(request.user):
+                return True
         return False
 
     @authenticated_users
     def has_object_update_permission(self, request):
-        if (
-            request.user.is_staff
-            or request.user.is_superuser
-            or self.organization
-            and self.organization.is_area_manager(request.user)
-            or self.organization
-            and self.organization.is_manager(request.user)
-            and not self.locked
-        ):
-            return True
-        return False
+        return self.has_object_write_permission(request)
 
 
 class EventContact(LogChangesMixing, models.Model):
@@ -127,10 +119,11 @@ class EventContact(LogChangesMixing, models.Model):
         return True
 
     @authenticated_users
+    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if (
-            request.user.is_staff
-            or request.user.is_superuser
+            self.event.organization
+            and self.event.organization.is_area_manager(request.user)
             or self.event.organization
             and self.event.organization.group in request.user.groups.all()
             and not self.event.locked
@@ -140,12 +133,4 @@ class EventContact(LogChangesMixing, models.Model):
 
     @authenticated_users
     def has_object_update_permission(self, request):
-        if (
-            request.user.is_staff
-            or request.user.is_superuser
-            or self.event.organization
-            and self.event.organization.group in request.user.groups.all()
-            and not self.event.locked
-        ):
-            return True
-        return False
+        return self.has_object_write_permission(request)
