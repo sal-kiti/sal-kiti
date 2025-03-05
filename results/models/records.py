@@ -149,7 +149,9 @@ class Record(LogChangesMixing, models.Model):
     @authenticated_users
     @allow_staff_or_superuser
     def has_object_update_permission(self, request):
-        if self.level.area and self.level.area.group and self.level.area.group in request.user.groups.all():
+        if self.level.area and self.level.area.manager and self.level.area.manager in request.user.groups.all():
+            return True
+        if self.type.sport.is_manager(request.user):
             return True
         return False
 

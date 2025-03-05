@@ -609,8 +609,18 @@ class CompetitionTestCase(ResultsTestCase):
         self.object.level.area_competition = True
         self.object.level.save()
         area = Area.objects.create(name="Area 1", abbreviation="area1")
-        self.user.groups.add(area.group)
+        self.user.groups.add(area.manager)
         self.object.organization.areas.add(area)
+        response = self._test_update(user=self.user, data=self.newdata, locked=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_update_with_sport_manager(self):
+        self.user.groups.add(self.object.type.sport.manager)
+        response = self._test_update(user=self.user, data=self.newdata, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_locked_competition_update_with_sport_manager(self):
+        self.user.groups.add(self.object.type.sport.manager)
         response = self._test_update(user=self.user, data=self.newdata, locked=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

@@ -14,7 +14,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Area
-        fields = ("id", "name", "abbreviation", "group", "permissions")
+        fields = ("id", "name", "abbreviation", "manager", "permissions")
 
 
 class OrganizationSerializer(serializers.ModelSerializer, EagerLoadingMixin):

@@ -8,6 +8,7 @@ from results.models.competitions import Competition
 from results.models.events import Event
 from results.models.organizations import Area, Organization
 from results.models.results import Result, ResultPartial
+from results.models.sports import Sport
 from results.utils.notification import (
     competition_creation_notification,
     event_creation_notification,
@@ -50,9 +51,19 @@ def create_organization_group(sender, instance=None, created=False, **kwargs):
 def create_area_group(sender, instance=None, created=False, **kwargs):
     """Creates group when area is created."""
     group_name = "area_" + instance.abbreviation
-    if created and not instance.group and Group.objects.filter(name=group_name).count() == 0:
+    if created and not instance.manager and Group.objects.filter(name=group_name).count() == 0:
         group = Group.objects.create(name=group_name)
-        instance.group = group
+        instance.manager = group
+        instance.save()
+
+
+@receiver(post_save, sender=Sport)
+def create_sport_group(sender, instance=None, created=False, **kwargs):
+    """Creates group when sport is created."""
+    group_name = "sport_" + instance.abbreviation
+    if created and not instance.manager and Group.objects.filter(name=group_name).count() == 0:
+        group = Group.objects.create(name=group_name)
+        instance.manager = group
         instance.save()
 
 

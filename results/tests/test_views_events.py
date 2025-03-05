@@ -7,6 +7,7 @@ from rest_framework.test import APIRequestFactory
 from results.models.events import Event, EventContact
 from results.models.organizations import Area
 from results.tests.factories.athletes import AthleteFactory
+from results.tests.factories.categories import SportFactory
 from results.tests.factories.competitions import CompetitionFactory
 from results.tests.factories.events import EventContactFactory, EventFactory
 from results.tests.utils import ResultsTestCase
@@ -87,8 +88,22 @@ class EventTestCase(ResultsTestCase):
 
     def test_event_update_with_area_user_locked(self):
         area = Area.objects.create(name="Area 1", abbreviation="area1")
-        self.user.groups.add(area.group)
+        self.user.groups.add(area.manager)
         self.object.organization.areas.add(area)
+        response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_event_update_with_sport_manager_no_sport_competition(self):
+        sport = SportFactory.create()
+        other_sport = SportFactory.create(abbreviation="other")
+        CompetitionFactory.create(event=self.object, type__sport=other_sport)
+        self.user.groups.add(sport.manager)
+        response = self._test_update(user=self.user, data=self.newdata)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_event_update_with_sport_manager(self):
+        competition = CompetitionFactory.create(event=self.object)
+        self.user.groups.add(competition.type.sport.manager)
         response = self._test_update(user=self.user, data=self.newdata)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

@@ -16,7 +16,7 @@ class Area(LogChangesMixing, models.Model):
 
     name = models.CharField(max_length=100, unique=True, verbose_name=_("Name"))
     abbreviation = models.CharField(max_length=100, unique=True, verbose_name=_("Abbreviation"))
-    group = models.OneToOneField(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_("Group"))
+    manager = models.OneToOneField(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_("Manager"))
 
     def __str__(self):
         return self.abbreviation
@@ -60,7 +60,7 @@ class OrganizationManager(models.Manager):
         :return: queryset
         """
         groups = user.groups.all()
-        return self.filter(Q(group__in=groups) | Q(areas__group__in=groups))
+        return self.filter(Q(group__in=groups) | Q(areas__manager__in=groups))
 
 
 class Organization(LogChangesMixing, models.Model):
@@ -98,7 +98,7 @@ class Organization(LogChangesMixing, models.Model):
         """
         groups = user.groups.all()
         try:
-            Organization.objects.filter(Q(group__in=groups) | Q(areas__group__in=groups)).distinct().get(pk=self.pk)
+            Organization.objects.filter(Q(group__in=groups) | Q(areas__manager__in=groups)).distinct().get(pk=self.pk)
             return True
         except Organization.DoesNotExist:
             pass
@@ -112,7 +112,7 @@ class Organization(LogChangesMixing, models.Model):
         """
         groups = user.groups.all()
         try:
-            Organization.objects.filter(areas__group__in=groups).distinct().get(pk=self.pk)
+            Organization.objects.filter(areas__manager__in=groups).distinct().get(pk=self.pk)
             return True
         except Organization.DoesNotExist:
             pass

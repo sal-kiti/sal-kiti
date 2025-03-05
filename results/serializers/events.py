@@ -19,10 +19,11 @@ class CompetitionInfoSerializer(serializers.ModelSerializer):
 
     type = serializers.SlugRelatedField(read_only=True, slug_field="name")
     level = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    sport = serializers.PrimaryKeyRelatedField(read_only=True, source="type.sport")
 
     class Meta:
         model = Competition
-        fields = ("id", "type", "level", "public")
+        fields = ("id", "type", "sport", "level", "public")
 
 
 class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
@@ -41,6 +42,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         "competitions",
         "competitions__level",
         "competitions__type",
+        "competitions__type__sport",
     ]
 
     class Meta:
@@ -107,6 +109,10 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             )
         ):
             return data
+        if self.instance:
+            for competition in self.instance.competitions.all():
+                if competition.type.sport.is_manager(user):
+                    return data
         if not (self.instance and self.instance.organization.group in user.groups.all()) and (
             "organization" not in data or data["organization"].group not in user.groups.all()
         ):

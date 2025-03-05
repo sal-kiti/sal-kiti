@@ -180,6 +180,8 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
         if (
             user.is_superuser
             or user.is_staff
+            or self.instance
+            and self.instance.type.sport.is_manager(user)
             or (
                 (
                     not self.instance

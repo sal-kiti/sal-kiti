@@ -272,31 +272,38 @@ class Competition(LogChangesMixing, models.Model):
         return True
 
     @authenticated_users
+    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if (
-            (request.user.is_staff or request.user.is_superuser)
-            or self.organization
+            self.organization
             and self.organization.is_area_manager(request.user)
             and self.event.organization.is_area_manager(request.user)
-            or self.organization
+        ):
+            return True
+        if (
+            self.organization
             and self.organization.is_manager(request.user)
             and self.event.organization.is_manager(request.user)
             and not self.locked
             and not self.event.locked
         ):
             return True
+        if self.type.sport.is_manager(request.user):
+            return True
         return False
 
     @authenticated_users
+    @allow_staff_or_superuser
     def has_object_update_permission(self, request):
+        if self.organization and self.organization.is_area_manager(request.user):
+            return True
         if (
-            (request.user.is_staff or request.user.is_superuser)
-            or self.organization
-            and self.organization.is_area_manager(request.user)
-            or self.organization
+            self.organization
             and self.organization.is_manager(request.user)
             and not self.locked
             and not self.event.locked
         ):
+            return True
+        if self.type.sport.is_manager(request.user):
             return True
         return False

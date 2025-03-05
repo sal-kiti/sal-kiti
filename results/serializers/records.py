@@ -42,8 +42,9 @@ class RecordSerializer(serializers.ModelSerializer):
             or [i for i in list(data.keys()) if i not in ["approved", "historical"]] != []
             or not (
                 self.instance.level.area
-                and self.instance.level.area.group
-                and self.instance.level.area.group in user.groups.all()
+                and self.instance.level.area.manager
+                and self.instance.level.area.manager in user.groups.all()
+                or self.instance.type.sport.is_manager(user)
             )
         ):
             raise serializers.ValidationError(_("No permission to alter or create a record."), 403)
