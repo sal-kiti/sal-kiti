@@ -142,16 +142,36 @@ class StatisticsPohjolanMaljaTestCase(TestCase):
         org2 = OrganizationFactory.create(abbreviation="B", name="BN")
         competition = CompetitionFactory.create(level=level)
         ResultFactory.create(organization=org1, competition=competition, position=1)
+        ResultFactory.create(organization=org1, competition=competition, position=2)
+        ResultFactory.create(organization=org2, competition=competition, position=2)
+        result3 = ResultFactory.create(organization=org2, competition=competition, position=3)
+        ResultFactory.create(organization=org2, competition=competition, position=4)
         ResultFactory.create(organization=org1, competition=competition, position=5)
-        ResultFactory.create(organization=org1, competition=competition, position=15)
+        ResultFactory.create(organization=org1, competition=competition, position=6)
+        ResultFactory.create(organization=org1, competition=competition, position=7)
+        ResultFactory.create(organization=org1, competition=competition, position=8)
         ResultFactory.create(organization=org2, competition=competition, position=9)
-        ResultFactory.create(organization=org2, competition=competition, position=5)
+        ResultFactory.create(organization=org1, competition=competition, position=10)
         user = User.objects.create(username="superuser", is_staff=True)
         self.client.force_login(user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = [
-            {"organization": {"id": 1, "name": "AN", "abbreviation": "A"}, "value": 12},
-            {"organization": {"id": 2, "name": "BN", "abbreviation": "B"}, "value": 4},
+            {"organization": {"id": 1, "name": "AN", "abbreviation": "A"}, "value": 25},
+            {"organization": {"id": 2, "name": "BN", "abbreviation": "B"}, "value": 18},
         ]
-        self.assertEqual(response.content.decode(), json.dumps({"results": data}))
+        self.assertEqual(json.dumps({"results": data}), response.content.decode())
+        org3 = OrganizationFactory.create(abbreviation="C", name="CN", external=True)
+        ResultFactory.create(organization=org3, competition=competition, position=1)
+        response = self.client.get(self.url, follow=True)
+        # No change as org3 is tied to non-external organization
+        self.assertEqual(json.dumps({"results": data}), response.content.decode())
+        result3.organization = org3
+        result3.save()
+        response = self.client.get(self.url, follow=True)
+        data = [
+            {"organization": {"id": 1, "name": "AN", "abbreviation": "A"}, "value": 29},
+            {"organization": {"id": 2, "name": "BN", "abbreviation": "B"}, "value": 14},
+        ]
+        # Org2 loses third place and places 4-9 are increased by 1 (+4 to org1, -5+1 to org2)
+        self.assertEqual(json.dumps({"results": data}), response.content.decode())

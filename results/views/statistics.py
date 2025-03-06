@@ -95,18 +95,32 @@ def statistics_pohjolan_malja(request, year):
     competition_levels = CompetitionLevel.objects.filter(abbreviation__in=level_list)
     results = Result.objects.filter(
         competition__level__in=competition_levels,
-        position__lte=max_position,
         position__gte=1,
         competition__date_start__year=year,
-    )
+    ).order_by("competition", "category", "position", "-result")
     data_dict = {}
+    competition = None
+    category = None
     for result in results:
-        points = max_position - result.position + 1
-        organization = result.organization
-        if organization not in data_dict:
-            data_dict[organization] = points
-        else:
-            data_dict[organization] = data_dict[organization] + points
+        if competition != result.competition or category != result.category:
+            max_position = 8
+            competition = result.competition
+            category = result.category
+        if result.organization.external:
+            if not Result.objects.filter(
+                competition=result.competition,
+                category=result.category,
+                position=result.position,
+                organization__external=False,
+            ).exists():
+                max_position += 1
+        elif result.position <= max_position:
+            points = max_position - result.position + 1
+            organization = result.organization
+            if organization not in data_dict:
+                data_dict[organization] = points
+            else:
+                data_dict[organization] = data_dict[organization] + points
     object_list = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     data = []
     for obj in object_list:
