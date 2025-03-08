@@ -316,7 +316,7 @@ def _create_results(competition, index, number, verbosity=1):
                 if pr_type != previous_pr_type:
                     part_sum = 0
                 previous_pr_type = pr_type
-                max_result = pr_type.max_result if pr_type.max_result else 100
+                max_result = int(pr_type.max_result if pr_type.max_result else 100)
                 if temp_decimals:
                     value = (
                         decimal.Decimal(
