@@ -365,7 +365,7 @@ def _create_finals_partial_results(position, category_result, layouts, partial_r
                 decimals = 0
             else:
                 decimals = 1
-            max_result = pr_type.max_result if pr_type.max_result else 50
+            max_result = int(pr_type.max_result if pr_type.max_result else 50)
             if (
                 (competition_type in [1, 2, 20, 22] and position < 9 and order + position < 12)
                 or (competition_type == 5 and position < 9 and (order < 9 or order + position < 16))
@@ -391,7 +391,7 @@ def _create_finals_partial_results(position, category_result, layouts, partial_r
             fsum = p
     if fsum:
         pr_type = partial_result_types.filter(abbreviation=p.name.split("-")[0])[0]
-        max_result = pr_type.max_result if pr_type.max_result else 100
+        max_result = int(pr_type.max_result if pr_type.max_result else 100)
         if pr_type and max_result % 10 == 0:
             decimals = 0
         else:
