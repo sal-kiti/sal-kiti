@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.0 - 2025-03-09
+- Added sport managers
+- Changed API schema to OpenAPI 3
+- Changed CI testing from Travis to GitHub Actions
+- Removed support for Python 3.8
+- Fixed missing organization in permission check
+- Updated Pohjolan malja calculation
+- Updated requirements
+
+### Updating notes
+Includes database changes, run migrations
+- Added manager group for sports
+- Renamed manager group for areas
+
 ## 1.5.0 - 2024-12-16
 - Added notifications for new events and competitions
 - Added option to include competitions in event status change

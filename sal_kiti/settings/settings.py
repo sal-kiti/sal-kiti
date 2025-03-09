@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "Kiti API",
     "DESCRIPTION": "REST API for competition and results information.",
-    "VERSION": "1.5.0",
+    "VERSION": "1.6.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
     "ENUM_NAME_OVERRIDES": {
