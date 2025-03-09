@@ -1,9 +1,8 @@
 language: python
 dist: focal
 python:
-  - "3.8"
   - "3.9"
-  - "3.10"
+  - "3.13"
 install:
   - pip install -r requirements_dev.txt
 script:
