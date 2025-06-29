@@ -37,6 +37,7 @@ class Result(LogChangesMixing, models.Model):
     position = models.SmallIntegerField(null=True, blank=True, verbose_name=_("Position"))
     position_pre = models.SmallIntegerField(null=True, blank=True, verbose_name=_("Preliminary position"))
     approved = models.BooleanField(default=False, verbose_name=_("Approved"))
+    public = models.BooleanField(default=False, verbose_name=_("Public"))
     info = models.CharField(max_length=100, null=True, blank=True, verbose_name=_("Additional information"))
     admin_info = models.CharField(
         max_length=100, null=True, blank=True, verbose_name=_("Administrational information")

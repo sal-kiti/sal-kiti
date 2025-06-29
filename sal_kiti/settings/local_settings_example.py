@@ -52,6 +52,9 @@ REMOVE_COMPETITION_APPROVAL_WITH_EVENT = False
 # Turn False to ignore requirements check during import.
 # CHECK_COMPETITION_REQUIREMENTS = True
 
+# Automatically publish results when they are created. Default is True.
+# AUTO_PUBLISH_RESULTS = True
+
 # Gender and date of birth are available through API to these users
 UNMASKED_ATHLETE_USERS = ["admin"]
 

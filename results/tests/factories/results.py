@@ -25,6 +25,7 @@ class ResultFactory(factory.django.DjangoModelFactory):
     decimals = 1
     position = fuzzy.FuzzyInteger(1, 100)
     approved = True
+    public = True
 
 
 class ResultPartialFactory(factory.django.DjangoModelFactory):

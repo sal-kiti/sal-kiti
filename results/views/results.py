@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -52,8 +52,17 @@ class ResultViewSet(viewsets.ModelViewSet):
         """
         Prefetch partial results
         """
+        user = self.request.user
+        if not user.is_authenticated:
+            self.queryset = self.queryset.filter(public=True)
+        elif not user.is_superuser and not user.is_staff:
+            self.queryset = self.queryset.filter(
+                Q(public=True)
+                | Q(competition__organization__group__in=user.groups.all())
+                | Q(competition__organization__areas__manager__in=user.groups.all())
+                | Q(competition__type__sport__manager__in=user.groups.all())
+            )
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
-
         return self.queryset
 
 
@@ -82,6 +91,22 @@ class ResultPartialViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = ResultPartial.objects.all()
     serializer_class = ResultPartialSerializer
+
+    def get_queryset(self):
+        """
+        Filter public results
+        """
+        user = self.request.user
+        if not user.is_authenticated:
+            self.queryset = self.queryset.filter(result__public=True)
+        elif not user.is_superuser and not user.is_staff:
+            self.queryset = self.queryset.filter(
+                Q(result__public=True)
+                | Q(result__competition__organization__group__in=user.groups.all())
+                | Q(result__competition__organization__areas__manager__in=user.groups.all())
+                | Q(result__competition__type__sport__manager__in=user.groups.all())
+            )
+        return self.queryset
 
 
 @extend_schema(
@@ -221,6 +246,16 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
         Custom filtering with query parameters.
         """
         queryset = Result.objects.all()
+        user = self.request.user
+        if not user.is_authenticated:
+            queryset = queryset.filter(public=True)
+        elif not user.is_superuser and not user.is_staff:
+            queryset = queryset.filter(
+                Q(public=True)
+                | Q(competition__organization__group__in=user.groups.all())
+                | Q(competition__organization__areas__manager__in=user.groups.all())
+                | Q(competition__type__sport__manager__in=user.groups.all())
+            )
         try:
             competition = self.request.query_params.get("competition", None)
             if competition and int(competition) >= 0:
@@ -322,3 +357,19 @@ class ResultDetailViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Result.objects.all()
     serializer_class = ResultDetailSerializer
+
+    def get_queryset(self):
+        """
+        Filter public results
+        """
+        user = self.request.user
+        if not user.is_authenticated:
+            self.queryset = self.queryset.filter(public=True)
+        elif not user.is_superuser and not user.is_staff:
+            self.queryset = self.queryset.filter(
+                Q(public=True)
+                | Q(competition__organization__group__in=user.groups.all())
+                | Q(competition__organization__areas__manager__in=user.groups.all())
+                | Q(competition__type__sport__manager__in=user.groups.all())
+            )
+        return self.queryset

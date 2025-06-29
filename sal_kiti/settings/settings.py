@@ -92,6 +92,7 @@ EVENT_PUBLISH_REQUIRES_STAFF = True
 CHECK_COMPETITION_REQUIREMENTS = True
 APPROVE_COMPETITIONS_WITH_EVENT = False
 REMOVE_COMPETITION_APPROVAL_WITH_EVENT = False
+AUTO_PUBLISH_RESULTS = True
 
 WSGI_APPLICATION = "sal_kiti.wsgi.application"
 
@@ -120,7 +121,7 @@ DEFAULT_LOG_USER_ID = 1
 LOG_VALUE_FIELDS = {
     "Competition": ["type", "level", "locked", "public", "trial"],
     "Record": ["result", "partial_result", "approved", "category", "level", "type"],
-    "Result": ["result", "approved", "category", "competition"],
+    "Result": ["result", "approved", "public", "category", "competition"],
     "ResultPartial": ["result", "value", "type"],
 }
 LOGIN_URL = "/auth/login/"

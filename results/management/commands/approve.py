@@ -87,8 +87,8 @@ class Command(BaseCommand):
             logger.info(text)
 
     def approve_results(self, date_limit):
-        """Approve results which have not been modified during date limits"""
-        for result in Result.objects.filter(updated_at__lt=date_limit, approved=False):
+        """Approve public results which have not been modified during date limits"""
+        for result in Result.objects.filter(updated_at__lt=date_limit, approved=False, public=True):
             if _check_requirements(result):
                 result.approved = True
                 self.output("Result approved: %s" % result)

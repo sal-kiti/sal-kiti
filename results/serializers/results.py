@@ -147,6 +147,7 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
             "position",
             "position_pre",
             "approved",
+            "public",
             "info",
             "team",
             "partial",
@@ -161,6 +162,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
         partial_data = validated_data.pop("partial", None)
         team_members = validated_data.pop("team_members", None)
         dry_run = validated_data.pop("dry_run", None)
+        if getattr(settings, "AUTO_PUBLISH_RESULTS", False):
+            validated_data["public"] = True
         if not dry_run:
             result = Result.objects.create(**validated_data)
         else:
@@ -491,6 +494,52 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
             return False
         return True
 
+    def _check_approval(self, data, user, competition):
+        """
+        Check permissions to approve results.
+
+        Superuser, staff, area managers and sport managers have approval rights.
+
+        :param data:
+        :param user:
+        :param competition:
+        :return:
+        """
+        if (
+            "approved" in data
+            and data["approved"]
+            and not (
+                user.is_superuser
+                or user.is_staff
+                or (competition.organization.is_area_manager(user) and competition.level.area_competition)
+                or competition.type.sport.is_manager(user)
+            )
+        ):
+            raise serializers.ValidationError(_("No permission to approve results."))
+        if (
+            "approved" in data
+            and data["approved"]
+            and ("public" in data and not data["public"] or self.instance and not self.instance.public)
+        ):
+            raise serializers.ValidationError(_("Cannot approve non-published result."))
+        if (
+            "public" in data
+            and not data["public"]
+            and ("approved" in data and data["approved"] or self.instance and self.instance.approved)
+        ):
+            raise serializers.ValidationError(_("Cannot unpublish approved result."))
+        if (
+            self.instance
+            and self.instance.approved
+            and not (
+                user.is_superuser
+                or user.is_staff
+                or (competition.organization.is_area_manager(user) and competition.level.area_competition)
+                or competition.type.sport.is_manager(user)
+            )
+        ):
+            raise serializers.ValidationError(_("No permission to change approved results."))
+
     def validate(self, data):
         """
         Validates:
@@ -521,17 +570,8 @@ class ResultSerializer(QueryFieldsMixin, serializers.ModelSerializer, EagerLoadi
         if result is not None:
             self._check_value_limits(result, category, competition.type)
         self._check_partial(data, competition, category)
-        if (
-            "approved" in data
-            and data["approved"]
-            and not (
-                user.is_superuser
-                or user.is_staff
-                or (competition.organization.is_area_manager(user) and competition.level.area_competition)
-                or competition.type.sport.is_manager(user)
-            )
-        ):
-            raise serializers.ValidationError(_("No permission to approve results."))
+        self._check_approval(data, user, competition)
+
         return data
 
 
@@ -604,6 +644,7 @@ class ResultLimitedSerializer(QueryFieldsMixin, serializers.ModelSerializer, Eag
             "position_pre",
             "partial",
             "approved",
+            "public",
             "team",
             "info",
             "record",

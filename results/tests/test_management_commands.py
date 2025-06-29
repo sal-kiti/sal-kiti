@@ -39,3 +39,15 @@ class Approve(TestCase):
         call_command("approve", days=0, result=True, record=True, event=True, competition=True, verbosity=0)
         self.assertEqual(Event.objects.filter(locked=False).count(), 0)
         self.assertEqual(Competition.objects.filter(locked=False).count(), 0)
+
+    def test_approve_unpublished_result(self):
+        self.user = User.objects.create(username="logger")
+        result = ResultFactory.create(
+            approved=False, public=False, competition__locked=False, competition__event__locked=False
+        )
+        call_command("approve", days=0, result=True, verbosity=0)
+        self.assertEqual(Result.objects.filter(approved=False).count(), 1)
+        result.public = True
+        result.save()
+        call_command("approve", days=0, result=True, verbosity=0)
+        self.assertEqual(Result.objects.filter(approved=False).count(), 0)

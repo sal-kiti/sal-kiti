@@ -84,6 +84,11 @@ class ResultTestCase(TestCase):
         view = self.viewset.as_view(actions={"get": "retrieve"})
         return view(request, pk=self.object.pk)
 
+    def _test_access_not_public(self, user):
+        self.object.public = False
+        self.object.save()
+        return self._test_access(user)
+
     def _test_create(self, user, data, locked=True):
         if not locked:
             self.object.competition.locked = False
@@ -139,6 +144,32 @@ class ResultTestCase(TestCase):
                 self.assertEqual(response.data[key], str(self.data[key]))
             else:
                 self.assertEqual(response.data[key], self.data[key])
+
+    def test_result_access_not_public(self):
+        response = self._test_access_not_public(user=None)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_result_access_not_public_normal_user(self):
+        response = self._test_access_not_public(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_result_access_not_public_organization_user(self):
+        response = self._test_access_not_public(user=self.organization_user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_result_access_not_public_sports_manager(self):
+        self.user.groups.add(self.object.competition.type.sport.manager)
+        response = self._test_access_not_public(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_result_access_not_public_area_manager(self):
+        self.user.groups.add(self.area_group)
+        response = self._test_access_not_public(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_result_access_not_public_staff(self):
+        response = self._test_access_not_public(user=self.staff_user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_result_update_without_user(self):
         response = self._test_update(user=None, data=self.newdata, locked=False)
@@ -228,6 +259,13 @@ class ResultTestCase(TestCase):
 
     def test_result_create_with_organization_user_not_locked_competition(self):
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
+        self.assertTrue(response.data["public"])
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @override_settings(AUTO_PUBLISH_RESULTS=False)
+    def test_result_create_with_organization_user_without_auto_publish(self):
+        response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
+        self.assertFalse(response.data["public"])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_result_create_with_organization_user_requiring_approval(self):
@@ -243,6 +281,28 @@ class ResultTestCase(TestCase):
         self.object.competition.save()
         response = self._test_create(user=self.organization_user, data=self.newdata, locked=False)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_result_unapprove_with_organizational_user(self):
+        data = self.data.copy()
+        data["approved"] = False
+        response = self._test_update(user=self.organization_user, data=data, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_result_unapprove_with_staff_user(self):
+        data = self.data.copy()
+        data["approved"] = False
+        response = self._test_update(user=self.staff_user, data=data, locked=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_result_approve_unpublished_with_staff_user(self):
+        self.object.approved = False
+        self.object.public = False
+        self.object.save()
+        data = self.data.copy()
+        data["approved"] = True
+        response = self._test_update(user=self.staff_user, data=data, locked=False)
+        self.assertIn("Cannot approve non-published result", response.data["non_field_errors"][0])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def _test_area_approve(self, data=None):
         self.object.competition.locked = False
@@ -822,6 +882,15 @@ class ResultListTestCase(TestCase):
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
+
+    def test_result_list_access_not_published_result(self):
+        self.result.public = False
+        self.result.save()
+        request = self.factory.get(self.url)
+        view = self.viewset.as_view(actions={"get": "list"})
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_result_list_search(self):
         import os
