@@ -85,7 +85,12 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "staff":
             if not user.is_superuser and not user.is_staff:
-                self.queryset = self.queryset.filter(Q(public=True) | Q(organization__group__in=user.groups.all()))
+                self.queryset = self.queryset.filter(
+                    Q(public=True)
+                    | Q(organization__group__in=user.groups.all())
+                    | Q(organization__areas__manager__in=user.groups.all())
+                    | Q(type__sport__manager__in=user.groups.all())
+                )
         elif settings.LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION == "authenticated":
             if not user.is_authenticated:
                 self.queryset = self.queryset.filter(public=True)

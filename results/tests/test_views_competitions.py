@@ -525,6 +525,16 @@ class CompetitionTestCase(ResultsTestCase):
         view = self.viewset.as_view(actions={"get": "retrieve"})
         return view(request, pk=self.object.pk)
 
+    def _test_access_not_public(self, user, limit="authenticated"):
+        self.object.public = False
+        self.object.save()
+        request = self.factory.get(self.url + "1/")
+        force_authenticate(request, user=user)
+        view = self.viewset.as_view(actions={"get": "retrieve"})
+        with self.settings(LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION=limit):
+            result = view(request, pk=self.object.pk)
+        return result
+
     def _test_create(self, user, data, locked=True):
         if not locked:
             self.object.event.locked = False
@@ -582,6 +592,68 @@ class CompetitionTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
             self.assertEqual(response.data[key], self.data[key])
+
+    def test_competition_access_not_public_without_user_no_limit(self):
+        response = self._test_access_not_public(user=None, limit="none")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_without_user(self):
+        response = self._test_access_not_public(user=None, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_competition_access_not_public_without_user_staff_limit(self):
+        response = self._test_access_not_public(user=None, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_competition_access_not_public_with_normal_user(self):
+        response = self._test_access_not_public(user=self.user, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_with_normal_user_staff_limit(self):
+        response = self._test_access_not_public(user=self.user, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_competition_access_not_public_organization_user(self):
+        response = self._test_access_not_public(user=self.organization_user, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_organization_user_staff_limit(self):
+        response = self._test_access_not_public(user=self.organization_user, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_sports_manager(self):
+        self.user.groups.add(self.object.type.sport.manager)
+        response = self._test_access_not_public(user=self.user, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_sports_manager_staff_limit(self):
+        self.user.groups.add(self.object.type.sport.manager)
+        response = self._test_access_not_public(user=self.user, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_area_manager(self):
+        area_group = Group.objects.create(name="AreaGroup")
+        area = Area.objects.create(name="Area", abbreviation="A", manager=area_group)
+        self.object.organization.areas.add(area)
+        self.user.groups.add(area_group)
+        response = self._test_access_not_public(user=self.user, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_area_manager_staff_limit(self):
+        area_group = Group.objects.create(name="AreaGroup")
+        area = Area.objects.create(name="Area", abbreviation="A", manager=area_group)
+        self.object.organization.areas.add(area)
+        self.user.groups.add(area_group)
+        response = self._test_access_not_public(user=self.user, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_staff(self):
+        response = self._test_access_not_public(user=self.staff_user, limit="authenticated")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_access_not_public_staff_staff_limit(self):
+        response = self._test_access_not_public(user=self.staff_user, limit="staff")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_competition_update_without_user(self):
         response = self._test_update(user=None, data=self.newdata)
