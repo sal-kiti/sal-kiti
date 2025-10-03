@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-29 15:34+0300\n"
+"POT-Creation-Date: 2025-10-03 13:44+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,740 +18,751 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models/athletes.py:22 models/categories.py:73
+#: results/models/athletes.py:22 results/models/categories.py:73
 msgid "Man"
 msgstr ""
 
-#: models/athletes.py:23 models/categories.py:74
+#: results/models/athletes.py:23 results/models/categories.py:74
 msgid "Woman"
 msgstr ""
 
-#: models/athletes.py:24 models/categories.py:75
+#: results/models/athletes.py:24 results/models/categories.py:75
 msgid "Other"
 msgstr ""
 
-#: models/athletes.py:25
+#: results/models/athletes.py:25
 msgid "Unknown"
 msgstr ""
 
-#: models/athletes.py:27 models/events.py:101 models/results.py:27
+#: results/models/athletes.py:27 results/models/events.py:101
+#: results/models/results.py:27
 msgid "First name"
 msgstr ""
 
-#: models/athletes.py:28 models/events.py:102 models/results.py:28
+#: results/models/athletes.py:28 results/models/events.py:102
+#: results/models/results.py:28
 msgid "Last name"
 msgstr ""
 
-#: models/athletes.py:29 models/organizations.py:79
+#: results/models/athletes.py:29 results/models/organizations.py:79
 msgid "Sport ID"
 msgstr ""
 
-#: models/athletes.py:30
+#: results/models/athletes.py:30
 msgid "Date of birth"
 msgstr ""
 
-#: models/athletes.py:31 models/categories.py:77
+#: results/models/athletes.py:31 results/models/categories.py:77
 msgid "Gender"
 msgstr ""
 
-#: models/athletes.py:36
+#: results/models/athletes.py:36
 msgid "No automatic updates"
 msgstr ""
 
-#: models/athletes.py:40
+#: results/models/athletes.py:40
 msgid "Athlete"
 msgstr ""
 
-#: models/athletes.py:41
+#: results/models/athletes.py:41
 msgid "Athletes"
 msgstr ""
 
-#: models/athletes.py:81 models/competitions.py:243 models/events.py:26
-#: models/results.py:40 models/statistics.py:14
+#: results/models/athletes.py:81 results/models/competitions.py:243
+#: results/models/events.py:26 results/models/results.py:40
+#: results/models/statistics.py:14
 msgid "Public"
 msgstr ""
 
-#: models/athletes.py:82
+#: results/models/athletes.py:82
 msgid "Authenticated users"
 msgstr ""
 
-#: models/athletes.py:83
+#: results/models/athletes.py:83
 msgid "Staff users"
 msgstr ""
 
-#: models/athletes.py:84
+#: results/models/athletes.py:84
 msgid "Superuser only"
 msgstr ""
 
-#: models/athletes.py:90
-#: templates/notification/competition_creation_message.html:5
+#: results/models/athletes.py:90
+#: results/templates/notification/competition_creation_message.html:5
 msgid "Type"
 msgstr ""
 
-#: models/athletes.py:91 models/sports.py:15
+#: results/models/athletes.py:91 results/models/sports.py:15
 msgid "Suomisport ID"
 msgstr ""
 
-#: models/athletes.py:92 models/results.py:112
+#: results/models/athletes.py:92 results/models/results.py:112
 msgid "Value"
 msgstr ""
 
-#: models/athletes.py:93 models/competitions.py:233 models/events.py:20
-#: models/records.py:86
-#: templates/notification/competition_creation_message.html:11
-#: templates/notification/event_creation_message.html:6
+#: results/models/athletes.py:93 results/models/competitions.py:233
+#: results/models/events.py:20 results/models/records.py:86
+#: results/templates/notification/competition_creation_message.html:11
+#: results/templates/notification/event_creation_message.html:6
 msgid "Start date"
 msgstr ""
 
-#: models/athletes.py:94 models/competitions.py:234 models/events.py:21
-#: models/records.py:87
-#: templates/notification/competition_creation_message.html:12
-#: templates/notification/event_creation_message.html:7
+#: results/models/athletes.py:94 results/models/competitions.py:234
+#: results/models/events.py:21 results/models/records.py:87
+#: results/templates/notification/competition_creation_message.html:12
+#: results/templates/notification/event_creation_message.html:7
 msgid "End date"
 msgstr ""
 
-#: models/athletes.py:95
+#: results/models/athletes.py:95
 msgid "Visibility"
 msgstr ""
 
-#: models/athletes.py:96
+#: results/models/athletes.py:96
 msgid "Suomisport update timestamp"
 msgstr ""
 
-#: models/categories.py:13 models/categories.py:63 models/competitions.py:67
-#: models/competitions.py:118 models/competitions.py:177
-#: models/competitions.py:231 models/events.py:18 models/organizations.py:17
-#: models/organizations.py:74 models/records.py:21 models/sports.py:12
-#: models/statistics.py:10
-#: templates/notification/competition_creation_message.html:8
-#: templates/notification/event_creation_message.html:3
+#: results/models/categories.py:13 results/models/categories.py:63
+#: results/models/competitions.py:67 results/models/competitions.py:118
+#: results/models/competitions.py:177 results/models/competitions.py:231
+#: results/models/events.py:18 results/models/organizations.py:17
+#: results/models/organizations.py:74 results/models/records.py:21
+#: results/models/sports.py:12 results/models/statistics.py:10
+#: results/templates/notification/competition_creation_message.html:8
+#: results/templates/notification/event_creation_message.html:3
 msgid "Name"
 msgstr ""
 
-#: models/categories.py:14 models/categories.py:64 models/competitions.py:68
-#: models/competitions.py:119 models/competitions.py:178
-#: models/organizations.py:18 models/organizations.py:75 models/records.py:22
-#: models/sports.py:13
+#: results/models/categories.py:14 results/models/categories.py:64
+#: results/models/competitions.py:68 results/models/competitions.py:119
+#: results/models/competitions.py:178 results/models/organizations.py:18
+#: results/models/organizations.py:75 results/models/records.py:22
+#: results/models/sports.py:13
 msgid "Abbreviation"
 msgstr ""
 
-#: models/categories.py:16 models/categories.py:79 models/competitions.py:75
-#: models/competitions.py:133 models/organizations.py:80 models/records.py:32
-#: models/records.py:89 models/sports.py:20
+#: results/models/categories.py:16 results/models/categories.py:79
+#: results/models/competitions.py:75 results/models/competitions.py:133
+#: results/models/organizations.py:80 results/models/records.py:32
+#: results/models/records.py:89 results/models/sports.py:20
 msgid "Historical"
 msgstr ""
 
-#: models/categories.py:17 models/categories.py:78 models/competitions.py:25
-#: models/competitions.py:69 models/competitions.py:128 models/records.py:31
-#: models/results.py:111 models/sports.py:17 models/statistics.py:15
+#: results/models/categories.py:17 results/models/categories.py:78
+#: results/models/competitions.py:25 results/models/competitions.py:69
+#: results/models/competitions.py:128 results/models/records.py:31
+#: results/models/results.py:111 results/models/sports.py:17
+#: results/models/statistics.py:15
 msgid "Order"
 msgstr ""
 
-#: models/categories.py:24 models/categories.py:25
+#: results/models/categories.py:24 results/models/categories.py:25
 msgid "Division"
 msgstr ""
 
-#: models/categories.py:67
+#: results/models/categories.py:67
 msgid "Maximum age"
 msgstr ""
 
-#: models/categories.py:68
+#: results/models/categories.py:68
 msgid "Minimum age"
 msgstr ""
 
-#: models/categories.py:69
+#: results/models/categories.py:69
 msgid "Age limit checked by the exact day, not year"
 msgstr ""
 
-#: models/categories.py:70
+#: results/models/categories.py:70
 msgid "Team category"
 msgstr ""
 
-#: models/categories.py:71
+#: results/models/categories.py:71
 msgid "Number of team members"
 msgstr ""
 
-#: models/categories.py:86
+#: results/models/categories.py:86
 msgid "Category"
 msgstr ""
 
-#: models/categories.py:87
+#: results/models/categories.py:87
 msgid "Categories"
 msgstr ""
 
-#: models/categories.py:125 models/competitions.py:123
-#: models/competitions.py:180
+#: results/models/categories.py:125 results/models/competitions.py:123
+#: results/models/competitions.py:180
 msgid "Maximum result"
 msgstr ""
 
-#: models/categories.py:126 models/competitions.py:126
-#: models/competitions.py:183
+#: results/models/categories.py:126 results/models/competitions.py:126
+#: results/models/competitions.py:183
 msgid "Minimum result"
 msgstr ""
 
-#: models/categories.py:127
+#: results/models/categories.py:127
 msgid "Disallow category for this competition type"
 msgstr ""
 
-#: models/categories.py:128 models/competitions.py:185
+#: results/models/categories.py:128 results/models/competitions.py:185
 msgid "Check records"
 msgstr ""
 
-#: models/categories.py:129
+#: results/models/categories.py:129
 msgid "Check partial records"
 msgstr ""
 
-#: models/categories.py:130
+#: results/models/categories.py:130
 msgid "Record group"
 msgstr ""
 
-#: models/categories.py:132
+#: results/models/categories.py:132
 msgid "No partial records for listed result types"
 msgstr ""
 
-#: models/categories.py:140
+#: results/models/categories.py:140
 msgid "Competition type and category check"
 msgstr ""
 
-#: models/categories.py:141
+#: results/models/categories.py:141
 msgid "Competition type and category checks"
 msgstr ""
 
-#: models/competitions.py:19 models/competitions.py:132
-#: models/competitions.py:240
+#: results/models/competitions.py:19 results/models/competitions.py:132
+#: results/models/competitions.py:240
 msgid "Layout type"
 msgstr ""
 
-#: models/competitions.py:20
+#: results/models/competitions.py:20
 msgid "Label"
 msgstr ""
 
-#: models/competitions.py:21
+#: results/models/competitions.py:21
 msgid "Result type name"
 msgstr ""
 
-#: models/competitions.py:22
+#: results/models/competitions.py:22
 msgid "Block"
 msgstr ""
 
-#: models/competitions.py:23
+#: results/models/competitions.py:23
 msgid "Row"
 msgstr ""
 
-#: models/competitions.py:24
+#: results/models/competitions.py:24
 msgid "Column"
 msgstr ""
 
-#: models/competitions.py:26
+#: results/models/competitions.py:26
 msgid "Hide on smaller screen"
 msgstr ""
 
-#: models/competitions.py:27
+#: results/models/competitions.py:27
 msgid "Show on larger screen"
 msgstr ""
 
-#: models/competitions.py:34
+#: results/models/competitions.py:34
 msgid "Competition layout"
 msgstr ""
 
-#: models/competitions.py:35
+#: results/models/competitions.py:35
 msgid "Competition layouts"
 msgstr ""
 
-#: models/competitions.py:70 models/competitions.py:129
+#: results/models/competitions.py:70 results/models/competitions.py:129
 msgid "Requirements"
 msgstr ""
 
-#: models/competitions.py:71
+#: results/models/competitions.py:71
 msgid "Area competition"
 msgstr ""
 
-#: models/competitions.py:73
+#: results/models/competitions.py:73
 msgid "Require approved competition to add results"
 msgstr ""
 
-#: models/competitions.py:82
+#: results/models/competitions.py:82
 msgid "Competition level"
 msgstr ""
 
-#: models/competitions.py:83
+#: results/models/competitions.py:83
 msgid "Competition levels"
 msgstr ""
 
-#: models/competitions.py:121
+#: results/models/competitions.py:121
 msgid "Number of rounds"
 msgstr ""
 
-#: models/competitions.py:130
+#: results/models/competitions.py:130
 msgid "Personal competition"
 msgstr ""
 
-#: models/competitions.py:131
+#: results/models/competitions.py:131
 msgid "Team competition"
 msgstr ""
 
-#: models/competitions.py:140
+#: results/models/competitions.py:140
 msgid "Competition type"
 msgstr ""
 
-#: models/competitions.py:141
+#: results/models/competitions.py:141
 msgid "Competition types"
 msgstr ""
 
-#: models/competitions.py:192
+#: results/models/competitions.py:192
 msgid "Result type"
 msgstr ""
 
-#: models/competitions.py:193
+#: results/models/competitions.py:193
 msgid "Result types"
 msgstr ""
 
-#: models/competitions.py:232 models/events.py:19 models/statistics.py:11
+#: results/models/competitions.py:232 results/models/events.py:19
+#: results/models/statistics.py:11
 msgid "Description"
 msgstr ""
 
-#: models/competitions.py:235 models/events.py:22
-#: templates/notification/competition_creation_message.html:10
-#: templates/notification/event_creation_message.html:5
+#: results/models/competitions.py:235 results/models/events.py:22
+#: results/templates/notification/competition_creation_message.html:10
+#: results/templates/notification/event_creation_message.html:5
 msgid "Location"
 msgstr ""
 
-#: models/competitions.py:241 models/events.py:24 models/records.py:85
-#: models/results.py:39
+#: results/models/competitions.py:241 results/models/events.py:24
+#: results/models/records.py:85 results/models/results.py:39
 msgid "Approved"
 msgstr ""
 
-#: models/competitions.py:242 models/events.py:25
+#: results/models/competitions.py:242 results/models/events.py:25
 msgid "Edit lock"
 msgstr ""
 
-#: models/competitions.py:244
+#: results/models/competitions.py:244
 msgid "Trial competition"
 msgstr ""
 
-#: models/competitions.py:245 models/events.py:35 models/records.py:90
-#: models/results.py:46 models/results.py:117
+#: results/models/competitions.py:245 results/models/events.py:35
+#: results/models/records.py:90 results/models/results.py:46
+#: results/models/results.py:117
 msgid "Created at"
 msgstr ""
 
-#: models/competitions.py:246 models/events.py:36 models/records.py:91
-#: models/results.py:47 models/results.py:118
+#: results/models/competitions.py:246 results/models/events.py:36
+#: results/models/records.py:91 results/models/results.py:47
+#: results/models/results.py:118
 msgid "Updated at"
 msgstr ""
 
-#: models/competitions.py:259
+#: results/models/competitions.py:259
 msgid "Competition"
 msgstr ""
 
-#: models/competitions.py:260
+#: results/models/competitions.py:260
 msgid "Competitions"
 msgstr ""
 
-#: models/events.py:27
+#: results/models/events.py:27
 msgid "Competition categories"
 msgstr ""
 
-#: models/events.py:28
+#: results/models/events.py:28
 msgid "Optional dates"
 msgstr ""
 
-#: models/events.py:29
+#: results/models/events.py:29
 msgid "Web page"
 msgstr ""
 
-#: models/events.py:30
+#: results/models/events.py:30
 msgid "Invitation URL"
 msgstr ""
 
-#: models/events.py:31
+#: results/models/events.py:31
 msgid "Generic notes"
 msgstr ""
 
-#: models/events.py:32
+#: results/models/events.py:32
 msgid "Safety plan exists"
 msgstr ""
 
-#: models/events.py:33
+#: results/models/events.py:33
 msgid "International competition"
 msgstr ""
 
-#: models/events.py:34
+#: results/models/events.py:34
 msgid "Terms and Conditions agreement"
 msgstr ""
 
-#: models/events.py:43
-#: templates/notification/competition_creation_message.html:3
+#: results/models/events.py:43
+#: results/templates/notification/competition_creation_message.html:3
 msgid "Event"
 msgstr ""
 
-#: models/events.py:44
+#: results/models/events.py:44
 msgid "Events"
 msgstr ""
 
-#: models/events.py:87
+#: results/models/events.py:87
 msgid "Generic contact"
 msgstr ""
 
-#: models/events.py:88
+#: results/models/events.py:88
 msgid "Competition manager"
 msgstr ""
 
-#: models/events.py:89
+#: results/models/events.py:89
 msgid "Chief judge"
 msgstr ""
 
-#: models/events.py:90
+#: results/models/events.py:90
 msgid "Chief range officer"
 msgstr ""
 
-#: models/events.py:91
+#: results/models/events.py:91
 msgid "Technical manager"
 msgstr ""
 
-#: models/events.py:92
+#: results/models/events.py:92
 msgid "Range officer"
 msgstr ""
 
-#: models/events.py:95
+#: results/models/events.py:95
 msgid "Phone number may start with \"+\" and only contain digits."
 msgstr ""
 
-#: models/events.py:99
+#: results/models/events.py:99
 msgid "Contact type"
 msgstr ""
 
-#: models/events.py:103
+#: results/models/events.py:103
 msgid "Email address"
 msgstr ""
 
-#: models/events.py:104
+#: results/models/events.py:104
 msgid "Phone number"
 msgstr ""
 
-#: models/organizations.py:19 models/sports.py:18
+#: results/models/organizations.py:19 results/models/sports.py:18
 msgid "Manager"
 msgstr ""
 
-#: models/organizations.py:26 models/records.py:25
+#: results/models/organizations.py:26 results/models/records.py:25
 msgid "Area"
 msgstr ""
 
-#: models/organizations.py:27 models/organizations.py:77
+#: results/models/organizations.py:27 results/models/organizations.py:77
 msgid "Areas"
 msgstr ""
 
-#: models/organizations.py:76
+#: results/models/organizations.py:76
 msgid "External"
 msgstr ""
 
-#: models/organizations.py:78 models/statistics.py:9
+#: results/models/organizations.py:78 results/models/statistics.py:9
 msgid "Group"
 msgstr ""
 
-#: models/organizations.py:89
+#: results/models/organizations.py:89
 msgid "Organization"
 msgstr ""
 
-#: models/organizations.py:90
+#: results/models/organizations.py:90
 msgid "Organizations"
 msgstr ""
 
-#: models/records.py:26
+#: results/models/records.py:26
 msgid "Base results"
 msgstr ""
 
-#: models/records.py:27 models/results.py:126
+#: results/models/records.py:27 results/models/results.py:126
 msgid "Partial results"
 msgstr ""
 
-#: models/records.py:28
+#: results/models/records.py:28
 msgid "Personal"
 msgstr ""
 
-#: models/records.py:29
+#: results/models/records.py:29
 msgid "Team"
 msgstr ""
 
-#: models/records.py:30
+#: results/models/records.py:30
 msgid "Decimals"
 msgstr ""
 
-#: models/records.py:39
+#: results/models/records.py:39
 msgid "Record level"
 msgstr ""
 
-#: models/records.py:40
+#: results/models/records.py:40
 msgid "Record levels"
 msgstr ""
 
-#: models/records.py:88
+#: results/models/records.py:88
 msgid "Info"
 msgstr ""
 
-#: models/records.py:131
+#: results/models/records.py:131
 msgid "Record"
 msgstr ""
 
-#: models/records.py:132
+#: results/models/records.py:132
 msgid "Records"
 msgstr ""
 
-#: models/results.py:34 models/results.py:70
+#: results/models/results.py:34 results/models/results.py:70
 msgid "Result"
 msgstr ""
 
-#: models/results.py:35
+#: results/models/results.py:35
 msgid "Result code"
 msgstr ""
 
-#: models/results.py:36
+#: results/models/results.py:36
 msgid "Result decimals"
 msgstr ""
 
-#: models/results.py:37
+#: results/models/results.py:37
 msgid "Position"
 msgstr ""
 
-#: models/results.py:38
+#: results/models/results.py:38
 msgid "Preliminary position"
 msgstr ""
 
-#: models/results.py:41
+#: results/models/results.py:41
 msgid "Additional information"
 msgstr ""
 
-#: models/results.py:43
+#: results/models/results.py:43
 msgid "Administrational information"
 msgstr ""
 
-#: models/results.py:45
+#: results/models/results.py:45
 msgid "Team result"
 msgstr ""
 
-#: models/results.py:71
+#: results/models/results.py:71
 msgid "Results"
 msgstr ""
 
-#: models/results.py:113
+#: results/models/results.py:113
 msgid "Code"
 msgstr ""
 
-#: models/results.py:114
+#: results/models/results.py:114
 msgid "Value decimals"
 msgstr ""
 
-#: models/results.py:115
+#: results/models/results.py:115
 msgid "Time"
 msgstr ""
 
-#: models/results.py:116
+#: results/models/results.py:116
 msgid "Text value"
 msgstr ""
 
-#: models/results.py:125
+#: results/models/results.py:125
 msgid "Partial result"
 msgstr ""
 
-#: models/sports.py:27
-#: templates/notification/competition_creation_message.html:4
+#: results/models/sports.py:27
+#: results/templates/notification/competition_creation_message.html:4
 msgid "Sport"
 msgstr ""
 
-#: models/sports.py:28
+#: results/models/sports.py:28
 msgid "Sports"
 msgstr ""
 
-#: models/statistics.py:12
+#: results/models/statistics.py:12
 msgid "Link"
 msgstr ""
 
-#: models/statistics.py:13
+#: results/models/statistics.py:13
 msgid "Highlight"
 msgstr ""
 
-#: models/statistics.py:22
+#: results/models/statistics.py:22
 msgid "Statistics link"
 msgstr ""
 
-#: models/statistics.py:23
+#: results/models/statistics.py:23
 msgid "Statistics links"
 msgstr ""
 
-#: serializers/athletes.py:83 serializers/competitions.py:178
-#: serializers/events.py:115
+#: results/serializers/athletes.py:83 results/serializers/competitions.py:178
+#: results/serializers/events.py:115
 msgid "User not authenticated"
 msgstr ""
 
-#: serializers/athletes.py:87
+#: results/serializers/athletes.py:87
 msgid "No permission to create non external athlete"
 msgstr ""
 
-#: serializers/competitions.py:157 serializers/events.py:117
+#: results/serializers/competitions.py:157 results/serializers/events.py:117
 msgid "Start date may not be later than End date."
 msgstr ""
 
-#: serializers/competitions.py:165
+#: results/serializers/competitions.py:165
 msgid "Start date cannot be before event start date."
 msgstr ""
 
-#: serializers/competitions.py:167
+#: results/serializers/competitions.py:167
 msgid "End date cannot be later than event end date."
 msgstr ""
 
-#: serializers/competitions.py:202
+#: results/serializers/competitions.py:202
 msgid "No permission to alter or create an competition."
 msgstr ""
 
-#: serializers/competitions.py:209
+#: results/serializers/competitions.py:209
 msgid "No permission to alter or create a locked competition."
 msgstr ""
 
-#: serializers/competitions.py:213
+#: results/serializers/competitions.py:213
 msgid "No permission to publish competition."
 msgstr ""
 
-#: serializers/competitions.py:215
+#: results/serializers/competitions.py:215
 msgid "No permission to approve competition."
 msgstr ""
 
-#: serializers/events.py:103
+#: results/serializers/events.py:103
 msgid "Must agree to the terms and conditions."
 msgstr ""
 
-#: serializers/events.py:134
+#: results/serializers/events.py:134
 msgid "No permission to alter or create an event."
 msgstr ""
 
-#: serializers/events.py:136
+#: results/serializers/events.py:136
 msgid "No permission to alter or create a locked event."
 msgstr ""
 
-#: serializers/events.py:140
+#: results/serializers/events.py:140
 msgid "No permission to publish event."
 msgstr ""
 
-#: serializers/events.py:142
+#: results/serializers/events.py:142
 msgid "No permission to approve event."
 msgstr ""
 
-#: serializers/records.py:50
+#: results/serializers/records.py:50
 msgid "No permission to alter or create a record."
 msgstr ""
 
-#: serializers/results.py:84 serializers/results.py:558
+#: results/serializers/results.py:84 results/serializers/results.py:558
 msgid "No permission to alter or create a result."
 msgstr ""
 
-#: serializers/results.py:86 serializers/results.py:435
+#: results/serializers/results.py:86 results/serializers/results.py:435
 msgid "Partial result type does not match competition type."
 msgstr ""
 
-#: serializers/results.py:93 serializers/results.py:307
-#: serializers/results.py:441
+#: results/serializers/results.py:93 results/serializers/results.py:307
+#: results/serializers/results.py:441
 msgid "A result is too low."
 msgstr ""
 
-#: serializers/results.py:100 serializers/results.py:309
-#: serializers/results.py:447
+#: results/serializers/results.py:100 results/serializers/results.py:309
+#: results/serializers/results.py:447
 msgid "A result is too high."
 msgstr ""
 
-#: serializers/results.py:241
+#: results/serializers/results.py:241
 msgid "Athlete is too old for this category."
 msgstr ""
 
-#: serializers/results.py:248
+#: results/serializers/results.py:248
 msgid "Athlete is too young for this category."
 msgstr ""
 
-#: serializers/results.py:270
+#: results/serializers/results.py:270
 msgid "Athlete's gender is not allowed for this category."
 msgstr ""
 
-#: serializers/results.py:278
+#: results/serializers/results.py:278
 msgid "Incorrect number of team members for this category."
 msgstr ""
 
-#: serializers/results.py:297
+#: results/serializers/results.py:297
 #, python-format
 msgid "Missing requirement: %s."
 msgstr ""
 
-#: serializers/results.py:317
+#: results/serializers/results.py:317
 msgid "Incorrect category for a team result."
 msgstr ""
 
-#: serializers/results.py:319
+#: results/serializers/results.py:319
 msgid "Use team_members instead of athlete field for teams."
 msgstr ""
 
-#: serializers/results.py:321
+#: results/serializers/results.py:321
 msgid "Team result without team_members."
 msgstr ""
 
-#: serializers/results.py:332
+#: results/serializers/results.py:332
 msgid "Missing category."
 msgstr ""
 
-#: serializers/results.py:347 serializers/results.py:355
+#: results/serializers/results.py:347 results/serializers/results.py:355
 msgid "Missing athletes."
 msgstr ""
 
-#: serializers/results.py:367
+#: results/serializers/results.py:367
 msgid "Missing competition."
 msgstr ""
 
-#: serializers/results.py:392
+#: results/serializers/results.py:392
 msgid "Category is not allowed for this competition type."
 msgstr ""
 
-#: serializers/results.py:415
+#: results/serializers/results.py:415
 msgid "Entry already exists."
 msgstr ""
 
-#: serializers/results.py:425
+#: results/serializers/results.py:425
 msgid "Cannot change team status."
 msgstr ""
 
-#: serializers/results.py:518
+#: results/serializers/results.py:518
 msgid "No permission to approve results."
 msgstr ""
 
-#: serializers/results.py:524
+#: results/serializers/results.py:524
 msgid "Cannot approve non-published result."
 msgstr ""
 
-#: serializers/results.py:530
+#: results/serializers/results.py:530
 msgid "Cannot unpublish approved result."
 msgstr ""
 
-#: serializers/results.py:541
+#: results/serializers/results.py:541
 msgid "No permission to change approved results."
 msgstr ""
 
-#: templates/notification/competition_creation_message.html:1
+#: results/templates/notification/competition_creation_message.html:1
 msgid "New competition created."
 msgstr ""
 
-#: templates/notification/competition_creation_message.html:6
+#: results/templates/notification/competition_creation_message.html:6
 msgid "Level"
 msgstr ""
 
-#: templates/notification/competition_creation_message.html:9
-#: templates/notification/event_creation_message.html:4
+#: results/templates/notification/competition_creation_message.html:9
+#: results/templates/notification/event_creation_message.html:4
 msgid "Organizer"
 msgstr ""
 
-#: templates/notification/competition_creation_subject.html:1
+#: results/templates/notification/competition_creation_subject.html:1
 #, python-format
 msgid "New competition created by %(creator)s"
 msgstr ""
 
-#: templates/notification/event_creation_message.html:1
+#: results/templates/notification/event_creation_message.html:1
 msgid "New event created."
 msgstr ""
 
-#: templates/notification/event_creation_subject.html:1
+#: results/templates/notification/event_creation_subject.html:1
 #, python-format
 msgid "New event created by %(creator)s"
 msgstr ""
