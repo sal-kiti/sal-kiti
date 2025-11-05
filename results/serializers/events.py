@@ -23,7 +23,7 @@ class CompetitionInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Competition
-        fields = ("id", "type", "sport", "level", "public")
+        fields = ("id", "date_start", "date_end", "type", "sport", "level", "approved", "public")
 
 
 class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
