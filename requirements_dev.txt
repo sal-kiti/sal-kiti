@@ -1,9 +1,9 @@
 # Dev requirements
 -r requirements.txt
-black==25.1.0
-coverage==7.6.12
+black==25.9.0
+coverage==7.11.0
 factory-boy==3.3.3
-flake8==7.1.2
-isort==6.0.1
-Sphinx==7.4.7
+flake8==7.3.0
+isort==7.0.0
+Sphinx==8.2.3
 sphinxcontrib-django==2.5
