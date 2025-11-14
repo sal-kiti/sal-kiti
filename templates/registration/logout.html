@@ -2,10 +2,8 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% trans "SAL Kiti - Logout" %}</h1>
-  <br>
+  <h1>{% trans "Logout" %}</h1>
   <p>{% trans "You have logged out." %}</p>
-  <br>
-  <a href="/"><button type="submit" class="btn btn-primary">{% trans "Front page" %}</button></a>
-  <a href="{% url 'login' %}?next=/"><button type="submit" class="btn btn-primary">{% trans "Login" %}</button></a>
+  <a href="/"><button type="submit">{% trans "Front page" %}</button></a>
+  <a href="{% url 'login' %}?next=/"><button type="submit">{% trans "Login" %}</button></a>
 {% endblock %}

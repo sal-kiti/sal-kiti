@@ -1,22 +1,17 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-  <h1 id="login-form">{% trans "SAL Kiti - Login" %}</h1>
-  <br>
+  <h1>{% trans "Kiti - Login" %}</h1>
   {% if user.is_authenticated %}
     <p>{% trans "You have already logged in" %}</p>
-    <a href="{% url 'logout' %}"><button type="button" class="btn btn-primary">{% trans "Logout" %}</button></a>
+    <a href="{% url 'logout' %}"><button type="button">{% trans "Logout" %}</button></a>
   {% else %}
     <form method="post" action="{% url 'login' %}">
       {% csrf_token %}
-      <table aria-describedby="login-form">
-        {{ form }}
-      </table>
-      <br>
-      <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+      {{ form }}
+      <button type="submit">{% trans "Submit" %}</button>
       <input type="hidden" name="next" value="{% firstof next '/' %}" />
     </form>
-    <br>
     <p><a href="{% url 'password_reset' %}">{% trans "Lost password? Reset it here. You may use same form to get forgotten username." %}</a></p>
   {% endif %}
 {% endblock %}

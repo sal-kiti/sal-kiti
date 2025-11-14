@@ -1,17 +1,18 @@
+{% load i18n %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{% block title %}SAL Kiti{% endblock %}</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
+<html lang="{{ LANGUAGE_CODE }}">
+<meta charset="UTF-8">
+<title>{% block title %}Kiti{% endblock %}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="{% static 'css/kiti.css' %}">
 <body>
-<main>
+<div class="">
   <div class="container">
-    <br>
     {% block content %}
     {% endblock %}
   </div>
-</main>
-</body>
-</html>
+</div>

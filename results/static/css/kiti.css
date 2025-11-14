@@ -1,0 +1,115 @@
+/* static/css/kiti_plain.css */
+
+/* Page base */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 420px;
+}
+
+form {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  padding: 2rem 2.25rem;
+}
+
+/* Header */
+h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+p {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Form fields */
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: 0;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+button {
+  display: inline-block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #fff;
+  text-align: center;
+  background-color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+button:focus {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+button:hover {
+  background-color: #0a58ca;
+  border-color: #0a53be;
+}
+
+a {
+  color: #084fba;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.errorlist {
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+}

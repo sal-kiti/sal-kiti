@@ -6,6 +6,7 @@ from django.views.generic.base import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from results.routers import router
+from results.views.auth import LocalLoginView, LocalLogoutView
 from results.views.statistics import statistics_pohjolan_malja
 from results.views.users import current_user
 
@@ -18,6 +19,8 @@ urlpatterns = [
     path("api/users/current/", current_user, name="current-user"),
     path("api/", include(router.urls)),
     path("admin/", admin.site.urls),
+    path("auth/login/", LocalLoginView.as_view(), name="login"),
+    path("auth/logout/", LocalLogoutView.as_view(), name="logout"),
     path("auth/", include("django.contrib.auth.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/schema/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 13:44+0300\n"
+"POT-Creation-Date: 2025-11-15 11:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,69 +26,66 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: sal_kiti/urls.py:12
+#: sal_kiti/urls.py:13
 msgid "Kiti admin"
 msgstr ""
 
-#: sal_kiti/urls.py:13 sal_kiti/urls.py:14
+#: sal_kiti/urls.py:14 sal_kiti/urls.py:15
 msgid "Kiti administration"
 msgstr ""
 
 #: templates/registration/login.html:4
-msgid "SAL Kiti - Login"
+msgid "Kiti - Login"
 msgstr ""
 
-#: templates/registration/login.html:7
+#: templates/registration/login.html:6
 msgid "You have already logged in"
 msgstr ""
 
-#: templates/registration/login.html:8
+#: templates/registration/login.html:7 templates/registration/logout.html:5
 msgid "Logout"
 msgstr ""
 
-#: templates/registration/login.html:16
+#: templates/registration/login.html:12
 msgid "Submit"
 msgstr ""
 
-#: templates/registration/login.html:20
+#: templates/registration/login.html:15
 msgid ""
 "Lost password? Reset it here. You may use same form to get forgotten "
 "username."
 msgstr ""
 
-#: templates/registration/logout.html:5
-msgid "SAL Kiti - Logout"
-msgstr ""
-
-#: templates/registration/logout.html:7
+#: templates/registration/logout.html:6
 msgid "You have logged out."
 msgstr ""
 
-#: templates/registration/logout.html:9
+#: templates/registration/logout.html:7
 msgid "Front page"
 msgstr ""
 
-#: templates/registration/logout.html:10
-#: templates/registration/password_reset_complete.html:9
+#: templates/registration/logout.html:8
+#: templates/registration/password_reset_complete.html:7
 msgid "Login"
 msgstr ""
 
 #: templates/registration/password_reset_complete.html:5
 #: templates/registration/password_reset_confirm.html:5
+#: templates/registration/password_reset_confirm.html:10
 #: templates/registration/password_reset_done.html:5
 #: templates/registration/password_reset_form.html:5
 msgid "Reset password"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:7
+#: templates/registration/password_reset_complete.html:6
 msgid "Password has been reset successfully."
 msgstr ""
 
-#: templates/registration/password_reset_confirm.html:17
+#: templates/registration/password_reset_confirm.html:13
 msgid "Password reset failed."
 msgstr ""
 
-#: templates/registration/password_reset_done.html:7
+#: templates/registration/password_reset_done.html:6
 msgid "Please follow the instructions in the email to reset your password."
 msgstr ""
 "Please follow the instructions in the email to reset your password. If you "
@@ -96,23 +93,24 @@ msgstr ""
 "delay an email but it should arrive within 30 minutes."
 
 #: templates/registration/password_reset_email.html:2
+#, python-format
 msgid ""
-"You're receiving this email because you requested a password reset for your "
-"user account at"
+"You're receiving this email because you requested a password reset for your\n"
+"user account at %(site_name)s."
 msgstr ""
 
-#: templates/registration/password_reset_email.html:4
+#: templates/registration/password_reset_email.html:5
 msgid "Your username, in case you've forgotten:"
 msgstr ""
 
-#: templates/registration/password_reset_email.html:6
+#: templates/registration/password_reset_email.html:7
 msgid "If you did not request a password reset, please ignore this email."
 msgstr ""
 
-#: templates/registration/password_reset_email.html:8
+#: templates/registration/password_reset_email.html:9
 msgid "Please go to the following page and choose a new password:"
 msgstr ""
 
-#: templates/registration/password_reset_form.html:7
+#: templates/registration/password_reset_form.html:6
 msgid "Instructions for resetting password will be send to your email."
 msgstr ""

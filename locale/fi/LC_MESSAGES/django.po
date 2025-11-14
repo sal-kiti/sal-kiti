@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 13:44+0300\n"
+"POT-Creation-Date: 2025-11-15 11:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,31 +26,31 @@ msgstr "Suomi"
 msgid "English"
 msgstr "Englanti"
 
-#: sal_kiti/urls.py:12
+#: sal_kiti/urls.py:13
 msgid "Kiti admin"
 msgstr "Kiti admin"
 
-#: sal_kiti/urls.py:13 sal_kiti/urls.py:14
+#: sal_kiti/urls.py:14 sal_kiti/urls.py:15
 msgid "Kiti administration"
 msgstr "Kiti hallinta"
 
 #: templates/registration/login.html:4
-msgid "SAL Kiti - Login"
-msgstr "SAL Kiti - Kirjaudu sisään"
+msgid "Kiti - Login"
+msgstr "Kiti - Kirjaudu sisään"
 
-#: templates/registration/login.html:7
+#: templates/registration/login.html:6
 msgid "You have already logged in"
 msgstr "Olet jo kirjautunut sisään"
 
-#: templates/registration/login.html:8
+#: templates/registration/login.html:7 templates/registration/logout.html:5
 msgid "Logout"
 msgstr "Kirjadu ulos"
 
-#: templates/registration/login.html:16
+#: templates/registration/login.html:12
 msgid "Submit"
 msgstr "Lähetä"
 
-#: templates/registration/login.html:20
+#: templates/registration/login.html:15
 msgid ""
 "Lost password? Reset it here. You may use same form to get forgotten "
 "username."
@@ -58,39 +58,36 @@ msgstr ""
 "Hukaksitko salasanasi? Palauta se täällä. Voit käyttää samaa lomaketta "
 "unohdetun käyttäjätunnuksen palautukseen."
 
-#: templates/registration/logout.html:5
-msgid "SAL Kiti - Logout"
-msgstr "SAL Kiti - Kirjaudu ulos"
-
-#: templates/registration/logout.html:7
+#: templates/registration/logout.html:6
 msgid "You have logged out."
 msgstr "Olet kirjautunut ulos."
 
-#: templates/registration/logout.html:9
+#: templates/registration/logout.html:7
 msgid "Front page"
 msgstr "Etusivu"
 
-#: templates/registration/logout.html:10
-#: templates/registration/password_reset_complete.html:9
+#: templates/registration/logout.html:8
+#: templates/registration/password_reset_complete.html:7
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
 #: templates/registration/password_reset_complete.html:5
 #: templates/registration/password_reset_confirm.html:5
+#: templates/registration/password_reset_confirm.html:10
 #: templates/registration/password_reset_done.html:5
 #: templates/registration/password_reset_form.html:5
 msgid "Reset password"
 msgstr "Palauta salasana"
 
-#: templates/registration/password_reset_complete.html:7
+#: templates/registration/password_reset_complete.html:6
 msgid "Password has been reset successfully."
 msgstr "Salasana on palautettu onnistuneesti."
 
-#: templates/registration/password_reset_confirm.html:17
+#: templates/registration/password_reset_confirm.html:13
 msgid "Password reset failed."
 msgstr "Salasanan palautus epäonnistui."
 
-#: templates/registration/password_reset_done.html:7
+#: templates/registration/password_reset_done.html:6
 msgid "Please follow the instructions in the email to reset your password."
 msgstr ""
 "Seuraa sähköpostitse saamiaisi ohjeita salasanan palautukseen. Jos "
@@ -99,25 +96,26 @@ msgstr ""
 "saapua puolen tunnin sisällä."
 
 #: templates/registration/password_reset_email.html:2
+#, python-format
 msgid ""
-"You're receiving this email because you requested a password reset for your "
-"user account at"
+"You're receiving this email because you requested a password reset for your\n"
+"user account at %(site_name)s."
 msgstr ""
-"Vastaanotit tämän sähköpostin, koska pyysit salasanan palautusta tilillesi "
-"järjestelmässä"
+"Vastaanotit tämän sähköpostin, koska pyysit salasanan palautusta tilillesi\n"
+"järjestelmässä %(site_name)s."
 
-#: templates/registration/password_reset_email.html:4
+#: templates/registration/password_reset_email.html:5
 msgid "Your username, in case you've forgotten:"
 msgstr "Käyttäjänimesi on:"
 
-#: templates/registration/password_reset_email.html:6
+#: templates/registration/password_reset_email.html:7
 msgid "If you did not request a password reset, please ignore this email."
 msgstr "Jos et pyytänyt salasanan palautusta, jätä tämä viesti huomiotta."
 
-#: templates/registration/password_reset_email.html:8
+#: templates/registration/password_reset_email.html:9
 msgid "Please go to the following page and choose a new password:"
 msgstr "Mene seuraavalle sivulle antaaksesi uuden salasanan:"
 
-#: templates/registration/password_reset_form.html:7
+#: templates/registration/password_reset_form.html:6
 msgid "Instructions for resetting password will be send to your email."
 msgstr "Ohjeet salasanan palautukseen lähetetetään sähköpostiisi."
