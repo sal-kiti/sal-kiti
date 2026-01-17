@@ -125,13 +125,8 @@ class AthleteInformationViewSet(viewsets.ModelViewSet):
         Restricts the returned information to public values, unless user is
         staff or superuser.
         """
-        if not self.request or not self.request.user.is_authenticated:
-            return self.queryset.filter(visibility="P")
-        elif not (self.request.user.is_staff or self.request.user.is_superuser):
-            return self.queryset.filter(visibility__in=["P", "A"])
-        elif not self.request.user.is_superuser:
-            return self.queryset.filter(visibility__in=["P", "A", "S"])
-        return self.queryset
+        queryset = super().get_queryset()
+        return AthleteInformation.get_visibility_queryset(self.request.user, queryset)
 
     @method_decorator(vary_on_cookie)
     def dispatch(self, request, *args, **kwargs):

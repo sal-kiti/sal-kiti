@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
@@ -125,13 +126,22 @@ class AthleteInformation(LogChangesMixing, models.Model):
         :return: queryset
         """
         if not user or not user.is_authenticated:
-            return queryset.filter(visibility__in=["P"], date_start__lte=date.today(), date_end__gte=date.today())
+            visibility = ["P"]
+            limit_to_active = getattr(settings, "LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED", True)
         elif user.is_superuser:
-            return queryset.filter(visibility__in=["P", "A", "S", "U"])
+            visibility = ["P", "A", "S", "U"]
+            limit_to_active = getattr(settings, "LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_SUPERUSER", False)
         elif user.is_staff:
-            return queryset.filter(visibility__in=["P", "A", "S"])
+            visibility = ["P", "A", "S"]
+            limit_to_active = getattr(settings, "LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_STAFF", False)
         else:
-            return queryset.filter(visibility__in=["P", "A"], date_start__lte=date.today(), date_end__gte=date.today())
+            visibility = ["P", "A"]
+            limit_to_active = getattr(settings, "LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_USER", True)
+        queryset = queryset.filter(visibility__in=visibility)
+        if limit_to_active:
+            queryset = queryset.exclude(date_start__gt=date.today()).exclude(date_end__lt=date.today())
+
+        return queryset
 
     @staticmethod
     def has_read_permission(request):
