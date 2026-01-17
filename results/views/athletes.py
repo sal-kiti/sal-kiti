@@ -61,15 +61,22 @@ class AthleteViewSet(viewsets.ModelViewSet):
         info = self.request.query_params.get("info", None)
         if info:
             visibility = AthleteInformation.get_visibility(self.request.user)
-            queryset = queryset.filter(
-                info__type=info,
-                info__date_end__gte=date.today(),
-                info__date_start__lte=date.today(),
-                info__visibility__in=visibility,
-            )
             sport = self.request.query_params.get("sport", None)
             if sport:
-                queryset = queryset.filter(info__sport=sport)
+                queryset = queryset.filter(
+                    info__type=info,
+                    info__date_end__gte=date.today(),
+                    info__date_start__lte=date.today(),
+                    info__visibility__in=visibility,
+                    info__sport_id=sport,
+                )
+            else:
+                queryset = queryset.filter(
+                    info__type=info,
+                    info__date_end__gte=date.today(),
+                    info__date_start__lte=date.today(),
+                    info__visibility__in=visibility,
+                )
         athlete_information_queryset = AthleteInformation.get_visibility_queryset(
             user=self.request.user, queryset=AthleteInformation.objects.all()
         )
