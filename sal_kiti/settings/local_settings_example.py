@@ -84,6 +84,13 @@ COMPETITION_CREATION_NOTIFICATION_ADDRESSES = ["creation@example.org", "competit
 COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED = False
 EVENT_CREATION_NOTIFICATION_ADDRESSES = ["creation@example.org", "event@example.org"]
 
+# Should athlete information to be limited to active information for different user types.
+# If information has start or end time, it is checked when True.
+LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED = True
+LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_USER = True
+LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_STAFF = False
+LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_SUPERUSER = False
+
 STATIC_ROOT = "/path/to/static/"
 
 LOCALE_PATHS = ["/path/to/sal-sal_kiti/locale", "/path/to/sal-sal_kiti/results/locale"]

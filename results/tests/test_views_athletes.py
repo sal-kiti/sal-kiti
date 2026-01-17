@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.contrib.auth.models import User
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
@@ -92,6 +93,7 @@ class AthleteTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["info"], [])
 
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_SUPERUSER=False)
     def test_athlete_access_past_information_with_superuser(self):
         AthleteInformationFactory.create(
             athlete=self.object,
@@ -225,6 +227,39 @@ class AthleteInformationTestCase(ResultsTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for key in self.data:
             self.assertEqual(response.data[key], self.data[key])
+
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED=True)
+    def test_athlete_information_access_object_without_date(self):
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED=True)
+    def test_athlete_information_access_expired_object(self):
+        self.object.date_end = date.today() - timedelta(days=1)
+        self.object.save()
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED=True)
+    def test_athlete_information_access_future_object(self):
+        self.object.date_start = date.today() + timedelta(days=1)
+        self.object.save()
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED=False)
+    def test_athlete_information_access_expired_object_without_limit(self):
+        self.object.date_end = date.today() - timedelta(days=1)
+        self.object.save()
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(LIMIT_ATHLETE_INFORMATION_TO_ACTIVE_UNAUTHENTICATED=False)
+    def test_athlete_information_access_future_object_without_limit(self):
+        self.object.date_start = date.today() + timedelta(days=1)
+        self.object.save()
+        response = self._test_access(user=None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_athlete_information_access_object_A(self):
         self.object.visibility = "A"
