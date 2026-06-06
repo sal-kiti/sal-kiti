@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.7.0 - 2026-06-06
+- Updated to Django 5.2
+- Updated other requirements
+- Removed support for Python 3.9
+- Changed package manager to uv
+- Added public status to results
+- Added new auth styles and templates to improve accessibility
+- Improved AthleteInformation filtering
+- Added has_results to competitions and events
+
+### Updating notes
+Includes database changes, run migrations
+- Added public status results
+
 ## 1.6.0 - 2025-03-09
 - Added sport managers
 - Changed API schema to OpenAPI 3
