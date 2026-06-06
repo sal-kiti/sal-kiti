@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 13:44+0300\n"
+"POT-Creation-Date: 2026-06-06 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -588,8 +588,8 @@ msgstr "Tilastolinkki"
 msgid "Statistics links"
 msgstr "Tilastolinkit"
 
-#: results/serializers/athletes.py:83 results/serializers/competitions.py:178
-#: results/serializers/events.py:115
+#: results/serializers/athletes.py:83 results/serializers/competitions.py:183
+#: results/serializers/events.py:120
 msgid "User not authenticated"
 msgstr "Käyttäjä ei ole kirjautunut"
 
@@ -597,51 +597,55 @@ msgstr "Käyttäjä ei ole kirjautunut"
 msgid "No permission to create non external athlete"
 msgstr "Ei oikeutta luoda tai muuttaa urheilijaa"
 
-#: results/serializers/competitions.py:157 results/serializers/events.py:117
+#: results/serializers/competitions.py:117 results/serializers/events.py:40
+msgid "Has public results"
+msgstr "Sisältää julkisia tuloksia"
+
+#: results/serializers/competitions.py:162 results/serializers/events.py:122
 msgid "Start date may not be later than End date."
 msgstr "Aloituspäivä ei voi olla päättymispäivän jälkeen."
 
-#: results/serializers/competitions.py:165
+#: results/serializers/competitions.py:170
 msgid "Start date cannot be before event start date."
 msgstr "Aloituspäivä ei voi olla ennen tapahtuman aloituspäivää."
 
-#: results/serializers/competitions.py:167
+#: results/serializers/competitions.py:172
 msgid "End date cannot be later than event end date."
 msgstr "Lopetuspäivä ei voi olla tapahtuman lopetuspäivän jälkeen."
 
-#: results/serializers/competitions.py:202
+#: results/serializers/competitions.py:207
 msgid "No permission to alter or create an competition."
 msgstr "Ei oikeutta luoda tai muuttaa kilpailua."
 
-#: results/serializers/competitions.py:209
+#: results/serializers/competitions.py:214
 msgid "No permission to alter or create a locked competition."
 msgstr "Ei oikeutta luoda tai muuttaa lukittua kilpailua."
 
-#: results/serializers/competitions.py:213
+#: results/serializers/competitions.py:218
 msgid "No permission to publish competition."
 msgstr "Ei oikeutta julkaista kilpailua."
 
-#: results/serializers/competitions.py:215
+#: results/serializers/competitions.py:220
 msgid "No permission to approve competition."
 msgstr "Ei oikeutta hyväksyä kilpailua."
 
-#: results/serializers/events.py:103
+#: results/serializers/events.py:108
 msgid "Must agree to the terms and conditions."
 msgstr "Kilpailun ehdot hyväksymättä."
 
-#: results/serializers/events.py:134
+#: results/serializers/events.py:139
 msgid "No permission to alter or create an event."
 msgstr "Ei oikeutta luoda tai muuttaa tapahtumaa."
 
-#: results/serializers/events.py:136
+#: results/serializers/events.py:141
 msgid "No permission to alter or create a locked event."
 msgstr "Ei oikeutta luoda tai muuttaa lukittua tapahtumaa."
 
-#: results/serializers/events.py:140
+#: results/serializers/events.py:145
 msgid "No permission to publish event."
 msgstr "Ei oikeutta julkaista tapahtumaa."
 
-#: results/serializers/events.py:142
+#: results/serializers/events.py:147
 msgid "No permission to approve event."
 msgstr "Ei oikeutta hyväksyä tapahtumaa."
 

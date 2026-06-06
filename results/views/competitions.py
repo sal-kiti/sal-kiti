@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
@@ -14,6 +14,7 @@ from results.models.competitions import (
     CompetitionResultType,
     CompetitionType,
 )
+from results.models.results import Result
 from results.serializers.competitions import (
     CompetitionLayoutSerializer,
     CompetitionLevelSerializer,
@@ -95,6 +96,9 @@ class CompetitionViewSet(viewsets.ModelViewSet):
             if not user.is_authenticated:
                 self.queryset = self.queryset.filter(public=True)
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
+        self.queryset = self.queryset.annotate(
+            has_results=Exists(Result.objects.filter(public=True, competition_id=OuterRef("pk")))
+        )
         return self.queryset
 
     @method_decorator(vary_on_cookie)

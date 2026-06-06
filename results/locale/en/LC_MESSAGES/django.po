@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 13:44+0300\n"
+"POT-Creation-Date: 2026-06-06 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -588,8 +588,8 @@ msgstr ""
 msgid "Statistics links"
 msgstr ""
 
-#: results/serializers/athletes.py:83 results/serializers/competitions.py:178
-#: results/serializers/events.py:115
+#: results/serializers/athletes.py:83 results/serializers/competitions.py:183
+#: results/serializers/events.py:120
 msgid "User not authenticated"
 msgstr ""
 
@@ -597,51 +597,55 @@ msgstr ""
 msgid "No permission to create non external athlete"
 msgstr ""
 
-#: results/serializers/competitions.py:157 results/serializers/events.py:117
+#: results/serializers/competitions.py:117 results/serializers/events.py:40
+msgid "Has public results"
+msgstr ""
+
+#: results/serializers/competitions.py:162 results/serializers/events.py:122
 msgid "Start date may not be later than End date."
 msgstr ""
 
-#: results/serializers/competitions.py:165
+#: results/serializers/competitions.py:170
 msgid "Start date cannot be before event start date."
 msgstr ""
 
-#: results/serializers/competitions.py:167
+#: results/serializers/competitions.py:172
 msgid "End date cannot be later than event end date."
 msgstr ""
 
-#: results/serializers/competitions.py:202
+#: results/serializers/competitions.py:207
 msgid "No permission to alter or create an competition."
 msgstr ""
 
-#: results/serializers/competitions.py:209
+#: results/serializers/competitions.py:214
 msgid "No permission to alter or create a locked competition."
 msgstr ""
 
-#: results/serializers/competitions.py:213
+#: results/serializers/competitions.py:218
 msgid "No permission to publish competition."
 msgstr ""
 
-#: results/serializers/competitions.py:215
+#: results/serializers/competitions.py:220
 msgid "No permission to approve competition."
 msgstr ""
 
-#: results/serializers/events.py:103
+#: results/serializers/events.py:108
 msgid "Must agree to the terms and conditions."
 msgstr ""
 
-#: results/serializers/events.py:134
+#: results/serializers/events.py:139
 msgid "No permission to alter or create an event."
 msgstr ""
 
-#: results/serializers/events.py:136
+#: results/serializers/events.py:141
 msgid "No permission to alter or create a locked event."
 msgstr ""
 
-#: results/serializers/events.py:140
+#: results/serializers/events.py:145
 msgid "No permission to publish event."
 msgstr ""
 
-#: results/serializers/events.py:142
+#: results/serializers/events.py:147
 msgid "No permission to approve event."
 msgstr ""
 
