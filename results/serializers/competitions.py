@@ -112,6 +112,10 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all())
     event_info = EventLimitedSerializer(read_only=True, source="event")
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
+    has_results = serializers.BooleanField(
+        read_only=True,
+        label=_("Has public results"),
+    )
 
     permissions = DRYPermissionsField()
 
@@ -147,6 +151,7 @@ class CompetitionSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             "trial",
             "approved",
             "permissions",
+            "has_results",
         )
 
     def _check_dates(self, data):

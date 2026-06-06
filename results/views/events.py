@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Prefetch, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
@@ -9,6 +9,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 
 from results.models.athletes import AthleteInformation
 from results.models.events import Event, EventContact
+from results.models.results import Result
 from results.serializers.events import EventContactSerializer, EventSerializer
 from results.utils.pagination import CustomPagePagination
 
@@ -84,6 +85,11 @@ class EventViewSet(viewsets.ModelViewSet):
             if not user.is_authenticated:
                 self.queryset = self.queryset.filter(public=True)
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
+        self.queryset = self.queryset.annotate(
+            has_results=Exists(
+                Result.objects.filter(public=True, competition__public=True, competition__event_id=OuterRef("pk"))
+            )
+        )
         return self.queryset
 
     @method_decorator(vary_on_cookie)

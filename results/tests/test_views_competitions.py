@@ -22,6 +22,7 @@ from results.tests.factories.competitions import (
     CompetitionTypeFactory,
 )
 from results.tests.factories.events import EventFactory
+from results.tests.factories.results import ResultFactory
 from results.tests.utils import ResultsTestCase
 from results.views.competitions import (
     CompetitionLayoutViewSet,
@@ -654,6 +655,19 @@ class CompetitionTestCase(ResultsTestCase):
     def test_competition_access_not_public_staff_staff_limit(self):
         response = self._test_access_not_public(user=self.staff_user, limit="staff")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_competition_has_results(self):
+        request = self.factory.get(self.url + "1/")
+        view = self.viewset.as_view(actions={"get": "retrieve"})
+        response = view(request, pk=self.object.pk)
+        self.assertFalse(response.data["has_results"])
+        result = ResultFactory.create(competition=self.object, public=False)
+        response = view(request, pk=self.object.pk)
+        self.assertFalse(response.data["has_results"])
+        result.public = True
+        result.save()
+        response = view(request, pk=self.object.pk)
+        self.assertTrue(response.data["has_results"])
 
     def test_competition_update_without_user(self):
         response = self._test_update(user=None, data=self.newdata)

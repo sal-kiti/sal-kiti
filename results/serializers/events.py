@@ -35,6 +35,10 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
     organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all())
     competitions = CompetitionInfoSerializer(many=True, read_only=True)
     permissions = DRYPermissionsField()
+    has_results = serializers.BooleanField(
+        read_only=True,
+        label=_("Has public results"),
+    )
 
     _PREFETCH_RELATED_FIELDS = [
         "organization",
@@ -69,6 +73,7 @@ class EventSerializer(serializers.ModelSerializer, EagerLoadingMixin):
             "international",
             "safety_plan",
             "toc_agreement",
+            "has_results",
         )
 
     def is_sport_manager(self, user, event):
