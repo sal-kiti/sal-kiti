@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.1 - 2026-06-06
+- Fixed uv.lock version
+
 ## 1.7.0 - 2026-06-06
 - Updated to Django 5.2
 - Updated other requirements
