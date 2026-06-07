@@ -5,6 +5,8 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from divari.routers import router as divari_router
+from divari.views import CalculateSeason
 from results.routers import router
 from results.views.auth import LocalLoginView, LocalLogoutView
 from results.views.statistics import statistics_pohjolan_malja
@@ -18,6 +20,8 @@ urlpatterns = [
     path("api/sal/pohjolanmalja/<int:year>/", statistics_pohjolan_malja, name="sal-pohjolan-malja"),
     path("api/users/current/", current_user, name="current-user"),
     path("api/", include(router.urls)),
+    path("api/divari/calculate", CalculateSeason.as_view()),
+    path("api/divari/", include(divari_router.urls)),
     path("admin/", admin.site.urls),
     path("auth/login/", LocalLoginView.as_view(), name="login"),
     path("auth/logout/", LocalLogoutView.as_view(), name="logout"),
