@@ -9,6 +9,10 @@ from divari.routers import router as divari_router
 from divari.views import CalculateSeason
 from results.routers import router
 from results.views.auth import LocalLoginView, LocalLogoutView
+from results.views.sjal_ranking import (
+    statistics_sjal_ranking,
+    statistics_sjal_ranking_old,
+)
 from results.views.statistics import statistics_pohjolan_malja
 from results.views.users import current_user
 
@@ -18,6 +22,8 @@ admin.site.index_title = _("Kiti administration")
 
 urlpatterns = [
     path("api/sal/pohjolanmalja/<int:year>/", statistics_pohjolan_malja, name="sal-pohjolan-malja"),
+    path("api/sjal/ranking/<str:division>/", statistics_sjal_ranking_old, name="sjal-ranking"),
+    path("api/sjal/ranking/v2/<str:division>/", statistics_sjal_ranking, name="sjal-ranking-v2"),
     path("api/users/current/", current_user, name="current-user"),
     path("api/", include(router.urls)),
     path("api/divari/calculate", CalculateSeason.as_view()),
