@@ -58,6 +58,10 @@ REMOVE_COMPETITION_APPROVAL_WITH_EVENT = False
 # Gender and date of birth are available through API to these users
 UNMASKED_ATHLETE_USERS = ["admin"]
 
+# Gender options in result filtering. This allows users to find out gender or athletes so it's empty (disabled) by
+# default.
+# GENDER_IN_RESULT_LIST_FILTERING = ["M", "W"]
+
 # Limit visiblity of non public events and competitions, possible values: authenticated / staff / None (no limits)
 LIMIT_NON_PUBLIC_EVENT_AND_COMPETITION = "authenticated"
 

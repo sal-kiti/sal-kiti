@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+from django.conf import settings
 from django.db.models import Prefetch, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
@@ -225,6 +226,8 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             where_query = " WHERE" + raw_query.split("WHERE")[1].split(" ORDER BY")[0]
             for match in re.findall(r" \d{4}-\d{2}-\d{2}", raw_query):
                 where_query = where_query.replace(match, ' "' + match.strip() + '"')
+            for string in getattr(settings, "GENDER_IN_RESULT_LIST_FILTERING", []):
+                where_query = where_query.replace(f" {string} ", f' "{string}" ')
             joins = re.split("FROM .results_result.", raw_query)[1].split("WHERE")[0]
         else:
             where_query = ""
@@ -326,6 +329,10 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             external = self.request.query_params.get("external", False)
             if not external:
                 queryset = queryset.exclude(organization__external=True)
+
+            gender = self.request.query_params.get("gender", None)
+            if gender and gender in getattr(settings, "GENDER_IN_RESULT_LIST_FILTERING", []):
+                queryset = queryset.filter(athlete__gender=gender)
 
         except ValueError:
             raise exceptions.ParseError()
