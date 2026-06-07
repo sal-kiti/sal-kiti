@@ -872,6 +872,7 @@ class ResultListTestCase(TestCase):
             athlete=AthleteFactory.create(gender="M", date_of_birth=date.today() - relativedelta(years=18))
         )
         self.result2 = ResultFactory.create(athlete=self.result.athlete)
+        self.result3 = ResultFactory.create(athlete=AthleteFactory.create(gender="W"))
         self.url = "/api/resultlist/"
         self.viewset = ResultList
         self.model = Result
@@ -881,7 +882,7 @@ class ResultListTestCase(TestCase):
         view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 2)
+        self.assertEqual(len(response.data["results"]), 3)
 
     def test_result_list_access_not_published_result(self):
         self.result.public = False
@@ -890,16 +891,31 @@ class ResultListTestCase(TestCase):
         view = self.viewset.as_view(actions={"get": "list"})
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 2)
+
+    @override_settings(GENDER_IN_RESULT_LIST_FILTERING=[])
+    def test_result_gender_filtering_disabled(self):
+        params = {
+            "sport": 1,
+            "gender": "W",
+        }
+        request = self.factory.get(self.url, params)
+        view = self.viewset.as_view(actions={"get": "list"})
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 3)
+
+    @override_settings(GENDER_IN_RESULT_LIST_FILTERING=["M", "W"])
+    def test_result_grouping(self):
+        params = {
+            "sport": 1,
+            "group_results": 2,
+            "gender": "M",
+            "start": self.result.competition.date_start.isoformat(),
+        }
+        request = self.factory.get(self.url, params)
+        view = self.viewset.as_view(actions={"get": "list"})
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 1)
-
-    def test_result_list_search(self):
-        import os
-
-        if "TRAVIS" not in os.environ:
-            params = {"sport": 1, "group_results": 2}
-            request = self.factory.get(self.url, params)
-            view = self.viewset.as_view(actions={"get": "list"})
-            response = view(request)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(len(response.data["results"]), 1)
-            self.assertEqual(response.data["results"][0]["result"], str(self.result.result + self.result2.result))
+        self.assertEqual(response.data["results"][0]["result"], str(self.result.result + self.result2.result))
