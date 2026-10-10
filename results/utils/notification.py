@@ -25,22 +25,33 @@ def send_notification(addresses, subject, message):
 
 def event_creation_notification(event):
     """Send notification when event is created."""
-    addresses = getattr(settings, "EVENT_CREATION_NOTIFICATION_ADDRESSES", None)
+    addresses = getattr(settings, "EVENT_CREATION_NOTIFICATION_ADDRESSES", [])
     if addresses and event:
         subject = render_to_string(
             "notification/event_creation_subject.html", {"creator": event.organization.abbreviation}
         )
         message = render_to_string("notification/event_creation_message.html", {"event": event})
-        send_notification(settings.EVENT_CREATION_NOTIFICATION_ADDRESSES, subject, message)
+        send_notification(addresses, subject, message)
 
 
 def competition_creation_notification(competition):
     """Send notification when competition is created."""
-    addresses = getattr(settings, "COMPETITION_CREATION_NOTIFICATION_ADDRESSES", None)
+    addresses = getattr(settings, "COMPETITION_CREATION_NOTIFICATION_ADDRESSES", [])
+    notify_sport_managers = getattr(settings, "COMPETITION_CREATION_NOTIFY_SPORT_MANAGERS", False)
+    if notify_sport_managers:
+        try:
+            manager_group = competition.type.sport.managers
+        except AttributeError:
+            manager_group = None
+        if manager_group:
+            managers = manager_group.user_set.exclude(email="")
+            for user in managers:
+                if user.email not in addresses:
+                    addresses.append(user.email)
     if_event_approved = getattr(settings, "COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED", False)
     if addresses and competition and (not competition.event or if_event_approved or competition.event.approved):
         subject = render_to_string(
             "notification/competition_creation_subject.html", {"creator": competition.organization.abbreviation}
         )
         message = render_to_string("notification/competition_creation_message.html", {"competition": competition})
-        send_notification(settings.COMPETITION_CREATION_NOTIFICATION_ADDRESSES, subject, message)
+        send_notification(addresses, subject, message)

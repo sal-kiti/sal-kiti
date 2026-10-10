@@ -478,6 +478,25 @@ class CompetitionNotificationTestCase(ResultsTestCase):
             mail.outbox[len(mail.outbox) - 1].subject,
         )
 
+    @override_settings(
+        COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED=True, COMPETITION_CREATION_NOTIFY_SPORT_MANAGERS=True
+    )
+    def test_competition_notify_sport_managers(self):
+        event = EventFactory.create(approved=True)
+        competition_type = CompetitionTypeFactory.create()
+        group = Group.objects.create(name="Test Managers")
+        competition_type.sport.managers = group
+        competition_type.sport.save()
+        manager = User.objects.create(username="manager", email="manager@example.org")
+        manager.groups.add(group)
+        another_manager = User.objects.create(username="another_manager", email="")
+        another_manager.groups.add(group)
+        mail.outbox = []
+        CompetitionFactory.create(event=event, type=competition_type)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox[0].to), 3)
+        self.assertIn("manager@example.org", mail.outbox[0].to)
+
 
 class CompetitionTestCase(ResultsTestCase):
     def setUp(self):

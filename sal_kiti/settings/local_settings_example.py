@@ -85,6 +85,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@example.org"
 # List of email addresses to notify when new competition or event is created
 COMPETITION_CREATION_NOTIFICATION_ADDRESSES = ["creation@example.org", "competition@example.org"]
+COMPETITION_CREATION_NOTIFY_SPORT_MANAGERS = False
 COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED = False
 EVENT_CREATION_NOTIFICATION_ADDRESSES = ["creation@example.org", "event@example.org"]
 
