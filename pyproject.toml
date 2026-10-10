@@ -3,16 +3,16 @@ name = "sal-kiti"
 version = "1.7.1"
 requires-python = ">=3.10"
 dependencies = [
-    "django==5.2.15",
+    "django==5.2.18",
     "django-cors-headers==4.9.0",
     "django-dry-rest-permissions==1.2.0",
     "django-extensions==4.1",
-    "django-filter==25.2",
-    "djangorestframework==3.17.1",
+    "django-filter==26.1",
+    "djangorestframework==3.18.1",
     "djangorestframework-queryfields==1.1.0",
-    "drf-spectacular==0.29.0",
-    "mysqlclient==2.2.8",
-    "oauthlib==3.3.1",
+    "drf-spectacular==0.30.0",
+    "mysqlclient==2.3.0",
+    "oauthlib==4.0.0",
     "python-dateutil==2.9.0",
     "python-memcached==1.62",
     "requests==2.34.2",
