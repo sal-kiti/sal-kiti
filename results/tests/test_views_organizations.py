@@ -27,6 +27,25 @@ class OrganizationTestCase(ResultsTestCase):
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_organization_access_list_own(self):
+        new_org = OrganizationFactory.create(name="new org")
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 2)
+        self.url = "/api/organizations/?own=true"
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 0)
+        group, _ = Group.objects.get_or_create(name="club_" + self.object.abbreviation + "_" + str(self.object.pk))
+        self.user.groups.add(group)
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 1)
+        area_group = Group.objects.create(name="area_manager")
+        area = AreaFactory.create(name="new area", manager=area_group)
+        new_org.areas.add(area)
+        self.user.groups.add(area_group)
+        OrganizationFactory.create(name="newer org")
+        response = self._test_list(user=self.user)
+        self.assertEqual(len(response.data["results"]), 2)
+
     def test_organization_access_object_without_user(self):
         response = self._test_access(user=None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

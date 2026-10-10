@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_cookie
 from django_filters import rest_framework as filters
@@ -84,7 +85,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         if own:
             user = self.request.user
             if not user.is_superuser and not user.is_staff:
-                self.queryset = self.queryset.filter(group__in=user.groups.all())
+                self.queryset = self.queryset.filter(
+                    Q(group__in=user.groups.all()) | Q(areas__manager__in=user.groups.all())
+                )
         self.queryset = self.get_serializer_class().setup_eager_loading(self.queryset)
         return self.queryset
 
