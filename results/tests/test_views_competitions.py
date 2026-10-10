@@ -470,7 +470,7 @@ class CompetitionNotificationTestCase(ResultsTestCase):
             mail.outbox[len(mail.outbox) - 1].subject,
         )
 
-    @override_settings(COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED=True)
+    @override_settings(COMPETITION_CREATION_NOTIFICATION_IF_EVENT_UNAPPROVED=True)
     def test_competition_create_notification(self):
         competition = CompetitionFactory.create()
         self.assertEqual(
@@ -479,7 +479,7 @@ class CompetitionNotificationTestCase(ResultsTestCase):
         )
 
     @override_settings(
-        COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED=True, COMPETITION_CREATION_NOTIFY_SPORT_MANAGERS=True
+        COMPETITION_CREATION_NOTIFICATION_IF_EVENT_UNAPPROVED=True, COMPETITION_CREATION_NOTIFY_SPORT_MANAGERS=True
     )
     def test_competition_notify_sport_managers(self):
         event = EventFactory.create(approved=True)

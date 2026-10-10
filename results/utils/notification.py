@@ -48,8 +48,8 @@ def competition_creation_notification(competition):
             for user in managers:
                 if user.email not in addresses:
                     addresses.append(user.email)
-    if_event_approved = getattr(settings, "COMPETITION_CREATION_NOTIFICATION_IF_EVENT_APPROVED", False)
-    if addresses and competition and (not competition.event or if_event_approved or competition.event.approved):
+    if_event_unapproved = getattr(settings, "COMPETITION_CREATION_NOTIFICATION_IF_EVENT_UNAPPROVED", False)
+    if addresses and competition and (not competition.event or if_event_unapproved or competition.event.approved):
         subject = render_to_string(
             "notification/competition_creation_subject.html", {"creator": competition.organization.abbreviation}
         )
