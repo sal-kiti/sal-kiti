@@ -30,6 +30,7 @@ dev = [
     "sphinxcontrib-django==2.5",
 ]
 
+[project.optional-dependencies]
 uwsgi = [
     "uwsgi==2.0.31",
 ]
