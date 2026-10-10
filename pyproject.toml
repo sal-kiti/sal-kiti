@@ -34,6 +34,11 @@ uwsgi = [
     "uwsgi==2.0.31",
 ]
 
+[tool.uv]
+audit.malware-check = true
+exclude-newer = "7 days"
+exclude-newer-package = { django = false }
+
 [tool.isort]
 profile = "black"
 skip_gitignore = true
